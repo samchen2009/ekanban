@@ -6,6 +6,7 @@ class CreateKanbanStates < ActiveRecord::Migration
       t.boolean :is_initial
       t.boolean :is_closed
       t.integer :tracker_id
+      t.integer :position
     end
   end
 end

@@ -1,8 +1,8 @@
 Redmine::Plugin.register :ekanban do
   name 'Ekanban plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  author 'samchen2009@gmail.com'
+  description 'This is a kanban plugin for Redmine'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/samchen2009/ekanban'
+  author_url 'http://www.e-kaifa.com'
 end
