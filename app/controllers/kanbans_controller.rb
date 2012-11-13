@@ -3,8 +3,10 @@ class KanbansController < ApplicationController
 
 
   def index
+  	@Kanbans = Kanban.valid()
   end
 
   def create
+  	
   end
 end
