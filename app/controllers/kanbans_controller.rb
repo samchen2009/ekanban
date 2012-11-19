@@ -3,7 +3,12 @@ class KanbansController < ApplicationController
 
 
   def index
-  	@Kanbans = Kanban.valid()
+  	@kanbans = Kanban.valid()
+  	@kanban = @kanbans.first
+  	@panes = @kanban.kanban_pane
+  	@panes.each do |pane|
+  		pane.name = pane.kanban_state.name
+  	end
   end
 
   def create

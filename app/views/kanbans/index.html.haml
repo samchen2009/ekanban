@@ -1,0 +1,15 @@
+%script{:type => "text/javascript", :src => "jquery-1.7.2-ui-1.8.21-ujs-2.0.3.js"}
+/ = javascript_include_tag 'kanban.js', :plugin => 'scrum2b' %>
+= stylesheet_link_tag 'kanban', :plugin => 'ekanban'
+/ - content_for :header_tags do
+/  = stylesheet_link_tag 'version', :plugin => 'kanbans'
+
+/ = stylesheet_link_tag 'version', :plugin => 'kanbans'
+%p{:class => "issues"} Kanbans
+
+- @panes.each do |pane|
+  .board
+    %p{:class => "status"}= pane.name
+    %p= "Stage: #{pane.kanban_state.kanban_stage.name}"
+%style{:type => "text/css"}
+
