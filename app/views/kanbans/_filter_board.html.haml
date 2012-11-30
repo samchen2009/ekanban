@@ -1,0 +1,17 @@
+#filters_kanban.clearfix
+  #seclectbox.clearfix
+    = form_tag :action => 'index', :method => "get", :project_id =>  params[:project_id] do
+      / = button_tag "Submit",:class => "btn_submit", :action => "index"
+      %select{:name => "select kanban", :id => "kanban_id"}
+        %option{:value => 0} All Kanbans
+        - @kanbans.each do |k|
+          %option{:value => k.id} #{k.name}
+      %select{:name => "select_team", :id => "principal_id"}
+        %option{:value => 0} All Groups
+        - @principals.each do |p|
+          %option{:value => p.id} #{p.firstname} #{p.lastname}
+      %select{:name => "select_member", :id => "member_id"}
+        %option{:value => 0} All Members
+        - @members.each do |m|
+          %option{:value => m.id} #{m.user.firstname} #{m.user.lastname}
+      = link_to_function l(:button_apply), 'submit_query_form("seclectbox")', {:class => 'icon icon-checked'}

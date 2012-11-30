@@ -1,0 +1,8 @@
+-controller.cards(pane_id).each do |c|
+  - assignee_name = controller.assignee_name(c.assigned_to)
+  .kanban-card{:title=>"##{c.priority_id}:#{c.subject}<br>To:#{assignee_name}<br>#{c.description}"}
+    .card-header
+      = link_to "##{c.id}", issue_path(c)
+      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{c.priority_id}   O:#{assignee_name}"
+    .card-content="#{c.subject}"
+

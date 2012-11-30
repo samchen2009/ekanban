@@ -1,17 +1,108 @@
-.board {
-  float:left;
-  background: #e3e3e3;
-  width:10%;
-  padding: 0 10px 10px 10px;
-  margin:1px;
-  border: 1px solid #000000;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px; } {
+table {height:600px;table-layout:fixed;width:100%}
+table.kanban td,th {border:1px solid #d7d7d7;}
+table.kanban {border-collapse: collapse; width: 100%; margin: 10px 0 6px 0;border: 1px solid #d7d7d7;text-align:center}
+table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:auto;font-weight:bold;}
+table.kanban td#backlog {}
+
+.kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
+.kanban-card { margin: 5px;width:180px;float:left; overflow:hidden}
+.card-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0em; text-align: left; overflow:hidden; }
+.card-header .ui-icon { float: right; }
+.card-content { padding: 0.4em; overflow:hidden;text-align: left}
+.ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+.ui-sortable-placeholder * { visibility: hidden; }
+
+.icon-box {
+  background-repeat: no-repeat;
 }
-.board p.status{
-	color:#606264;
-	font-size:17px;
-	font-weight:bold;
-	font-family: Trebuchet MS,Georgia,"Times New Roman",serif; margin:5px 0 10px 0;
+
+.icon-search{width:13px;height:13px; padding:1px;background-image: url(../images/icon-search.png); }
+.icon-minus{ background-image: url(../images/icon-minux.png); }
+.icon-plus{ background-image: url(../images/icon-plus.png); }
+
+.p1-color{background-color: #ff6666}
+.p2-color{background-color: #ffc1c1}
+.p3-color{background-color: #ccff99}
+.p4-color{background-color: #defebd}
+.p5-color{background-color: #ffffff}
+
+.out_box{
+  width:90%;
+  height:600px;
+  padding: 0px;
+  border-left: 1px solid #e4e4e4;
+  border-top: 1px solid #e4e4e4;
+  margin:10px;
+  border-collapse:collapse;
+}
+
+.inner_box{
+  border-right: 1px solid #e4e4e4;
+  border-bottom: 1px solid #e4e4e4;
+  float: left;
+  border-collapse:collapse;
+}
+
+.no_border{
+  border-width: 0px
+}
+
+.panes{
+  width:100%;
+  overflow: auto;
+  float:left;
+}
+
+/* layout
+   
+   out_box -> header -> stages -> title
+           -> panes -> cards
+           -> footer     
+ */
+
+#kanban_header {
+  width:100%;
+  height:50px;
+  line-height: 50px;
+  clear:both;
+  text-align:center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #555555;
+  background: #faf6fa;
+}
+
+#kanban_body{
+  width:100%;
+  height:auto;
+  clear:both;
+}
+
+#kanban_footer{
+  width: 100%;
+  height: 30px;
+  clear:both:
+}
+
+
+#seclectbox {
+  width: 100%;
+  padding: 5px;
+}
+
+.clearfix {
+  display: inline-block;
+}
+
+#seclectbox select#select_kanban {
+  padding: 2px;
+  float: right;
+}
+#seclectbox select#select_team {
+  float: right;
+  padding: 2px;
+}
+#seclectbox select#select_member {
+  float: right;
+  padding: 2px;
 }
