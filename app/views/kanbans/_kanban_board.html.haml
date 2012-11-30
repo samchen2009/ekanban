@@ -11,7 +11,7 @@
       - stages = controller.stages(panes)
       - stages.each do |s|
         - if s.state_name.size == 1
-          %th{:id=>"state_#{s.state_name[0]}", :rowspan=>"2"}
+          %th{:id=>"stage_#{s.state_name[0]}", :rowspan=>"2"}
             .plain-text{:style => "width:80%;float:left"}= s.name
             - if s.state_name[0] == "backlog"
               #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}

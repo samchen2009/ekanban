@@ -47,6 +47,7 @@
 
     $( "#backlog-minus-icon").click(function(){
       $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+      $("#pane_1").find(".card-header .ui-icon").trigger("click");
     });
 
     $("#backlog-search-icon").click(function(){

@@ -50,7 +50,7 @@ class KanbanPane < ActiveRecord::Base
     end
   end
 
-  # Get Pane's or 
+  # Get Pane's or Group's WIP
   def wip(arg=nil)
     if @view == PROJECT_VIEW
       #members in this project and role matches this pane
