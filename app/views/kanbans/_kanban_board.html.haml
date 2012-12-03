@@ -12,7 +12,9 @@
       - stages.each do |s|
         - if s.state_name.size == 1
           %th{:id=>"stage_#{s.state_name[0]}", :rowspan=>"2"}
-            .plain-text{:style => "width:80%;float:left"}= s.name
+            .plain-text{:style => "width:80%;float:left"}
+              = s.name 
+              %span.wip-text{:id => "#{s.name}_wip"}= "(#{s.wip}:#{s.wip_limit})"
             - if s.state_name[0] == "backlog"
               #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
               #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
@@ -21,6 +23,7 @@
         - else
           %th{:id=>"stage_#{s.name}", :colspan=>"#{s.state_name.size}"}
             =s.name
+            %span.wip-text{:id => "#{s.name}_wip"}= "(#{s.wip}:#{s.wip_limit})"
     %tr
       - stages.each do |s|
         - if s.state_name.size > 1
@@ -34,3 +37,4 @@
             %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
           = render :partial => "kanban_pane", :locals=>{:pane_id => pane.id}
 %style{:type => "text/css"}
+

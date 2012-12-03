@@ -5,12 +5,13 @@ table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:au
 table.kanban td#backlog {}
 
 .kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
-.kanban-card { margin: 5px;width:180px;float:left; overflow:hidden}
+.kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}
 .card-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0em; text-align: left; overflow:hidden; }
 .card-header .ui-icon { float: right; }
 .card-content { padding: 0.4em; overflow:hidden;text-align: left}
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
+.wip-text {color:blue;}
 
 .icon-box {
   background-repeat: no-repeat;

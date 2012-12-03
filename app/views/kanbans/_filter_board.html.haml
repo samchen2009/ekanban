@@ -1,17 +1,10 @@
-#filters_kanban.clearfix
-  #seclectbox.clearfix
-    = form_tag :action => 'index', :method => "get", :project_id =>  params[:project_id] do
-      / = button_tag "Submit",:class => "btn_submit", :action => "index"
-      %select{:name => "select kanban", :id => "kanban_id"}
-        %option{:value => 0} All Kanbans
-        - @kanbans.each do |k|
-          %option{:value => k.id} #{k.name}
-      %select{:name => "select_team", :id => "principal_id"}
-        %option{:value => 0} All Groups
-        - @principals.each do |p|
-          %option{:value => p.id} #{p.firstname} #{p.lastname}
-      %select{:name => "select_member", :id => "member_id"}
-        %option{:value => 0} All Members
-        - @members.each do |m|
-          %option{:value => m.id} #{m.user.firstname} #{m.user.lastname}
-      = link_to_function l(:button_apply), 'submit_query_form("seclectbox")', {:class => 'icon icon-checked'}
+.clearfix
+  /= form_tag( {:project_id => @project}, :method => :get, :id => 'kanban_query_form') do
+  /= form_tag :action => 'index',:project_id =>  params[:project_id]
+  = form_tag( {:controller => "kanbans", :action => 'index'}, :method => :get, :id => 'kanban_query_form') do
+    = select_tag "kanban_id", options_for_select([["All Kanbans",0]]) + options_from_collection_for_select(@kanbans, "id", "name",params[:kanban_id] || 0)
+    = select_tag "principal_id", options_for_select([["All Groups",0]]) + options_from_collection_for_select(@principals,"id", "name", params[:principal_id] || 0)
+    = select_tag "member_id", options_for_select([["All Members",0]]) + options_from_collection_for_select(@members,"id", "name", params[:member_id] || 0)
+    = hidden_field_tag :project_id, params[:project_id]
+    = link_to_function l(:button_apply), 'submit_query_form("kanban_query_form")', {:class => 'icon icon-checked'}
+

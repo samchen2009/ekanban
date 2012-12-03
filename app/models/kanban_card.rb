@@ -6,12 +6,22 @@ class KanbanCard < ActiveRecord::Base
   belongs_to :kanban_pane, :class_name => :KanbanPane
 
   scope :by_group, lambda {|group|
-    group_id = group.nil? ? User.current_group : group.is_a?(Group) ? group.id : group.to_i
+    return if group.nil?
+    if (group.is_a?(User))
+      group_id = User.to_id(group)
+    else
+      group_id = Group.to_id(group)
+    end
     {:conditions => ["#{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id], :include => :issue}
   }
 
   scope :by_user, lambda {|user|
-    user_id = user.nil? ? User.current :  user.is_a?(User) ? user.id : user.to_i
+    user_id = User.to_id(user)
+    {:conditions => ["#{Issue.table_name}.assigned_to_id=?", user_id], :include => :issue}
+  }
+
+  scope :by_member, lambda {|member|
+    user_id = member.nil? ? User.current.id :  member.is_a?(Member) ? member.user_id : member.to_i
     {:conditions => ["#{Issue.table_name}.assigned_to_id=?", user_id], :include => :issue}
   }
 
@@ -25,7 +35,6 @@ class KanbanCard < ActiveRecord::Base
   	return nil if state.nil?
   	status_id = IssueStatusKanbanState.status_id(state)
   	return nil if status_id.nil?
-  	puts "asdfasdfasdfasdfasdf"
     {:conditions => ["#{Issue.table_name}.status_id = ?", status_id], :include => [:issue]}
   }
 

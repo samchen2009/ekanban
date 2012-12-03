@@ -6,7 +6,8 @@
 = javascript_include_tag "http://code.jquery.com/jquery-1.8.2.js"
 = javascript_include_tag "http://code.jquery.com/ui/1.9.1/jquery-ui.js"
 = stylesheet_link_tag "http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css"
-= javascript_include_tag "kanban.js", :plugin=>'ekanban'
+= javascript_include_tag "select_list_move"
+/= javascript_include_tag "kanban", :plugin=>'ekanban'
 
 #kanban_filter
   = render :partial => "filter_board"
@@ -17,19 +18,20 @@
 
 :javascript
   $(function() {
+
+    // Make the pane sortable.
     $( ".kanban-pane" ).sortable({
       connectWith: ".kanban-pane"
     });
 
     //$( "#state_backlog").addClass ("ui-icon ui-icon-minusthick")
 
-   $.expr[":"].contains = $.expr.createPseudo(function(arg) {
-    return function( elem ) {
+    // Ignore case in contains()
+    $.expr[":"].contains = $.expr.createPseudo(function(arg) {
+      return function( elem ) {
         return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-    };
-   });
-
-
+      };
+    });
 
     $( ".kanban-card" ).addClass( "ui-helper-clearfix ui-corner-all ")
       .find( ".card-header" )
@@ -76,5 +78,17 @@
     $(".kanban-card:contains('P3')").addClass("p3-color")
     $(".kanban-card:contains('P4')").addClass("p4-color")
     $(".kanban-card:contains('P5')").addClass("p5-color")
+
+    //$.ajax({
+    //  type: "GET",
+    //  url: "/groups",
+    //  dataType: "script",
+    //  cache: false,
+    //  success: function(data){
+        // TOOD: Could optimize by only loading the tab panel that we're looking at
+    //    alert(data);
+    //  }
+    //});
+
   });
 

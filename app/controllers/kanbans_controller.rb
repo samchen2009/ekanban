@@ -1,11 +1,15 @@
 class  KanbanStageHelper
 
   attr_reader :name,:state_name
+  attr_accessor :wip,:wip_limit
+
 
   def initialize (name, state_name)
     @state_name = []
     @name = name
     @state_name << state_name
+    @wip = 10;
+    @wip_limit = 100;
   end
 
   def add(state_name)
@@ -27,22 +31,27 @@ class KanbansController < ApplicationController
 
   def index
     @project = Project.find(params[:project_id])#Get member name of this project
-    @members = @project.members
+    @members= @project.members
     @principals = @project.principals
+
+    @member = nil
+    @principal = nil
 
     params[:kanban_id] = 0 if params[:kanban_id].nil?
     params[:member_id] = 0 if params[:member_id].nil?
     params[:principal_id] = 0 if params[:principal_id].nil?
 
-    if params[:kanban_id] > 0
-        @kanbans = Kanban.find(params[:kanban_id])
+    @kanbans = []
+
+    if params[:kanban_id].to_i > 0
+        @kanbans << Kanban.find(params[:kanban_id])
     else
         @kanbans = Kanban.by_project(@project)
     end
 
-    if params[:member_id] == 0 and params[:principal_id] == 0
+    if params[:member_id].to_i == 0 and params[:principal_id].to_i == 0
       @view = PROJECT_VIEW
-    elsif params[:member_id] > 0
+    elsif params[:member_id].to_i > 0
       @view = MEMBER_VIEW
       @member = Member.find(params[:member_id])
     else
@@ -51,8 +60,15 @@ class KanbansController < ApplicationController
     end
 
     #Get all kanbans's name
-    @kanban_names = @kanbans.collect {|k| k.name}
-
+    @kanban_names = @kanbans.collect{|k| k.name}
+    respond_to do |format|
+      format.html
+      format.js { render :partial => "index", :locals => {:view=>@view, :kanbans=>@Kanbans}}
+      format.json { render :json => {:kanbans => @kanbans, 
+                                     :teams => @principal, 
+                                     :member => @member, 
+                                     :view => @view}}
+    end
   end
 
   def panes(kanban)
@@ -67,7 +83,13 @@ class KanbansController < ApplicationController
 
   def cards(pane_id)
     pane = KanbanPane.find(pane_id)
-    cards = pane.issue
+    cards = pane.kanban_card
+    if !@member.nil?
+       cards = cards.by_member(@member)
+    elsif !@principal.nil?
+       cards = cards.by_group(@principal)
+    end
+    cards
   end
 
   def assignee_name(assignee)
@@ -104,4 +126,22 @@ class KanbansController < ApplicationController
   def create
   	debugger
   end
+
+  def wip(stage)
+
+  end
+
+  def pane(pane_id)
+    pane = KanbanPane.find(pane_id)
+  end
+
+  def stage(pane_id)
+    pane = pane(pane_id)
+    stage = Stage.find(pane.stage_id) if !pane.nil?
+  end
+
+  def pane_wip(pane_id)
+
+  end
+
 end
