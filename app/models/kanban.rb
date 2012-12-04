@@ -27,3 +27,7 @@ class Kanban < ActiveRecord::Base
   end
 
 end
+
+class Project < ActiveRecord::Base
+  has_many :kanban
+end

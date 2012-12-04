@@ -1,13 +1,13 @@
-.contextual= link_to l(:label_kanban_new), new_kanban_path(nil), :class => 'icon icon-add'
+.contextual= link_to l(:label_kanban_new), new_project_kanban_path(), :class => 'icon icon-add'
 %h2 Kanbans
 
 / = javascript_include_tag 'kanban.js', :plugin => 'scrum2b' %>
-= stylesheet_link_tag 'kanban', :plugin => 'ekanban'
+= stylesheet_link_tag 'kanban', :plugin => :ekanban
 = javascript_include_tag "http://code.jquery.com/jquery-1.8.2.js"
 = javascript_include_tag "http://code.jquery.com/ui/1.9.1/jquery-ui.js"
 = stylesheet_link_tag "http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css"
 = javascript_include_tag "select_list_move"
-/= javascript_include_tag "kanban", :plugin=>'ekanban'
+= javascript_include_tag "kanban", :plugin => :ekanban
 
 #kanban_filter
   = render :partial => "filter_board"
@@ -21,10 +21,40 @@
 
     // Make the pane sortable.
     $( ".kanban-pane" ).sortable({
-      connectWith: ".kanban-pane"
+      connectWith: ".kanban-pane",
+      start: function(event,ui){
+        ui.item.removeClass("acceptable");
+      },
+      receive: function(event,ui){
+        console.debug(event,ui);
+
+        /* check */
+        if (cardIsAccepted(event,ui)){
+          console.debug("accepted");
+          ui.item.addClass("acceptable");
+        }else{
+          console.debug("not acceptable");
+          ui.item.removeClass("acceptable");
+        }
+        if (!ui.item.hasClass('acceptable')){
+          ui.sender.sortable("cancel");
+        }else{
+          /* owner, status, comments, */
+          updateCard();
+          /* wip (sender and receiver) */
+          updatePane();
+        }
+      },
+      remove: function(event,ui){
+        console.debug(event,ui);
+        ui.item.removeClass("acceptable");
+      },
     });
 
-    //$( "#state_backlog").addClass ("ui-icon ui-icon-minusthick")
+    $(".kanan-card").draggable({
+      connectToSortable: '.kanban-pane',
+      revert: "invalid"
+    });
 
     // Ignore case in contains()
     $.expr[":"].contains = $.expr.createPseudo(function(arg) {
@@ -79,16 +109,16 @@
     $(".kanban-card:contains('P4')").addClass("p4-color")
     $(".kanban-card:contains('P5')").addClass("p5-color")
 
-    //$.ajax({
-    //  type: "GET",
-    //  url: "/groups",
-    //  dataType: "script",
-    //  cache: false,
-    //  success: function(data){
+    $.ajax({
+      type: "GET",
+      url:  "#{project_kanbans_path()}",
+      dataType: "script",
+      cache: false,
+      success: function(data){
         // TOOD: Could optimize by only loading the tab panel that we're looking at
-    //    alert(data);
-    //  }
-    //});
+        alert(data);
+      }
+    });
 
   });
 

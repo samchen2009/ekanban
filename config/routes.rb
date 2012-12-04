@@ -2,6 +2,7 @@
 # See: http://guides.rubyonrails.org/routing.html
 
 RedmineApp::Application.routes.draw do
-	resources  :kanbans
-        resources  :kanban_panes
+	resources :projects do
+		resources  :kanbans
+	end
 end

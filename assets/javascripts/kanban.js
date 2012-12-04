@@ -1,18 +1,27 @@
-$(function() {
-    $( ".kanban-pane" ).sortable({
-        connectWith: ".kanban-pane"
-    });
+/* On droppable accept is invoked */
+function onDroppableAccept(){
+    //alert("ssss")
+    console.debug("ssss")
+}
 
-    $( ".kanban-card" ).addClass( "ui-helper-clearfix ui-corner-all" )
-        .find( ".card-header" )
-            .addClass( "ui-widget-header ui-corner-all" )
-            .prepend( "<span class='ui-icon-minusthick'></span>")
-            .end()
-        .find( ".card-content" );
+/* When user drop the draggable */
+function onDroppableDrop(event,ui){
+    //alert(arguments.callee.toString());
+    console.debug("iiiiiiiiii")
+}
 
-    $( ".card-header .ui-icon" ).click(function() {
-        $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
-        $( this ).parents( ".kanban-card:first" ).find( ".card-content" ).toggle();
-    });
-    $( ".kanban-pane" ).disableSelection();
-});
+/* Check whether the card can be dropped in a new pane
+ # event: over
+ # ui.sender: the pane that card comes from.
+ # ui.item: the dragged card.
+*/
+function cardIsAccepted(event, ui){
+    console.debug(ui.sender);
+    console.debug(ui.item);
+    console.debug($(this));
+    return false;
+}
+
+function updateCard(){}
+
+function updatePane(){}
