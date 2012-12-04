@@ -1,9 +1,10 @@
 -controller.cards(pane_id).each do |c|
   - i = c.issue
   - assignee_name = controller.assignee_name(i.assigned_to)
-  .kanban-cards
-    .kanban-card{:id=>"#{i.id}",:title=>"##{i.priority_id}:#{i.subject}<br>To:#{assignee_name}<br>#{i.description}"}
-      .card-header
-        = link_to "##{i.id}", issue_path(i)
-        %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
-      .card-content="#{i.subject}"
+  .kanban-card{:id=>"#{i.id}",:title=>"##{i.priority_id}:#{i.subject}<br>To:#{assignee_name}<br>#{i.description}"}
+    .card-header
+      = link_to "##{i.id}", issue_path(i)
+      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
+    .card-content="#{i.subject}"
+
+

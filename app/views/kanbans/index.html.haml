@@ -99,6 +99,10 @@
         .hide()
         .filter(":contains('"+(keywords)+"')")
         .show();
+      text = $("#wip_backlog").text();
+      text = text.split(":");
+      text = "(" + $("#pane_1").children(".kanban-card:visible").length + ":" + text[1];
+      $("#wip_backlog").text(text);
     }).keyup();
 
     $( document ).tooltip();
@@ -108,17 +112,5 @@
     $(".kanban-card:contains('P3')").addClass("p3-color")
     $(".kanban-card:contains('P4')").addClass("p4-color")
     $(".kanban-card:contains('P5')").addClass("p5-color")
-
-    $.ajax({
-      type: "GET",
-      url:  "#{project_kanbans_path()}",
-      dataType: "script",
-      cache: false,
-      success: function(data){
-        // TOOD: Could optimize by only loading the tab panel that we're looking at
-        alert(data);
-      }
-    });
-
   });
 

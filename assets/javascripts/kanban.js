@@ -22,6 +22,11 @@ function cardIsAccepted(event, ui){
     return false;
 }
 
+function updateWip(wip,wip_limit,stage){
+	$("wip_"+stage).html("<span class:wip-text> (" + wip + ":" +wip_limit +")");
+}
+
+
 function updateCard(){}
 
 function updatePane(){}
