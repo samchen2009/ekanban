@@ -6,7 +6,10 @@ class KanbanPanesController < ApplicationController
   def index
   	@panes = KanbanPane.where("kanban_id = #{params[:kanban_id]}");
   	stages = []
-  	@panes.each {|p| stages << p.kanban_state.kanban_stage.name}
+  	@panes.each do |p|
+  	  stages << p.kanban_state.kanban_stage.name
+ 	  p.wip_limit =	p.wip_limit_by_view(params[:project_id],params[:group_id],params[:member_id])
+  	end
     respond_with([@panes,stages]);
   end
 

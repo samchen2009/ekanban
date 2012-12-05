@@ -32,21 +32,25 @@ class KanbanPane < ActiveRecord::Base
   end
 
   # Get Pane's or User's WIP limit, don't naming the function as wip_limit
-  def wip_limit_by_view(arg=nil)
+  def wip_limit_by_view(project, group=nil, user=nil)
     if self.wip_limit_auto == false
       return self.wip_limit
     end
-    if @view == PROJECT_VIEW
-      project = Project.to_project(arg)
+
+    if (group.nil? and user.nil?)
+      @view = PROJECT_VIEW
+      project = Project.to_project(project)
       project = self.kanban.project if project.nil?
       puts "project  = #{project}"
-      project.wip_limit(self.role_id)
-    elsif @view == GROUP_VIEW
-      group = Group.to_group(arg)
-      return group.wip_limit(self.role_id);
-    elsif @view == USER_VIEW
-      user = User.to_user(arg)
+      wip_limit = project.wip_limit(self.role_id)
+    elsif !user.nil?
+      @view = USER_VIEW
+      user = User.to_user(user)
       return user.wip_limit
+    else
+      @view = GROUP_VIEW
+      group = Group.to_group(group)
+      return group.wip_limit(self.role_id, project);
     end
   end
 
@@ -109,33 +113,33 @@ class Group < Principal
   end
 
   def wip_limit(role=nil,project=nil)
+    project = Project.to_project(project)
     role = Role.to_role(role)
-    user_ids = User.in_group(self).collect {|user| user.id}
-    members = Project.to_project(project).members
-    members.select! {|member| user_ids.include?(members.user_id)}
-    return members.inject(0) {|sum,member| 
-      sum += members.user.wip_limit if member.roles.include(role) or role.nil?
-      sum
+    users = User.member_of(project).in_group(self)
+
+    wip_limit = users.inject(0) {|sum,user|
+      (user.roles_for_project(project).include?(role) or role.nil?) ? (sum+user.wip_limit) : sum
     }
+    wip_limit
   end
 end
 
 class Project < ActiveRecord::Base
   def self.to_id(project)
-    project_id = project.nil? ? nil : project.is_a?(project) ? project.id : project.to_i
+    project_id = project.nil? ? nil : project.is_a?(Project) ? project.id : project.to_i
   end
 
   def self.to_project(project)
-    project = project.nil? ? nil : project_is_a?(project) ? project : project.fine(project)
+    project = project.nil? ? nil : project.is_a?(Project) ? project : Project.find(project)
   end
 
   def wip_limit(role=nil)
-    role_id = Role.to_id(role)
-    puts "role_id=#{role_id}"
-    self.members.inject(0) do |sum,member|
-      sum += member.user.wip_limit if member.roles.collect{|r| r.id}.include?(role_id) or role_id.nil?
-      sum
+    role = Role.to_role(role)
+    wip_limit = self.members.inject(0) do |sum,member|
+      user = member.user
+      (user.roles_for_project(self).include?(role) or role.nil?) ? (sum + user.wip_limit) : sum
     end
+    wip_limit
   end
 end
 

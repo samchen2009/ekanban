@@ -3,8 +3,20 @@ class KanbanCardsController < ApplicationController
 
 
   def index
+  	respond_to :json
   end
 
   def create
+  end
+
+  def show
+  	respond_to :json,:html
+  	@card = KanbanCard.find(params[:id])
+  	@issue = @card.issue
+  	respond_with([@card,@issue])
+  end
+
+  def update
+  	respond_to :json
   end
 end

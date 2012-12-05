@@ -6,6 +6,8 @@
 = javascript_include_tag "http://code.jquery.com/jquery-1.8.2.js"
 = javascript_include_tag "http://code.jquery.com/ui/1.9.1/jquery-ui.js"
 = stylesheet_link_tag "http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css"
+= javascript_include_tag "http://code.jquery.com/ui/1.9.1/jquery-ui.js"
+= javascript_include_tag "http://www.formmail-maker.com/var/demo/jquery-popup-form/jquery.colorbox-min.js"
 = javascript_include_tag "select_list_move"
 = javascript_include_tag "kanban", :plugin => :ekanban
 
@@ -26,14 +28,13 @@
         ui.item.removeClass("acceptable");
       },
       receive: function(event,ui){
-        console.debug(event,ui);
-
         /* check */
+        console.debug("1", ui, $(this));
         if (cardIsAccepted(event,ui)){
-          console.debug("accepted");
+          console.debug("2 accept");
           ui.item.addClass("acceptable");
         }else{
-          console.debug("not acceptable");
+          console.debug("3 reject");
           ui.item.removeClass("acceptable");
         }
         if (!ui.item.hasClass('acceptable')){
@@ -42,11 +43,10 @@
           /* owner, status, comments, */
           updateCard();
           /* wip (sender and receiver) */
-          updatePane();
+          updatePanesWip(ui.sender,$(this));
         }
       },
       remove: function(event,ui){
-        console.debug(event,ui);
         ui.item.removeClass("acceptable");
       },
     });
@@ -106,6 +106,9 @@
     }).keyup();
 
     $( document ).tooltip();
+    $( document ).ready(function(){
+      $(".popup").colorbox({iframe:true, fastIframe:false, width:"600px", height:"400px", transition:"fade", scrolling:false});
+    });
 
     $(".kanban-card:contains('P1')").addClass("p1-color")
     $(".kanban-card:contains('P2')").addClass("p2-color")
@@ -113,4 +116,3 @@
     $(".kanban-card:contains('P4')").addClass("p4-color")
     $(".kanban-card:contains('P5')").addClass("p5-color")
   });
-

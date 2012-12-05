@@ -14,7 +14,7 @@
           %th{:id=>"stage_#{s.state_name[0]}", :rowspan=>"2"}
             .plain-text{:style => "width:80%;float:left"}
               = s.name 
-              %span.wip-text{:id => "wip_#{s.name}"}= "(#{s.wip}:#{s.wip_limit})"
+              %span.wip-text{:id => "wip_#{s.name}"}= " "
             - if s.state_name[0] == "backlog"
               #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
               #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
@@ -23,7 +23,7 @@
         - else
           %th{:id=>"stage_#{s.name}", :colspan=>"#{s.state_name.size}"}
             =s.name
-            %span.wip-text{:id => "wip_#{s.name}"}= "(#{s.wip}:#{s.wip_limit})"
+            %span.wip-text{:id => "wip_#{s.name}"}= "  "
     %tr
       - stages.each do |s|
         - if s.state_name.size > 1
@@ -46,15 +46,7 @@
       dataType: "json",
       cache: false,
       success: function(json){
-        // TOOD: Could optimize by only loading the tab panel that we're looking at
-        for (i=0; i<json[1].length; i++){
-         if (json[1][i] === json[1][i-1])
-           wip += $("#pane_"+(i+1)).children(":visible").length;
-         else
-           wip = $("#pane_"+(i+1)).children(":visible").length;
-         var wip_limit = json[0][i].kanban_pane.wip_limit;
-         $("#wip_"+ json[1][i]).text("(" + wip + ":" +wip_limit +")")
-        }
+        init_wip(json);
       }
     });
   });
