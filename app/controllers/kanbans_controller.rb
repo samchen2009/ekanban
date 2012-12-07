@@ -10,6 +10,7 @@ class  KanbanStageHelper
     @state_name << state_name
     @wip = 10;
     @wip_limit = 100;
+
   end
 
   def add(state_name)
@@ -36,6 +37,10 @@ class KanbansController < ApplicationController
 
     @member = nil
     @principal = nil
+
+    @issueStatuss = IssueStatus.all
+    @kanbanStates = KanbanState.all
+    @issueStatusKanbanState = IssueStatusKanbanState.all
 
     params[:kanban_id] = 0 if params[:kanban_id].nil?
     params[:member_id] = 0 if params[:member_id].nil?

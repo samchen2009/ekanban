@@ -1,0 +1,24 @@
+= labelled_fields_for "kanban_card" do |f|
+  #popupWindowHeader.newline
+  = form_tag( {:controller => "kanban_cards", :action => 'update'}, :method => :put, :id => 'kanban_card_form') do
+    .newline
+      = label_tag "Issue Status: "
+      = select_tag "issue_status_id", options_from_collection_for_select(@issueStatuss, "id", "name")
+      = label_tag "Kanban State: "
+      = select_tag "kanban_state_id", options_from_collection_for_select(@kanbanStates, "id", "name")
+    .newline
+      = label_tag "assigned to: "
+      = select_tag "assignee_id", options_from_collection_for_select(@principals,"id", "name")
+    .newline
+      = label_tag "developer: "
+      = select_tag "developer_id",  options_from_collection_for_select(@principals,"id", "name")
+      = label_tag "verifier"
+      = select_tag "verifier_id",  options_from_collection_for_select(@principals,"id", "name")
+    .newline
+      = label_tag "Keywords: "
+      = text_field_tag "keyword"
+    = hidden_field_tag :project_id, params[:project_id]
+    .newline
+      = label_tag "Comment:"
+      = text_area "comment_text",:class => 'wiki-edit',:no_label => true
+    .newline= submit_tag("Save")

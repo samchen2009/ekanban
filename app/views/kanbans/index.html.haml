@@ -18,8 +18,22 @@
 #kanban_boards
   = render :partial => "kanban_board", :collection => @kanbans, :as => :kanban
 
+#popupWindow
+  %a#popupWindowClose X
+  #popupWindowBody
+    = render :partial => "kanban_card"
+  #popupWindowFoot
+
+#backgroundPopup
+
 :javascript
   $(function() {
+    // Ignore case in contains()
+    $.expr[":"].contains = $.expr.createPseudo(function(arg) {
+      return function( elem ) {
+        return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+      };
+    });
 
     // Make the pane sortable.
     $( ".kanban-pane" ).sortable({
@@ -41,9 +55,14 @@
           ui.sender.sortable("cancel");
         }else{
           /* owner, status, comments, */
-          updateCard();
-          /* wip (sender and receiver) */
-          updatePanesWip(ui.sender,$(this));
+          popupCard(ui.item, $("#popupWindow"),"edit", $(this));
+          if (!ui.item.hasClass("saved")){
+            ui.sender.sortable("cancel");
+          }else{
+            ui.item.removeClass("saved");
+            /* wip (sender and receiver) */
+            updatePanesWip(ui.sender,$(this));
+          }
         }
       },
       remove: function(event,ui){
@@ -54,13 +73,6 @@
     $(".kanan-card").draggable({
       connectToSortable: '.kanban-pane',
       revert: "invalid"
-    });
-
-    // Ignore case in contains()
-    $.expr[":"].contains = $.expr.createPseudo(function(arg) {
-      return function( elem ) {
-        return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-      };
     });
 
     $( ".kanban-card" ).addClass( "ui-helper-clearfix ui-corner-all ")
@@ -106,8 +118,25 @@
     }).keyup();
 
     $( document ).tooltip();
+
     $( document ).ready(function(){
-      $(".popup").colorbox({iframe:true, fastIframe:false, width:"600px", height:"400px", transition:"fade", scrolling:false});
+      $(".kanban-card").bind("dblclick", function(){
+        popupCard($(this),$("#popupWindow"),"edit");
+      });
+
+      $("#popupWindowClose").click(function(){
+        disablePopup($(".popuped"));
+      });
+
+      $("#backgroundPopup").click(function(){
+        disablePopup($(".popuped"));
+      });
+
+      $(document).keypress(function(e){
+        if(e.keyCode==27){
+          disablePopup(".popuped");
+        }
+      });
     });
 
     $(".kanban-card:contains('P1')").addClass("p1-color")
