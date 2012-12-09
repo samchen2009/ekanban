@@ -12,7 +12,12 @@ class KanbanCard < ActiveRecord::Base
     else
       group_id = Group.to_id(group)
     end
-    {:conditions => ["#{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id], :include => :issue}
+    {:conditions => ["#{Issue.table_name}.assigned_to_id = ? or #{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id,group_id], :include => :issue}
+  }
+
+  scope :in_pane, lambda {|pane|
+    pane_id = KanbanPane.to_id(pane)
+    {:conditions => ["kanban_pane_id=?", pane_id]}
   }
 
   scope :by_user, lambda {|user|
@@ -46,57 +51,3 @@ class KanbanCard < ActiveRecord::Base
 
 end
 
-class Issue < ActiveRecord::Base
-
-  scope :belong_to_group, lambda {|group|
-    group_id = group.nil? ? User.current_group : group.is_a?(Group) ? group.id : group.to_i
-    {:conditions => ["#{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id]}
-  }
-
-  scope :belong_to_user, lambda {|user|
-    user_id = user.nil? ? User.current :  user.is_a?(User) ? user.id : user.to_i
-    {:conditions => ["#{Issue.table_name}.assigned_to_id=?", user_id]}
-  }
-
-  #usage
-  #Issue.belong_to(user) => all issues belong to user
-  #Issue.belong_to(group) => all issues belong to group
-  #Issue.belong_to() => all issues belong to current project
-  #Issue.belong_to(user,project) => project issue belong to user
-  #Issue.belong_to(group,project) => project issue belong to group
-  scope :belong_to, lambda {|*args|
-
-  	project_id = user_id = group_id = nil
-  	args.to_a.each do |arg|
-  		user_id = arg.id if arg.is_a?(User)
-  		project_id = arg.id if arg.is_a?(Project)
-  		group_id = arg.id if arg.is_a?(Group)
-  	end
-
-  	conditions = []
-  	values = []
-  	if user_id
-  		conditions << "#{Issue.table_name}.assigned_to_id=?"
-  		values << user_id
-  	end
-  	if group_id
-  		conditions << "#{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)"
-  		values << group_id
-  	end
-  	if project_id
-  		conditions << "#{Issue.table_name}.project_id=?"
-  		values << project_id
-  	end
-  	{:conditions => conditions.join(' and ').to_a.concat(values)}
-  }
-
-
-end
-
-class IssueStatus < ActiveRecord::Base
-  def self.closed_id
-  	#IssueStatus.all.each {|x| return x.id if x.is_closed} 
-    status = IssueStatus.where(:is_closed => 1)
-    return status.id if status.nil?
-  end
-end

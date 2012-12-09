@@ -8,4 +8,9 @@ RedmineApp::Application.routes.draw do
 		end
 	end
 	resource :kanban_cards
+
+	match 'kanban_apis/kanban_state_issue_status', :controller => 'kanban_apis', :action => 'kanban_state_issue_status', :via => :get
+	match 'kanban_apis/kanban_workflow', :controller => 'kanban_apis', :action => 'kanban_workflow', :via => :get
+	match 'kanban_apis/issue_workflow', :controller => 'kanban_apis', :action => 'issue_workflow', :via => :get
+	match 'project/:project_id/kanbans', :controller => 'kanbans', :action => 'index', :via => :get
 end

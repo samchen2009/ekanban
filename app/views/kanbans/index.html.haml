@@ -10,6 +10,8 @@
 = javascript_include_tag "http://www.formmail-maker.com/var/demo/jquery-popup-form/jquery.colorbox-min.js"
 = javascript_include_tag "select_list_move"
 = javascript_include_tag "kanban", :plugin => :ekanban
+= javascript_include_tag "kanban_api", :plugin => :ekanban
+= javascript_include_tag "jquery.blockUI.js", :plugin => :ekanban
 
 #kanban_filter
   = render :partial => "filter_board"
@@ -18,8 +20,7 @@
 #kanban_boards
   = render :partial => "kanban_board", :collection => @kanbans, :as => :kanban
 
-#popupWindow
-  %a#popupWindowClose X
+#popupWindow{:title => "Edit kanban card"}
   #popupWindowBody
     = render :partial => "kanban_card"
   #popupWindowFoot
@@ -43,7 +44,6 @@
       },
       receive: function(event,ui){
         /* check */
-        console.debug("1", ui, $(this));
         if (cardIsAccepted(event,ui)){
           console.debug("2 accept");
           ui.item.addClass("acceptable");
@@ -54,13 +54,12 @@
         if (!ui.item.hasClass('acceptable')){
           ui.sender.sortable("cancel");
         }else{
-          /* owner, status, comments, */
-          popupCard(ui.item, $("#popupWindow"),"edit", $(this));
-          if (!ui.item.hasClass("saved")){
+
+          if (!confirm("Are you sure? Click 'OK' will update the moving to server")){
             ui.sender.sortable("cancel");
           }else{
-            ui.item.removeClass("saved");
-            /* wip (sender and receiver) */
+            var popup = $("#popupWindow");
+            popupCard(ui.sender,$(this),ui.item,popup,"drop");
             updatePanesWip(ui.sender,$(this));
           }
         }
@@ -121,7 +120,7 @@
 
     $( document ).ready(function(){
       $(".kanban-card").bind("dblclick", function(){
-        popupCard($(this),$("#popupWindow"),"edit");
+        popupCard(null,null,$(this),$("#popupWindow"),"edit")
       });
 
       $("#popupWindowClose").click(function(){
@@ -137,6 +136,13 @@
           disablePopup(".popuped");
         }
       });
+
+      $("#popupSubmit").click(function(){
+        /* Ajax update card here */
+        updateCard();
+      });
+
+      get_kanban_state_issue_status();
     });
 
     $(".kanban-card:contains('P1')").addClass("p1-color")

@@ -10,5 +10,5 @@ Redmine::Plugin.register :ekanban do
   project_module :Kanban do
    permission :view_kanban, :kanbans => :index
   end
-  menu :project_menu, :Kanban, {:controller=>'kanbans', :action => 'index'}, :caption => 'Kanbans', :after => :activity
+  menu :project_menu, :Kanban, {:controller=>'kanbans', :action => 'index'}, :caption => 'Kanbans', :after => :activity, :param => :project_id
 end

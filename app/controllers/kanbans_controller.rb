@@ -132,10 +132,6 @@ class KanbansController < ApplicationController
   	debugger
   end
 
-  def wip(stage)
-
-  end
-
   def pane(pane_id)
     pane = KanbanPane.find(pane_id)
   end
@@ -143,10 +139,6 @@ class KanbansController < ApplicationController
   def stage(pane_id)
     pane = pane(pane_id)
     stage = Stage.find(pane.stage_id) if !pane.nil?
-  end
-
-  def pane_wip(pane_id)
-
   end
 
 end

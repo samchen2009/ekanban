@@ -31,45 +31,50 @@ class KanbanPane < ActiveRecord::Base
     self.kanban_card.reject{|card| card.issue.status_id != is_closed_id}
   end
 
-  # Get Pane's or User's WIP limit, don't naming the function as wip_limit
-  def wip_limit_by_view(project, group=nil, user=nil)
+  def self.to_id(pane)
+    pane_id = pane.nil? ? nil : pane.is_a?(KanbanPane) ? pane.id : pane.to_i
+  end
+
+  def self.to_pane(user)
+    pane = pane.nil? ? nil : pane.is_a?(KanbanPane) ?  pane : KanbanPane.find(pane);
+  end
+
+  # Get Pane's or User's WIP limit, don't name it wip_limit to avoid naming conflict
+  def wip_limit_by_view(group=nil, user=nil)
     if self.wip_limit_auto == false
       return self.wip_limit
     end
 
+    role = Role.find(self.role_id);
+    project = self.kanban.project if project.nil?
     if (group.nil? and user.nil?)
       @view = PROJECT_VIEW
-      project = Project.to_project(project)
-      project = self.kanban.project if project.nil?
-      puts "project  = #{project}"
       wip_limit = project.wip_limit(self.role_id)
     elsif !user.nil?
+      # User.wip_limit if he has the same role with pane
       @view = USER_VIEW
       user = User.to_user(user)
-      return user.wip_limit
+      wip_limit = (user.roles_for_project(project).include?(role) or role.nil?) ? user.wip_limit : 0
     else
+      # Group's wip_limit is equal to all his members that work in this pane
       @view = GROUP_VIEW
       group = Group.to_group(group)
-      return group.wip_limit(self.role_id, project);
+      wip_limit = group.wip_limit(self.role_id, project);
     end
+    wip_limit
   end
 
-  # Get Pane's or Group's WIP
-  def wip(arg=nil)
-    if @view == PROJECT_VIEW
-      #members in this project and role matches this pane
-      #for example, design/coding panes only count developer's wip.
-      return self.open_cards().size || 0
-    elsif @view == GROUP_VIEW
-      group = Group.to_group(arg)
-      return 0 if group.nil?
-      return 0 || self.open_cards().select{|card| group.users.collect{|u| u.id}.include?(card.issue.assigned_to_id)}.size
-    elsif @view == USER_VIEW
-      user_id = User.to_id(arg)
-      return 0 if user_id.nil?
-      return 0 || self.open_cards().select{|card| card.issue.assigned_to_id == user_id}.size
+  def self.wip(pane,group=nil, user=nil)
+    return 0 if pane.nil?
+    pane_id = KanbanPane.to_id(pane)
+    if !user.nil?
+      user_id = User.to_id(user)
+      return KanbanCard.by_user(user_id).in_pane(pane_id).size
+    elsif !group.nil?
+      group_id = Group.to_group(group)
+      return KanbanCard.by_group(group_id).in_pane(pane_id).size
     else
-      return 0
+      return KanbanCard.in_pane(pane_id).size
     end
   end
 
@@ -93,62 +98,5 @@ class KanbanPane < ActiveRecord::Base
   end
 end
 
-class User < Principal
-  def self.to_id(user)
-    user_id = user.nil? ? User.current : user.is_a?(User) ? user.id : user.to_i
-  end
 
-  def self.to_user(user)
-    user = user.nil? ? User.current : user.is_a?(User) ?  user : User.find(user)
-  end
-end
 
-class Group < Principal
-  def self.to_id(group)
-    group_id = group.nil? ? nil : group.is_a?(Group) ? group.id : group.to_i
-  end
-
-  def self.to_group(group)
-    group = group.nil? ? nil : group.is_a?(Group) ? group : Group.find(group)
-  end
-
-  def wip_limit(role=nil,project=nil)
-    project = Project.to_project(project)
-    role = Role.to_role(role)
-    users = User.member_of(project).in_group(self)
-
-    wip_limit = users.inject(0) {|sum,user|
-      (user.roles_for_project(project).include?(role) or role.nil?) ? (sum+user.wip_limit) : sum
-    }
-    wip_limit
-  end
-end
-
-class Project < ActiveRecord::Base
-  def self.to_id(project)
-    project_id = project.nil? ? nil : project.is_a?(Project) ? project.id : project.to_i
-  end
-
-  def self.to_project(project)
-    project = project.nil? ? nil : project.is_a?(Project) ? project : Project.find(project)
-  end
-
-  def wip_limit(role=nil)
-    role = Role.to_role(role)
-    wip_limit = self.members.inject(0) do |sum,member|
-      user = member.user
-      (user.roles_for_project(self).include?(role) or role.nil?) ? (sum + user.wip_limit) : sum
-    end
-    wip_limit
-  end
-end
-
-class Role < ActiveRecord::Base
-  def self.to_id(role)
-    role_id = role.nil? ? nil : role.is_a?(Role) ? role.id : role.to_i
-  end
-
-  def self.to_role(role)
-    role = role.nil? ? nil : role.is_a?(Role) ? role : Role.find(role)
-  end
-end

@@ -8,7 +8,7 @@ class KanbanPanesController < ApplicationController
   	stages = []
   	@panes.each do |p|
   	  stages << p.kanban_state.kanban_stage.name
- 	  p.wip_limit =	p.wip_limit_by_view(params[:project_id],params[:group_id],params[:member_id])
+ 	    p.wip_limit =	p.wip_limit_by_view(params[:group_id],params[:member_id])
   	end
     respond_with([@panes,stages]);
   end

@@ -1,6 +1,6 @@
 = labelled_fields_for "kanban_card" do |f|
   #popupWindowHeader.newline
-  = form_tag( {:controller => "kanban_cards", :action => 'update'}, :method => :put, :id => 'kanban_card_form') do
+  = form_tag( {:controller => "kanban_cards", :action => 'update'}, :remote => true, :method => :put, :id => 'kanban_card_form') do
     .newline
       = label_tag "Issue Status: "
       = select_tag "issue_status_id", options_from_collection_for_select(@issueStatuss, "id", "name")
@@ -21,4 +21,4 @@
     .newline
       = label_tag "Comment:"
       = text_area "comment_text",:class => 'wiki-edit',:no_label => true
-    .newline= submit_tag("Save")
+    #popupSubmit.newline= submit_tag("Save")

@@ -17,6 +17,8 @@ class KanbanCardsController < ApplicationController
   end
 
   def update
-  	respond_to :json
+  	respond_to do |format|
+      format.json {render :nothing => true}
+    end
   end
 end

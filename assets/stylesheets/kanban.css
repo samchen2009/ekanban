@@ -125,33 +125,14 @@ table.kanban td#backlog {}
 
 #popupWindow{
   display:none;
-  position:fixed;
-  height:auto;
-  width:600px;
+  min-height:340;
+  min-width:560px;
   background:#FFFFFF;
   border:2px solid #cecece;
   z-index:2;
   padding:4px;
   font-size:12px;
   /*opacity: 0.2;*/
-}
-
-#popupWindowHeader{
-  font-size:14px;
-  margin:1em;
-  font-weight: bold;
-  overflow: hidden;
-}
-
-#popupWindowClose{
-  font-size:12px;
-  line-height:12px;
-  right:6px;
-  top:4px;
-  position:absolute;
-  color:#6fa5fd;
-  font-weight:700;
-  display:block;
 }
 
 #popupWindowBody{
