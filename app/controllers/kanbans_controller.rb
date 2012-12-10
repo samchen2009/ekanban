@@ -1,12 +1,13 @@
 class  KanbanStageHelper
 
-  attr_reader :name,:state_name
+  attr_reader :id,:name,:state_name
   attr_accessor :wip,:wip_limit
 
 
-  def initialize (name, state_name)
+  def initialize (id, name, state_name)
     @state_name = []
     @name = name
+    @id = id
     @state_name << state_name
     @wip = 10;
     @wip_limit = 100;
@@ -34,13 +35,17 @@ class KanbansController < ApplicationController
     @project = Project.find(params[:project_id])#Get member name of this project
     @members= @project.members
     @principals = @project.principals
+    @user = User.current
+
+    @roles = @user.roles_for_project(@project)
 
     @member = nil
     @principal = nil
 
-    @issueStatuss = IssueStatus.all
-    @kanbanStates = KanbanState.all
-    @issueStatusKanbanState = IssueStatusKanbanState.all
+    @issue_statuss = IssueStatus.all
+    @kanban_states = KanbanState.all
+    @issue_status_kanban_state = IssueStatusKanbanState.all
+    @kanban_flows = KanbanWorkflow.all
 
     params[:kanban_id] = 0 if params[:kanban_id].nil?
     params[:member_id] = 0 if params[:member_id].nil?
@@ -98,7 +103,7 @@ class KanbansController < ApplicationController
   end
 
   def assignee_name(assignee)
-    assignee.is_a?(Principal)? assignee.name : "unassigned"
+    assignee.is_a?(Principal)? assignee.alias : "unassigned"
   end
 
   def stages(panes)
@@ -107,13 +112,13 @@ class KanbansController < ApplicationController
     panes.each do |p|
       state = p.kanban_state
       p.name = state.name
-      stage_name = state.kanban_stage.name
-      stages << KanbanStageHelper.new(stage_name, p.name) if stages.empty?
-      i = stages.index {|s| s.name == stage_name}
+      stage = state.kanban_stage
+      stages << KanbanStageHelper.new(stage.id,stage.name, p.name) if stages.empty?
+      i = stages.index {|s| s.name == stage.name}
       if !i.nil?
         stages[i].add (p.name)
       else
-        stages << KanbanStageHelper.new(state.kanban_stage.name, p.name)
+        stages << KanbanStageHelper.new(stage.id, stage.name, p.name)
       end
     end
     return stages

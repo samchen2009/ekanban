@@ -11,19 +11,19 @@
       - stages = controller.stages(panes)
       - stages.each do |s|
         - if s.state_name.size == 1
-          %th{:id=>"stage_#{s.state_name[0]}", :rowspan=>"2"}
+          %th{:id=>"stage_#{s.id}", :rowspan=>"2", :name=>s.state_name[0]}
             .plain-text{:style => "width:80%;float:left"}
               = s.name 
-              %span.wip-text{:id => "wip_#{s.name}"}= " "
+              %span.wip-text{:id => "wip_#{s.id}"}= " "
             - if s.state_name[0] == "backlog"
               #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
               #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
 
               /.icon.icon-minus{:style=>"float:right"}
         - else
-          %th{:id=>"stage_#{s.name}", :colspan=>"#{s.state_name.size}"}
+          %th{:id=>"stage_#{s.id}", :colspan=>"#{s.state_name.size}", :name=>s.name}
             =s.name
-            %span.wip-text{:id => "wip_#{s.name}"}= "  "
+            %span.wip-text{:id => "wip_#{s.id}"}= "  "
     %tr
       - stages.each do |s|
         - if s.state_name.size > 1
@@ -32,7 +32,7 @@
 
     %tr{:style=>"height:90%; overflow-y:auto"}
       -panes.each do |pane|
-        %td.kanban-pane{:id=>"pane_#{pane.id}"}
+        %td.kanban-pane{:id=>"pane_#{pane.id}",:state_id=>"#{pane.kanban_state_id}",:role_id=>"#{pane.role_id}"}
           - if pane.id == 1
             %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
           = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}

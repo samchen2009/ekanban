@@ -137,6 +137,13 @@ class User < Principal
   end
 end
 
+class Principal < ActiveRecord::Base
+  def alias
+    return self.login if self.login != ""
+    return self.firstname + " " + self.lastname
+  end
+end
+
 class IssueStatus < ActiveRecord::Base
   def self.closed_id
     #IssueStatus.all.each {|x| return x.id if x.is_closed} 

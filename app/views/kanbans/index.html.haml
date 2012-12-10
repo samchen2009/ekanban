@@ -11,7 +11,6 @@
 = javascript_include_tag "select_list_move"
 = javascript_include_tag "kanban", :plugin => :ekanban
 = javascript_include_tag "kanban_api", :plugin => :ekanban
-= javascript_include_tag "jquery.blockUI.js", :plugin => :ekanban
 
 #kanban_filter
   = render :partial => "filter_board"
@@ -27,8 +26,14 @@
 
 #backgroundPopup
 
+/ Get rails variables from templates.
+= content_tag "div", "", :id => "kanban-data"
+= content_tag "div", "", :id => "my-profile", :data => {:user => @user, :roles => @roles}
+= content_tag "div", "", :id => "project-profile", :data => {:project => @project}
+
 :javascript
   $(function() {
+
     // Ignore case in contains()
     $.expr[":"].contains = $.expr.createPseudo(function(arg) {
       return function( elem ) {
@@ -44,11 +49,11 @@
       },
       receive: function(event,ui){
         /* check */
-        if (cardIsAccepted(event,ui)){
-          console.debug("2 accept");
+        result = cardIsAccepted(ui.item,ui.sender,$(this));
+        if (result.success){
           ui.item.addClass("acceptable");
         }else{
-          console.debug("3 reject");
+          console.debug("rejected:" + result.error);
           ui.item.removeClass("acceptable");
         }
         if (!ui.item.hasClass('acceptable')){
@@ -142,7 +147,11 @@
         updateCard();
       });
 
-      get_kanban_state_issue_status();
+      //Ajax Call.
+      getKanbanStateIssueStatus();
+      getKanbanStates();
+      getKanbanWorkflow();
+      getUserWipAndLimit($("#my-profile").data("user").user.id);
     });
 
     $(".kanban-card:contains('P1')").addClass("p1-color")
