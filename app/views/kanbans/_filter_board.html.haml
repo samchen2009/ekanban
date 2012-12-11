@@ -6,7 +6,7 @@
     = select_tag "principal_id", options_for_select([["All Groups",0]]) + options_from_collection_for_select(@principals,"id", "alias", params[:principal_id] || 0)
     = select_tag "member_id", options_for_select([["All Members",0]]) + options_from_collection_for_select(@members,"id", "name", params[:member_id] || 0)
     = hidden_field_tag :project_id, params[:project_id]
-    = link_to_function l(:button_save), 'submit_query_form("kanban_query_form")', {:class => 'icon icon-checked'}
+    = link_to_function l(:button_apply), 'submit_query_form("kanban_query_form")', {:class => 'icon icon-checked'}
 
 
 

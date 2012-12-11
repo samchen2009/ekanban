@@ -1,0 +1,6 @@
+- if @saved
+  :plain
+    $("#popupWindow").dialog("close");
+- else
+  :plain
+    $("#popupWindow").find("#indication").css("color","red").css("float","right").text("error! #{errors}").show();

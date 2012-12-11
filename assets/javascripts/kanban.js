@@ -17,7 +17,7 @@ function updateWip(wip,wip_limit,stage){
 /* Popup window */
 function popupCard(fromPane,toPane,card,popup,event)
 {
-  initPopupCard(popup,card,event,toPane);
+  initPopupCard(popup,card,event,fromPane,toPane);
   //$.blockUI({
   //  message: $("#popupWindow")
   //});
@@ -46,17 +46,17 @@ function kanbanStateToIssueStatus(state_id)
   return issue_status_id;
 }
 
-function initPopupCard(popup,card,action,receiver){
+function initPopupCard(popup,card,action,sender,receiver){
   if (action === "new"){
     popup.find("#popupWindowHeader").html("<p>New Issue </p>").show();
   }else{
     var issue_id = card.attr("id");
     popup.find("#popupWindowHeader").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
     if (action === "edit"){
-      pane_id = sender.attr("id").match(/\d+$/)[0]
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
-      popup.find("#kanban_pane_id").val(pane_id);
+      // no move, set to 0 to skip update.
+      popup.find("#kanban_pane_id").val(0);
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
@@ -78,6 +78,7 @@ function initPopupCard(popup,card,action,receiver){
     popup.find("select#verifier_id").val(card.find("#verifier_id").val());
     popup.find("#issue_id").val(issue_id);
     popup.find("textarea").val("").focus(1);
+    popup.find("#indication").hide();
   }
 }
 

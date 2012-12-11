@@ -4,6 +4,8 @@ table.kanban {border-collapse: collapse; width: 100%; margin: 10px 0 6px 0;borde
 table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:auto;font-weight:bold;}
 table.kanban td#backlog {}
 
+a:link {color:blue !important}
+
 .kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
 .kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}
 .card-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0em; text-align: left; overflow:hidden; }
@@ -54,13 +56,6 @@ table.kanban td#backlog {}
   float:left;
 }
 
-/* layout
-   
-   out_box -> header -> stages -> title
-           -> panes -> cards
-           -> footer     
- */
-
 #kanban_header {
   width:100%;
   height:50px;
@@ -89,6 +84,7 @@ table.kanban td#backlog {}
 #seclectbox {
   width: 100%;
   padding: 5px;
+  font-size: 12px;
 }
 
 .clearfix {
@@ -108,21 +104,6 @@ table.kanban td#backlog {}
   padding: 2px;
 }
 
-
-#backgroundPopup{
-  display:none;
-  position:fixed;
-  _position:absolute; /* hack for internet explorer 6*/
-  height:100%;
-  width:100%;
-  top:0;
-  left:0;
-  background:#FFFF66;
-  border:1px solid #cecece;
-  z-index:1;
-  opacity: 0.4;
-}
-
 #popupWindow{
   display:none;
   min-height:340;
@@ -133,6 +114,11 @@ table.kanban td#backlog {}
   padding:4px;
   font-size:12px;
   /*opacity: 0.2;*/
+}
+
+#popupWindowHeader{
+  font-weight: bold;
+  margin: 20px
 }
 
 #popupWindowBody{
