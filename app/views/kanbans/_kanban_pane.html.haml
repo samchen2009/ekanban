@@ -8,7 +8,7 @@
       = hidden_field_tag :assignee_id, i.assigned_to
       = hidden_field_tag :kanban_state_id, c.kanban_pane.kanban_state.id
       = hidden_field_tag :developer_id, c.developer_id
-      = hidden_field_tag :verifier_id, c.tester_id
+      = hidden_field_tag :verifier_id, c.verifier_id
       = hidden_field_tag :subject, i.subject
       %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
     .card-content="#{i.subject}"

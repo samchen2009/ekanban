@@ -53,15 +53,19 @@ function initPopupCard(popup,card,action,receiver){
     var issue_id = card.attr("id");
     popup.find("#popupWindowHeader").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
     if (action === "edit"){
+      pane_id = sender.attr("id").match(/\d+$/)[0]
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
+      popup.find("#kanban_pane_id").val(pane_id);
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
-      var status_id = kanbanStateToIssueStatus(pane_id);
+      var state_id = receiver.attr("state_id")
+      var status_id = kanbanStateToIssueStatus(state_id);
       popup.find("select#issue_status_id").val(status_id);
-      popup.find("select#kanban_state_id").val(pane_id);
+      popup.find("select#kanban_state_id").val(state_id);
       card.find("#assignee_id").val(myUserID());
+      popup.find("#kanban_pane_id").val(pane_id);
       if (hasRole("developer")){
         card.find("#developer_id").val(myUserID());
       }
@@ -217,10 +221,12 @@ function cardIsAccepted(card,sender,receiver){
   }
 
   /* Check user's WIP */
-  my_wip_limit = $("#my-profile").data("user").user.wip_limit;
-  my_wip = $("#my-profile").data("wip");
-  if (my_wip == my_wip_limit){
-    return {"success":false,"error":"reach your wip_limit"}
+  if (card.find("#assignee_id").val() != myUserID()){
+    my_wip_limit = $("#my-profile").data("user").user.wip_limit;
+    my_wip = $("#my-profile").data("wip");
+    if (my_wip == my_wip_limit){
+      return {"success":false,"error":"reach your wip_limit"}
+    }
   }
 
   if (!isValidKanbanTransition(from_state,to_state)){

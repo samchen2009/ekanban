@@ -26,7 +26,7 @@ end
 def user_wip_and_limit
 	#An user may work for multiple project
 	if (params[:pane_id].nil?)
-		wip = KanbanCard.open().by_user(params[:user_id])
+		wip = KanbanCard.open().by_user(params[:user_id]).in_progress()
 	else
 		wip = KanbanPane.wip(params[:pane_id],nil,params[:user_id]);
 	end
@@ -36,7 +36,7 @@ end
 
 def group_wip_and_limit
 	if params[:pane_id] == 0 or params[:pane_id].nil?
-		wip = KanbanCard.open().byGroup(params[:group_id])
+		wip = KanbanCard.open().byGroup(params[:group_id]).in_progress()
 	else
 		wip = KanbanPane.wip(params[:pane_id],params[:group_id],nil);
 	end

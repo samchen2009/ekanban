@@ -14,7 +14,7 @@ class KanbanPane < ActiveRecord::Base
 
   scope :by_kanban, lambda {|kanban| 
     kanban_id = Kanban.to_id(kanban)
-    where(:kanban_id => kanban_id)
+    where(:kanban_id => kanban_id) 
   }
 
   def initialize

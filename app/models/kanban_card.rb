@@ -40,7 +40,11 @@ class KanbanCard < ActiveRecord::Base
   	return nil if state.nil?
   	status_id = IssueStatusKanbanState.status_id(state)
   	return nil if status_id.nil?
-    {:conditions => ["#{Issue.table_name}.status_id = ?", status_id], :include => [:issue]}
+    {:conditions => ["#{Issue.table_name}.status_id = ?", status_id], :include => :issue}
+  }
+
+  scope :in_progress, lambda {
+    {:conditions => ["#{KanbanPane.table_name}.in_progress='t'"], :include => :kanban_pane}
   }
 
   scope :open, lambda {|*args|
@@ -48,6 +52,15 @@ class KanbanCard < ActiveRecord::Base
     is_closed_id = IssueStatus.closed_id; 
     {:conditions => ["#{Issue.table_name}.status_id #{is_closed ? "" : "!"}= ?", is_closed_id], :include => [:issue]}
   }
+
+  def in_progress?(roles)
+    debugger
+    pane = self.kanban_pane
+    role = Role.find(pane.role_id)
+    # card in a non-in-progress pane or card 
+    return false if !pane.in_progress
+    true
+  end
 
 end
 

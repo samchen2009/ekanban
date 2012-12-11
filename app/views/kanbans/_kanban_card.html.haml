@@ -18,8 +18,9 @@
       = label_tag "Keywords: "
       = text_field_tag "keyword"
     = hidden_field_tag :project_id, params[:project_id]
+    = hidden_field_tag :kanban_pane_id, 0
     .newline
       = label_tag "Comment:"
-      = text_area "comment_text",:class => 'wiki-edit',:no_label => true
+      = text_area "comment", "notes"
       = hidden_field_tag "issue_id", 0
     #popupSubmit.newline= submit_tag("Save")
