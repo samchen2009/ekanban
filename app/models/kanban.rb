@@ -137,7 +137,7 @@ class User < Principal
 
   def has_role?(role,project)
     role = Role.to_role(role)
-    return self.roles_for_project(Prject.to_project(prject)).include?(role)
+    return self.roles_for_project(Project.to_project(project)).include?(role)
   end
 
   def wip

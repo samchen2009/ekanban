@@ -13,12 +13,13 @@ class KanbanState < ActiveRecord::Base
   end
 
   def self.to_state(state)
-    state = state.nil? ? nil : state.is_a?(state) ? state : State.find(state)
+    state = state.nil? ? nil : state.is_a?(KanbanState) ? state : KanbanState.find(state)
   end
 
   def self.in_same_stage?(*states)
-  	stage = stages[0].stage_id
+  	stage = KanbanState.to_state(states[0]).stage_id
   	states.each {|s| return false if stage != KanbanState.to_state(s).stage_id}
   	return true
   end
+
 end
