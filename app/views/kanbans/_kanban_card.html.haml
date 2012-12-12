@@ -25,3 +25,9 @@
       = hidden_field_tag "issue_id", 0
     #popupSubmit.newline= submit_tag("Save") 
     #indication "indicate submit reslut"
+
+:javascript
+  $("#popupSubmit").click(function(){
+    $('#ajax-indicator').css("z-index","1999").css("opacity","1").css("border","0px").show();
+  });
+

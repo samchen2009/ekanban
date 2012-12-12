@@ -12,3 +12,5 @@ Redmine::Plugin.register :ekanban do
   end
   menu :project_menu, :Kanban, {:controller=>'kanbans', :action => 'index'}, :caption => 'Kanbans', :after => :activity, :param => :project_id
 end
+
+require 'ekanban/ekanban_hooks'

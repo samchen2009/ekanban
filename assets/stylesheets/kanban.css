@@ -5,8 +5,21 @@ table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:au
 table.kanban td#backlog {}
 
 .link {color:blue}
-a:link {color:blue !important}
 .icon-setup { background-image: url(../images/icon-setup.png); }
+
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px; /* half width of the spinner gif */
+  margin-top: -50px; /* half height of the spinner gif */
+  text-align:center;
+  z-index:1234;
+  overflow: auto;
+  width: 31px; /* width of the spinner gif */
+  height: 31px; /*hight of the spinner gif +2px to fix IE8 issue */
+}
+
 
 .kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
 .kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}
