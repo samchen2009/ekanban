@@ -17,10 +17,6 @@ class KanbanPane < ActiveRecord::Base
     where(:kanban_id => kanban_id) 
   }
 
-  def initialize
-  	@view = PROJECT_VIEW  #"project"/"group"/"user"
-  end
-
   def open_cards()
   	is_closed_id = IssueStatus.closed_id;
   	self.kanban_card.reject{|card| card.issue.status_id == is_closed_id}
@@ -35,9 +31,14 @@ class KanbanPane < ActiveRecord::Base
     pane_id = pane.nil? ? nil : pane.is_a?(KanbanPane) ? pane.id : pane.to_i
   end
 
-  def self.to_pane(user)
+  def self.to_pane(pane)
     pane = pane.nil? ? nil : pane.is_a?(KanbanPane) ?  pane : KanbanPane.find(pane);
   end
+
+  def self.pane_by(state,kanban)
+    return KanbanPane.find_by_kanban_id_and_kanban_state_id(Kanban.to_id(kanban), KanbanState.to_id(state))
+  end
+
 
   # Get Pane's or User's WIP limit, don't name it wip_limit to avoid naming conflict
   def wip_limit_by_view(group=nil, user=nil)
@@ -79,22 +80,20 @@ class KanbanPane < ActiveRecord::Base
   end
 
   def accept_user?(user)
+
+    #1 I still have space?
+    return false if self.wip_limit_by_view() == KanbanPane.wip(self)
+
     user = User.to_user(user)
     project = self.kanban.project
-    #check whether a project member first.
-    puts "check whether user is member of project #{project.name}"
-    return false if user.member_of?(project)
 
-    #check whether user still have capacity
-    puts "check whether user reach wip_limit(#{user.wip_limit})"
-    return false if user.wip_limit <= self.wip(user)
+    # He is a member of my project?
+    return false if !user.member_of?(project)
 
-    #check whether the role in this pane.
-    puts "check whether user's role is allowed in this pane"
-    #roles = user.roles_for_project(project)
-    #return false if roles.nil?
-    #roles.each {|role| return true if role.id == self.role_id}
-    return true
+    # user match my role?
+    return false if !user.has_role?(self.role_id, project)
+
+    true
   end
 end
 

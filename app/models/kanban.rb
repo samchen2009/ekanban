@@ -4,10 +4,8 @@ class Kanban < ActiveRecord::Base
   belongs_to  :project
   belongs_to  :tracker
   has_many  :kanban_pane
-
   validates_presence_of  :project_id, :tracker_id, :is_valid
 
-  after_save :update_position_under_parent, :if => Proc.new {|project| project.name_changed?}
   before_destroy :delete_all_members
 
   #scope :by_project_tracker, lambda{ |project,tracker| {:conditions => ["#{Kanban.table_name}.project_id = #{project} and #{Kanban.table_name}.tracker_id = #{tracker_id}"]}}
@@ -78,8 +76,9 @@ class Role < ActiveRecord::Base
   end
 
   def self.to_role(role)
-    role = role.nil? ? nil : role.is_a?(Role) ? role : Role.find(role)
+    role = role.nil? ? nil : role.is_a?(Role) ? role : (role.to_i == 0) ? Role.find_by_name(role) : Role.find(role)
   end
+
 end
 
 class Issue < ActiveRecord::Base
@@ -135,6 +134,16 @@ class User < Principal
   def self.to_user(user)
     user = user.nil? ? User.current : user.is_a?(User) ?  user : User.find(user)
   end
+
+  def has_role?(role,project)
+    role = Role.to_role(role)
+    return self.roles_for_project(Prject.to_project(prject)).include?(role)
+  end
+
+  def wip
+    KanbanCard.open().by_user(self).in_progress().size
+  end
+
 end
 
 class Principal < ActiveRecord::Base
