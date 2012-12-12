@@ -4,7 +4,9 @@ table.kanban {border-collapse: collapse; width: 100%; margin: 10px 0 6px 0;borde
 table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:auto;font-weight:bold;}
 table.kanban td#backlog {}
 
+.link {color:blue}
 a:link {color:blue !important}
+.icon-setup { background-image: url(../images/icon-setup.png); }
 
 .kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
 .kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}

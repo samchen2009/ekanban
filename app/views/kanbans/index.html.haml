@@ -1,4 +1,6 @@
-.contextual= link_to l(:label_kanban_new), new_project_kanban_path(), :class => 'icon icon-add'
+.contextual
+  = link_to l(:label_kanban_new), new_project_kanban_path(), :class => 'icon icon-add'
+  = link_to l(:label_kanban_setup), "kanbans/setup", :class => 'icon icon-setup'
 %h2 Kanbans
 
 / = javascript_include_tag 'kanban.js', :plugin => 'scrum2b' %>
@@ -128,30 +130,17 @@
         popupCard(null,null,$(this),$("#popupWindow"),"edit")
       });
 
-      $("#popupWindowClose").click(function(){
-        disablePopup($(".popuped"));
-      });
-
-      $("#backgroundPopup").click(function(){
-        disablePopup($(".popuped"));
-      });
-
-      $(document).keypress(function(e){
-        if(e.keyCode==27){
-          disablePopup(".popuped");
-        }
-      });
-
       $("#popupSubmit").click(function(){
         /* Ajax update card here */
         updateCard();
       });
-
+      $(".kanban-card a").css("color","blue");
       //Ajax Call.
       getKanbanStateIssueStatus();
       getKanbanStates();
       getKanbanWorkflow();
       getUserWipAndLimit($("#my-profile").data("user").user.id);
+
     });
 
     $(".kanban-card:contains('P1')").addClass("p1-color")
