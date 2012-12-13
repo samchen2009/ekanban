@@ -1,2 +1,29 @@
-%h1 comming soon...
-- controller.kanbans()
+-kanbans = controller.kanbans()
+-if !kanbans.nil?
+  %table{:class => "list"}
+    %thead
+      %th= l(:label_id)
+      %th= l(:field_name)
+      %th= l(:label_project)
+      %th= l(:label_tracker)
+      %th= l(:label_created_by)
+      %th= l(:field_description)
+      %th= l(:label_valid)
+    %tbody
+      -kanbans.each do |k|
+        %tr{:class => "#{cycle 'odd', 'even'}"}
+          %td=h(k.id)
+          %td=h(k.name) if !k.name.nil?
+          %td=h(k.project.name)
+          %td=h(k.tracker.name)
+          %td=h(k.created_by.alias) if !k.created_by.nil?
+          %td=h(k.description)
+          %td=h(k.is_valid)
+          %td{:class => "buttons"}
+            - if User.current.allowed_to?(:manage_categories, @project)
+              = link_to l(:button_edit), "kanban_edit", :class => 'icon icon-edit'
+              = delete_link "kanban_delete"
+- else
+  %p{:class => "nodata"}= l(:label_no_data)
+
+%p= link_to l(:label_kanban_new), "kanban_new", :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)

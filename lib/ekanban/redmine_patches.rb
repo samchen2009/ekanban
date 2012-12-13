@@ -9,7 +9,8 @@ module EKanban
           unloadable
 
           def kanbans
-            @kanbans = Kanban.find_by_project_id(@project.id)
+            debugger
+            @kanbans = Kanban.find_all_by_project_id(@project.id)
           end
           #user to extend.
           #alias_method_chain :show, :plugin

@@ -2,4 +2,7 @@
 en:
   my_label: "My label"
   label_kanban_new: "New Kanban"
-  label_kanban_setup: "Kanban"
+  label_kanban_setup: "Kanbans"
+  label_created_by: "Created by"
+  label_id: "No."
+  label_valid: "is_valid?"

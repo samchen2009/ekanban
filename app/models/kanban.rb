@@ -3,6 +3,7 @@ class Kanban < ActiveRecord::Base
   
   belongs_to  :project
   belongs_to  :tracker
+  belongs_to  :created_by
   has_many  :kanban_pane
   validates_presence_of  :project_id, :tracker_id, :is_valid
 
