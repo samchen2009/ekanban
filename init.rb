@@ -1,3 +1,7 @@
+require 'redmine'
+require 'ekanban/ekanban_hooks'
+require 'ekanban/redmine_patches'
+
 Redmine::Plugin.register :ekanban do
   name 'Ekanban Plugin'
   author 'samchen2009@gmail.com'
@@ -11,6 +15,17 @@ Redmine::Plugin.register :ekanban do
    permission :view_kanban, :kanbans => :index
   end
   menu :project_menu, :Kanban, {:controller=>'kanbans', :action => 'index'}, :caption => 'Kanbans', :after => :activity, :param => :project_id
+
+
+  Rails.configuration.to_prepare do
+    unless ProjectsHelper.included_modules.include?(EKanban::Patches::ProjectsHelperPatch)
+        ProjectsHelper.send(:include, EKanban::Patches::ProjectsHelperPatch)
+    end
+
+    unless ProjectsController.included_modules.include? EKanban::Patches::ProjectsControllerPatch
+      ProjectsController.send(:include, EKanban::Patches::ProjectsControllerPatch)
+    end
+  end
 end
 
-require 'ekanban/ekanban_hooks'
+
