@@ -3,6 +3,7 @@ class KanbanPane < ActiveRecord::Base
 
   belongs_to  :kanban_state
   belongs_to  :kanban
+  belongs_to  :role
   has_many    :kanban_card
   has_many    :issue, :through=>:kanban_card, :order => "priority_id ASC, updated_on DESC, issue_id DESC"
 

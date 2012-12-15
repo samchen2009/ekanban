@@ -136,9 +136,9 @@ class KanbansController < ApplicationController
   def new
     @kanban = Kanban.new
     @project = Project.find(params[:project_id])
-    existed_trackers = []
-    Kanban.all.each {|k| existed_trackers << k.tracker if k.is_valid}
-    @trackers = @project.trackers.reject {|t| existed_trackers.include?(t)}
+    used_trackers = []
+    Kanban.all.each {|k| used_trackers << k.tracker if k.is_valid}
+    @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
   end
 
   def create
@@ -153,7 +153,7 @@ class KanbansController < ApplicationController
   end
 
   def kanban_settings_tabs
-    tabs = [#{:name => 'General', :action => :kanban_general, :partial => 'form', :label => :label_kanban_general},
+    tabs = [{:name => 'General', :action => :kanban_general, :partial => 'general', :label => :label_kanban_general},
             {:name => 'States', :action => :kanban_state, :partial => 'state', :label => :label_kanban_state},
             {:name => 'Workflow', :action => :kanban_workflow, :partial => 'workflow', :label => :label_kanban_workflow},
             ]
@@ -163,6 +163,9 @@ class KanbansController < ApplicationController
   def edit
     @project = Project.find(params[:project_id])
     @kanban = Kanban.find(params[:id])
+    used_trackers = []
+    Kanban.all.each {|k| used_trackers << k.tracker if k.is_valid and k.id != params[:id].to_i}
+    @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
   end
 
   def destroy

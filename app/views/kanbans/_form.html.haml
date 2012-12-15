@@ -1,12 +1,17 @@
 = error_messages_for 'kanbans'
 
-.box.tabular
-  %p= f.text_field :name, :size => 30, :required => true
-  %p
-    = f.select :tracker_id, options_from_collection_for_select(@trackers, "id", "name")
-    - if (@tracks.nil?)
-      %em.info.error "All trackers are used, one kanban must be associated with one track."
-  %p= f.text_field :description, :size => 80
-  %p
-    = f.check_box :is_valid, :label => "Enabled?"
-    %em.info "Check it will display the new kanban in the kanban index page"
+= labelled_form_for :kanban, @kanban, :url => project_kanbans_path(@project.id), :html => {:id => 'kanban-new-form'} do |f|
+  .box.tabular
+    %p= f.text_field :name, :size => 30, :required => true
+    %p
+      = f.select :tracker_id, options_from_collection_for_select(@trackers, "id", "name", @kanban.nil? ? @kanban.id : nil)
+      - if (@trackers.nil?)
+        %em.info.error "All trackers are used, one kanban must be associated with one track."
+    %p= f.text_field :description, :size => 80
+    %p
+      = f.check_box :is_valid, :label => "Enabled?"
+      %em.info "Check it will display the new kanban in the kanban index page"
+  = submit_tag @kanban.id.nil? ? l(:button_create) : l(:button_save)
+  - path = @kanban.id.nil? ? settings_project_path(@project) : edit_project_kanban_path(@project.id,@kanban.id)
+  - t = @kanban.id.nil? ? {:tab => 'Kanban'} : {:tab => "General"}
+  = link_to l(:button_cancel), path , t

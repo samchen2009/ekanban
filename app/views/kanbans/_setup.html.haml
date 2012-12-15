@@ -23,7 +23,7 @@ debugger
           %td{:class => "buttons"}
             %em.info.error{:style => "display:none"} "Destroy failed!"
             - if User.current.allowed_to?(:manage_categories, @project)
-              = link_to l(:button_edit), edit_project_kanban_path(@project,k.id), :class => 'icon icon-edit'
+              = link_to l(:button_edit), edit_project_kanban_path(@project.id,k.id), :class => 'icon icon-edit'
               = delete_link project_kanban_path(@project.id,k.id)
 - else
   %p{:class => "nodata"}= l(:label_no_data)

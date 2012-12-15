@@ -1,0 +1,26 @@
+= error_messages_for 'kanbans'
+
+= labelled_form_for :kanban_pane, @pane, :url =>  project_kanban_kanban_panes_path(@project.id,@kanban.id), :html => {:id => 'kanban-pane-new-form'} do |f|
+  .box.tabular
+    %p= f.text_field :name, :size => 30, :required => true
+    - disable = @pane.wip_limit_auto
+    %p= f.number_field :wip_limit, :required => true, :label => l(:label_wip_limit), :disabled => disable
+    %p
+      = f.check_box :wip_limit_auto, :label => "Auto?"
+      %em.info "If checked, system will calculate it according to user's wip_limit"
+    %p
+      = f.select :kanban_state_id, options_from_collection_for_select(@states, "id", "name", @pane.id.nil? ? nil : @pane.kanban_state_id), :label => l(:label_kanban_state_id)
+      = link_to l(:label_kanban_state_new), "kanban_states/new", :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)
+    %p
+      = f.select :role_id, options_from_collection_for_select(@roles, "id", "name", @pane.id.nil? ? @pane.role.id : nil)
+      %em.info "The role of user work in this pane. e.g. developer for coding pane."
+
+    %p= f.text_field :description, :size => 80
+    %p
+      = f.check_box :in_progress, :label => "Work in progress?"
+      %em.info "If checked, cards in this pane will consume user's wip"
+      = hidden_field_tag :position, params[:position]
+  = submit_tag @pane.id.nil? ? l(:button_create) : l(:button_save)
+  /- path = @pane.id.nil? ? settings_project_path(@project) : edit_project_kanban_path(@project.id,@kanban.id)
+  /- t = @kanban.id.nil? ? {:tab => 'Kanban'} : {:tab => "states"}
+  = link_to l(:button_cancel), edit_project_kanban_path(@project.id,@kanban.id), :tab => "States"

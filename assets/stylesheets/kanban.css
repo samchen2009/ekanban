@@ -20,6 +20,7 @@ table.kanban td#backlog {}
   height: 31px; /*hight of the spinner gif +2px to fix IE8 issue */
 }
 
+.hidden {display:none}
 
 .kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
 .kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}
