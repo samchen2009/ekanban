@@ -1,0 +1,6 @@
+%h2= l(:label_kanban_new)
+
+= labelled_form_for :kanban, @kanban, :url => project_kanbans_path(@project.id), :html => {:id => 'kanban-new-form'} do |f|
+  = render :partial => 'form', :locals => {:f => f}
+  = submit_tag l(:button_create)
+  = link_to l(:button_cancel), settings_project_path(@project), :tab => 'Kanban'

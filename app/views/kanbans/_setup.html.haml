@@ -1,6 +1,7 @@
 -kanbans = controller.kanbans()
+debugger
 -if !kanbans.nil?
-  %table{:class => "list"}
+  %table{:id => "kanban-list-table",:class => "list"}
     %thead
       %th= l(:label_id)
       %th= l(:field_name)
@@ -11,19 +12,20 @@
       %th= l(:label_valid)
     %tbody
       -kanbans.each do |k|
-        %tr{:class => "#{cycle 'odd', 'even'}"}
+        %tr{:id => "#{k.id}",:class => "#{cycle 'odd', 'even'}"}
           %td=h(k.id)
           %td=h(k.name) if !k.name.nil?
           %td=h(k.project.name)
           %td=h(k.tracker.name)
-          %td=h(k.created_by.alias) if !k.created_by.nil?
+          %td=h(k.creater.alias) if !k.creater.nil?
           %td=h(k.description)
           %td=h(k.is_valid)
           %td{:class => "buttons"}
+            %em.info.error{:style => "display:none"} "Destroy failed!"
             - if User.current.allowed_to?(:manage_categories, @project)
-              = link_to l(:button_edit), "kanban_edit", :class => 'icon icon-edit'
-              = delete_link "kanban_delete"
+              = link_to l(:button_edit), edit_project_kanban_path(@project,k.id), :class => 'icon icon-edit'
+              = delete_link project_kanban_path(@project.id,k.id)
 - else
   %p{:class => "nodata"}= l(:label_no_data)
 
-%p= link_to l(:label_kanban_new), "kanban_new", :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)
+%p= link_to l(:label_kanban_new), new_project_kanban_path(@project.id), :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)

@@ -1,0 +1,12 @@
+= error_messages_for 'kanbans'
+
+.box.tabular
+  %p= f.text_field :name, :size => 30, :required => true
+  %p
+    = f.select :tracker_id, options_from_collection_for_select(@trackers, "id", "name")
+    - if (@tracks.nil?)
+      %em.info.error "All trackers are used, one kanban must be associated with one track."
+  %p= f.text_field :description, :size => 80
+  %p
+    = f.check_box :is_valid, :label => "Enabled?"
+    %em.info "Check it will display the new kanban in the kanban index page"

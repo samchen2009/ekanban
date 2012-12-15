@@ -133,8 +133,49 @@ class KanbansController < ApplicationController
     debugger
   end
 
+  def new
+    @kanban = Kanban.new
+    @project = Project.find(params[:project_id])
+    existed_trackers = []
+    Kanban.all.each {|k| existed_trackers << k.tracker if k.is_valid}
+    @trackers = @project.trackers.reject {|t| existed_trackers.include?(t)}
+  end
+
   def create
-  	debugger
+    @kanban = Kanban.new(params[:kanban])
+    @kanban.created_by = User.current.id
+    @kanban.project_id = params[:project_id]
+    if request.post? && @kanban.save
+      redirect_to settings_project_path(params[:project_id], :tab => 'kanbans')
+    else
+      render :action => 'new'
+    end
+  end
+
+  def kanban_settings_tabs
+    tabs = [#{:name => 'General', :action => :kanban_general, :partial => 'form', :label => :label_kanban_general},
+            {:name => 'States', :action => :kanban_state, :partial => 'state', :label => :label_kanban_state},
+            {:name => 'Workflow', :action => :kanban_workflow, :partial => 'workflow', :label => :label_kanban_workflow},
+            ]
+    #tabs.select {|tab| User.current.allowed_to?(tab[:action], @project)}
+  end
+
+  def edit
+    @project = Project.find(params[:project_id])
+    @kanban = Kanban.find(params[:id])
+  end
+
+  def destroy
+    puts params
+    @kanban = Kanban.find(params[:id])
+    @kanban.is_valid = 'f'
+    @saved = @kanban.save
+    respond_to do |format|
+      format.js do
+        render :partial => "update"
+      end
+      format.html { redirect_to :controller => 'projects', :action => 'settings', :id => params[:project_id], :tab => 'Kanban' }
+    end
   end
 
   def pane(pane_id)

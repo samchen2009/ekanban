@@ -3,9 +3,9 @@ class Kanban < ActiveRecord::Base
   
   belongs_to  :project
   belongs_to  :tracker
-  belongs_to  :created_by
+  belongs_to  :creater, :foreign_key => :created_by, :class_name => :User
   has_many  :kanban_pane
-  validates_presence_of  :project_id, :tracker_id, :is_valid
+  validates_presence_of  :project_id, :tracker_id
 
   before_destroy :delete_all_members
 
