@@ -1,2 +1,13 @@
 :javascript
-  $("#pane-list-table").find("tbody").sortable()
+  $("#pane-list-table").find("tbody").sortable({
+    //update the position
+
+    update: function(event,ui){
+        pos = 1;
+    	$('#pane-list-table > tbody  > tr').each(function(){
+    		$(this).find("td").eq(0).html(pos++);
+                t = (pos&1)? "odd" : "even";
+    		$(this).removeClass("odd").removeClass("even").addClass(t);
+    	});
+    }
+  });
