@@ -56,7 +56,7 @@ class KanbansController < ApplicationController
     if params[:kanban_id].to_i > 0
         @kanbans << Kanban.find(params[:kanban_id])
     else
-        @kanbans = Kanban.by_project(@project)
+        @kanbans = Kanban.by_project(@project).where("is_valid = 't'")
     end
 
     if params[:member_id].to_i == 0 and params[:principal_id].to_i == 0
