@@ -1,13 +1,32 @@
 :javascript
-  $("#pane-list-table").find("tbody").sortable({
+    $("#pane-list-table").find("tbody").sortable({
     //update the position
 
-    update: function(event,ui){
-        pos = 1;
-    	$('#pane-list-table > tbody  > tr').each(function(){
-    		$(this).find("td").eq(0).html(pos++);
-                t = (pos&1)? "odd" : "even";
-    		$(this).removeClass("odd").removeClass("even").addClass(t);
-    	});
-    }
-  });
+        update: function(event,ui){
+            pos = 1;
+            $('#pane-list-table > tbody  > tr').each(function(){
+                $(this).find("td").eq(0).html(pos++);
+                    t = (pos&1)? "odd" : "even";
+                $(this).removeClass("odd").removeClass("even").addClass(t);
+            });
+        }
+    });
+
+    $("#tab-content-Panes > #save-button").click(function(){
+        var position = new Array();
+        $("#ajax-indicator").show();
+        i = 0;
+        $('#pane-list-table > tbody  > tr').each(function(){
+            position.push($(this).attr("id"));
+        });
+        $.ajax({
+            type: "PUT",
+            url:  "#{project_kanban_path(@project.id,@kanban.id)}",
+            dataType: "html",
+            data: {"position":position},
+            cache: false,
+            stop: function(){$("#ajax-indicator").hide();},
+            failure: function(){$("#save-button > em").show();},
+            success: function(){$("#save-button > em").hide();},
+        });
+    });

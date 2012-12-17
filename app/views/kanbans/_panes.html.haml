@@ -1,4 +1,4 @@
-%h2 Kanban states coming soon
+%h2 Kanban Panes
 
 -panes = controller.panes(@kanban)
 -if !panes.nil?
@@ -7,7 +7,7 @@
       %th= l(:label_position)
       %th= l(:field_name)
       %th= l(:label_wip_limit)
-      %th= l(:label_kanban_state)
+      %th= l(:label_kanban_panes)
       %th= l(:label_role)
       %th= l(:field_description)
     %tbody
@@ -27,5 +27,7 @@
 - else
   %p{:class => "nodata"}= l(:label_no_data)
 
-%p.hidden= submit_tag l(:button_save)
+%p.hidden{:id => "save-button"}
+  = submit_tag l(:button_save)
+  %em.info.error{:style => "display:none"} "Save failure!"
 %p= link_to l(:label_kanban_pane_new), new_project_kanban_kanban_pane_path(@project.id,@kanban.id), :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)

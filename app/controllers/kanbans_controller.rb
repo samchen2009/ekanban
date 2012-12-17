@@ -146,7 +146,7 @@ class KanbansController < ApplicationController
     @kanban.created_by = User.current.id
     @kanban.project_id = params[:project_id]
     if request.post? && @kanban.save
-      redirect_to settings_project_path(params[:project_id], :tab => 'kanbans')
+      redirect_to settings_project_path(params[:project_id], :tab => 'Kanban')
     else
       render :action => 'new'
     end
@@ -154,10 +154,36 @@ class KanbansController < ApplicationController
 
   def kanban_settings_tabs
     tabs = [{:name => 'General', :action => :kanban_general, :partial => 'general', :label => :label_kanban_general},
-            {:name => 'States', :action => :kanban_state, :partial => 'state', :label => :label_kanban_state},
+            {:name => 'Panes', :action => :kanban_pane, :partial => 'panes', :label => :label_kanban_panes},
             {:name => 'Workflow', :action => :kanban_workflow, :partial => 'workflow', :label => :label_kanban_workflow},
             ]
     #tabs.select {|tab| User.current.allowed_to?(tab[:action], @project)}
+  end
+
+  def update
+    @project = Project.find(params[:project_id])
+    @kanban = Kanban.find(params[:id])
+    if (params[:position])
+      @kanban.kanban_pane.each {|p| p.position = params[:position].index("#{p.id}") + 1; p.save}
+    end
+    if (params[:kanban])
+      @kanban.description = params[:kanban][:description]
+      @kanban.tracker_id  = params[:kanban][:tracker_id]
+      @kanban.name  = params[:kanban][:name]
+      @kanban.is_valid  = params[:kanban][:is_valid]
+      @kanban.save
+    end
+
+    respond_to do |format|
+      format.json {render :nothing => true}
+      format.html do
+        if (params[:position])
+          render :partial => "edit_js"
+        else
+          redirect_to settings_project_path(params[:project_id], :tab => 'Kanban')
+        end
+      end
+    end
   end
 
   def edit

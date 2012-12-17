@@ -25,11 +25,12 @@ class KanbanPanesController < ApplicationController
   end
 
   def create
-    debugger
+    @kanban = Kanban.find(params[:kanban_id])
     @pane = KanbanPane.new(params[:kanban_pane])
     @pane.kanban_id = params[:kanban_id]
+    @pane.position = @kanban.kanban_pane.maximum(:position) + 1
     if request.post? && @pane.save
-      redirect_to edit_project_kanban_path(params[:project_id],params[:kanban_id]), :tab => 'States'
+      redirect_to edit_project_kanban_path(params[:project_id],params[:kanban_id], :tab => 'Panes')
     else
       render :action => 'new'
     end
@@ -42,9 +43,16 @@ class KanbanPanesController < ApplicationController
     @states = KanbanState.find_all_by_tracker_id(@kanban.tracker_id)
     @kanban.kanban_pane.each {|p| used_states << p.kanban_state if p.id != params[:id].to_i}
     @states = @states.reject{|s| used_states.include?(s)}
-    debugger
     @roles = Role.all
     @pane = KanbanPane.find(params[:id])
+  end
+
+  def update
+    @pane = KanbanPane.find(params[:id])
+    @pane.attributes = params[:kanban_pane]
+    if @pane.save
+      redirect_to edit_project_kanban_path(params[:project_id],params[:kanban_id], :tab => "Panes")
+    end
   end
 
   def show

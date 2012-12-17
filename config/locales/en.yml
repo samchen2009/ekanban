@@ -6,7 +6,7 @@ en:
   label_created_by: "Created by"
   label_id: "No."
   label_valid: "is_valid?"
-  label_kanban_state: "Kanban State"
+  label_kanban_panes: "Kanban Panes"
   label_kanban_workflow: "Kanban Workflows"
   label_kanban_general: "Kanban General"
   label_kanban_pane_new: "New Kanban Pane"

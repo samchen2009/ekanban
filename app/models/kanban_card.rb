@@ -54,7 +54,6 @@ class KanbanCard < ActiveRecord::Base
   }
 
   def in_progress?(roles)
-    debugger
     pane = self.kanban_pane
     role = Role.find(pane.role_id)
     # card in a non-in-progress pane or card 

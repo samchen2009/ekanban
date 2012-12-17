@@ -1,6 +1,6 @@
 = error_messages_for 'kanbans'
 
-= labelled_form_for :kanban_pane, @pane, :url =>  project_kanban_kanban_panes_path(@project.id,@kanban.id), :html => {:id => 'kanban-pane-new-form'} do |f|
+= labelled_form_for :kanban_pane, @pane, :url =>  @pane.id.nil? ? project_kanban_kanban_panes_path(@project.id,@kanban.id) : project_kanban_kanban_pane_path(@project.id, @kanban.id, @pane.id), :html => {:id => 'kanban-pane-form'} do |f|
   .box.tabular
     %p= f.text_field :name, :size => 30, :required => true
     - disable = @pane.wip_limit_auto

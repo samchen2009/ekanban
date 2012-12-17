@@ -7,6 +7,8 @@ table.kanban td#backlog {}
 .link {color:blue}
 .icon-setup { background-image: url(../images/icon-setup.png); }
 
+.disabled { disabled:disable}
+
 .spinner {
   position: fixed;
   top: 50%;
