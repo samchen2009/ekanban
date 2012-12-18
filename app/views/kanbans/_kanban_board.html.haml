@@ -46,7 +46,7 @@
       dataType: "json",
       cache: false,
       success: function(json){
-        init_wip(json);
+        init_wip("#{kanban.id}", json);
       }
     });
   });
