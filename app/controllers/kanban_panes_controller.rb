@@ -28,7 +28,8 @@ class KanbanPanesController < ApplicationController
     @kanban = Kanban.find(params[:kanban_id])
     @pane = KanbanPane.new(params[:kanban_pane])
     @pane.kanban_id = params[:kanban_id]
-    @pane.position = @kanban.kanban_pane.maximum(:position) + 1
+    position = @kanban.kanban_pane.maximum(:position)
+    @pane.position = position.nil? ? 1: position + 1
     if request.post? && @pane.save
       redirect_to edit_project_kanban_path(params[:project_id],params[:kanban_id], :tab => 'Panes')
     else

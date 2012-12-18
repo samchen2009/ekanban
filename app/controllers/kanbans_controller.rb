@@ -136,9 +136,14 @@ class KanbansController < ApplicationController
   def new
     @kanban = Kanban.new
     @project = Project.find(params[:project_id])
-    used_trackers = []
-    Kanban.all.each {|k| used_trackers << k.tracker if k.is_valid}
-    @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
+    @kanbans = Kanban.find_all_by_project_id(params[:project_id])
+    if @kanbans.nil?
+      @trackers = Tracker.all
+    else
+      used_trackers = []
+      @kanbans.each {|k| used_trackers << k.tracker if k.is_valid}
+      @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
+    end
   end
 
   def create
@@ -189,9 +194,14 @@ class KanbansController < ApplicationController
   def edit
     @project = Project.find(params[:project_id])
     @kanban = Kanban.find(params[:id])
-    used_trackers = []
-    Kanban.all.each {|k| used_trackers << k.tracker if k.is_valid and k.id != params[:id].to_i}
-    @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
+    @kanbans = Kanban.find_all_by_project_id(params[:project_id])
+    if @kanbans.nil?
+      @trackers = Tracker.all
+    else
+      used_trackers = []
+      @kanbans.each {|k| used_trackers << k.tracker if k.is_valid and k.id != params[:id].to_i}
+      @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
+    end
   end
 
   def destroy

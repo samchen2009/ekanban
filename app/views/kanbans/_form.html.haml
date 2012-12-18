@@ -1,5 +1,3 @@
-= error_messages_for 'kanbans'
-
 = labelled_form_for :kanban, @kanban, :url => @kanban.id.nil? ? project_kanbans_path(@project.id) : project_kanban_path(@project.id, @kanban.id), :html => {:id => 'kanban-info-form'} do |f|
   .box.tabular
     %p= f.text_field :name, :size => 30, :required => true
