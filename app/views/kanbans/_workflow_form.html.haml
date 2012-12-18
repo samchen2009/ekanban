@@ -1,0 +1,22 @@
+-panes = controller.panes(kanban)
+-pane_num = panes.size
+- if !panes.nil?
+  %table{:id => "kanban_workflow_table",:class => "list"}
+    %thead
+      %th= " "
+      - panes.each do |p|
+        %th= p.name
+    %tbody
+      - for from_pane in panes
+        %tr{:id => "from_#{from_pane.id}",:class => "#{cycle 'odd', 'even'}"}
+          %td{:style => "font-weight:bold;font-size:13px;bold;"}= h(from_pane.name)
+          - for to_pane in panes
+            - transition = KanbanWorkflow.find_by_old_state_id_and_new_state_id_and_kanban_id(from_pane.kanban_state_id, to_pane.kanban_state_id,kanban.id);
+            - enabled = !transition.nil? ? "enabled" : " "
+            - highlight = !transition.nil? ? ";background-color:#BBFFBB" : ";"
+            %td{:style => "align:center;font-size:11px" + highlight, :class => "#{enabled}"}
+              = select_tag "flow[#{from_pane.kanban_state_id}][#{to_pane.kanban_state_id}][]", options_from_collection_for_select(roles, "id", "name", transition.nil? ? 0 : transition.role_id), :include_blank => true, :style => "width:100%;font-weight:10px"+highlight
+  %p
+    %em blank - disable; otherwise, user with specified role can make the transition, and anonymous means anybody can do this transition
+- else
+  %p{:class => "nodata"}= l(:label_no_data)

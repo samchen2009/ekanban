@@ -195,6 +195,7 @@ class KanbansController < ApplicationController
     @project = Project.find(params[:project_id])
     @kanban = Kanban.find(params[:id])
     @kanbans = Kanban.find_all_by_project_id(params[:project_id])
+    @roles = Role.all
     if @kanbans.nil?
       @trackers = Tracker.all
     else

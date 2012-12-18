@@ -1,1 +1,11 @@
-%h2 Kanban workflow comming soon
+%h2 Kanban workflow
+
+= form_tag(project_kanban_kanban_workflow_path(@project.id, @kanban.id, 1), :method=>"put", :id => 'kanban_workflow_edit') do |f|
+  = render :partial => 'workflow_form', :locals => {:f => f, :kanban => @kanban, :roles => @roles}
+  = submit_tag l(:button_save)
+
+
+:javascript
+  $("select").change(function(){
+    $(this).css("background-color","#FF99FF");
+  });
