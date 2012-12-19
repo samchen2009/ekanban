@@ -25,7 +25,7 @@ table.kanban td#backlog {}
 
 .hidden {display:none}
 
-.kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;vertical-align:top}
+.kanban-pane {width:auto;overflow-y:auto;min-width:160px;max-width:300px;max-height:500px;vertical-align:top}
 .kanban-card { margin: 5px;width:90%;float:left; overflow:hidden}
 .card-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0em; text-align: left; overflow:hidden; }
 .card-header .ui-icon { float: right; }
