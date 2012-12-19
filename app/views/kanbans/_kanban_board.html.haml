@@ -1,10 +1,9 @@
 = stylesheet_link_tag 'kanban', :plugin => 'ekanban'
-%h3{:style => "margin 5px"}=kanban.name
-
+= link_to l(:label_kanban_setup), edit_project_kanban_path(@project.id,kanban.id), :class => 'icon icon-setup', :style => 'float:right'
+= link_to l(:label_kanban_report), "kanban/show", :class => 'icon icon-report', :style => 'float:right'
+%h3{:style => "margin-top:20px"}= kanban.name
 - panes = controller.panes(kanban)
 - panes_num = panes.size
-
-
 %table.kanban{:id=>"kanban_#{kanban.id}"}
   - if panes_num > 0
     %tr{:style=>"height:30px"}
@@ -31,10 +30,11 @@
             %th{:id=>"state_#{name}"}=name
 
     %tr{:style=>"height:90%; overflow-y:auto"}
-      -panes.each do |pane|
+      -panes.inject(0) do |i,pane|
         %td.kanban-pane{:id=>"pane_#{pane.id}",:state_id=>"#{pane.kanban_state_id}",:role_id=>"#{pane.role_id}"}
-          - if pane.id == 1
+          - if i == 0
             %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
+          - i++
           = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}
 
 = javascript_include_tag "kanban", :plugin => :ekanban

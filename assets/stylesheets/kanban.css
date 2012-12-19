@@ -5,7 +5,8 @@ table.kanban thead th{background-color: #EEEEEE;padding:4px;height:60px;width:au
 table.kanban td#backlog {}
 
 .link {color:blue}
-.icon-setup { background-image: url(../images/icon-setup.png); }
+.icon-setup  { background-image: url(../images/icon-setup.png); margin-left:15px; }
+.icon-report { background-image: url(../images/icon-report.png); margin-left:15px;}
 
 .disabled { disabled:disable}
 
