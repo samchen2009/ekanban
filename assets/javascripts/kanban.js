@@ -88,7 +88,6 @@ function init_wip(kanban_id,json){
   if (typeof(panes[0]) == "undefined") return;
   //table = $("#kanban_" + panes[0].kanban_pane.kanban_id)
   table = $("#kanban_" + kanban_id);
-  console.debug("init_wip:"+kanban_id)
   for (i=0; i<stages.length; i++){
     pane_id = panes[i].kanban_pane.id
     if (i > 0 && (stages[i].kanban_stage.id === stages[i-1].kanban_stage.id)){
@@ -97,7 +96,6 @@ function init_wip(kanban_id,json){
       wip = $("#pane_"+pane_id).children(":visible").length;
     }
     var wip_limit = panes[i].kanban_pane.wip_limit;
-    console.debug(kanban_id + "'s wip_limit:" + wip_limit);
     table.find("#wip_"+ stages[i].kanban_stage.id).text("(" + wip + ":" +wip_limit +")");
     table.find("#wip_"+ stages[i].kanban_stage.id).data("wip",wip);
     table.find("#wip_"+ stages[i].kanban_stage.id).data("wip_limit",wip_limit);
@@ -231,13 +229,13 @@ function cardIsAccepted(card,sender,receiver){
   }
 
   /* Check user's WIP */
-  if (card.find("#assignee_id").val() != myUserID()){
+  //if (card.find("#assignee_id").val() != myUserID()){
     my_wip_limit = $("#my-profile").data("user").user.wip_limit;
-    my_wip = $("#my-profile").data("wip");
+    my_wip = $("#my-profile").data("wip").length;
     if (my_wip == my_wip_limit){
       return {"success":false,"error":"reach your wip_limit"}
     }
-  }
+  //}
 
   if (!isValidKanbanTransition(from_state,to_state)){
     return {"success":false,"error":"Invalid state transition"}
