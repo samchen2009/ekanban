@@ -3,7 +3,7 @@
   - assignee_name = controller.assignee_name(i.assigned_to)
   .kanban-card.tooltip{:id=>"#{i.id}"}
     /,:title=>"##{i.priority_id}:#{i.subject}<br>To:#{assignee_name}<br>#{i.description}"}
-    .card-header
+    .card-header{:style => "overflow:hidden"}
       = link_to "##{i.id}", issue_path(i)
       = hidden_field_tag :issue_status_id, i.status_id
       = hidden_field_tag :assignee_id, i.assigned_to
@@ -11,16 +11,17 @@
       = hidden_field_tag :developer_id, c.developer_id
       = hidden_field_tag :verifier_id, c.verifier_id
       = hidden_field_tag :subject, i.subject
-      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
-    .card-content
-      ="#{i.subject}"
-      %span.tip{:style => "overflow:auto"}
+      %span.tip{:style => "font-weight: normal"}
         = link_to "##{i.id}", issue_path(i)
         = i.subject
         %br
-        %strong Assigned To:
+        %strong Assignee:
         = assignee_name
+        %strong   Status:
+        = i.status.name
         %br
         %strong Description:
         = i.description
-
+      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
+    .card-content
+      ="#{i.subject}"

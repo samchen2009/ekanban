@@ -101,12 +101,13 @@ function init_wip(kanban_id,json){
     table.find("#wip_"+ stages[i].kanban_stage.id).data("wip_limit",wip_limit);
     //store stage name in each pane's data.
     $("#pane_"+(i+1)).data("stage",stages[i].kanban_stage.name);
+    $("#pane_"+(i+1)).data("stage_id",stages[i].kanban_stage.id);
   }
 }
 
 function updatePanesWip(sender, receiver){
-   var stage_from = sender.data("stage").id;
-   var stage_to   = receiver.data("stage").id;
+   var stage_from = sender.data("stage_id");
+   var stage_to   = receiver.data("stage_id");
    var table = sender.parents("table");
 
    if (stage_from != stage_to){
@@ -200,7 +201,8 @@ function isValidKanbanTransition(from,to){
 function isValidIssueTransition(from,to){
 
 }
-/* Input: 
+
+/* Input:
  *   1. Card -> user/group -> roles.
  *   2. From Pane
  *   3. To Pane
@@ -224,18 +226,21 @@ function cardIsAccepted(card,sender,receiver){
 
   var pane_role = receiver.attr("role_id");
 
-  if (to_stage === from_stage){
+  if (to_stage === from_stage && assignee_changed == false){
     return {"success":true,"error":"In the same stage"};
   }
-
-  /* Check user's WIP */
-  //if (card.find("#assignee_id").val() != myUserID()){
+  /*
+   * 1. non-wip pane -> wip pane.
+   * 2. assignee changed in wip_pane.
+   */
+  if ((sender.attr("check_wip") == "false" && receiver.attr("check_wip") == "true") ||
+      (card.find("#assignee_id").val() != myUserID() && receiver.attr("check_wip") == "true")){
     my_wip_limit = $("#my-profile").data("user").user.wip_limit;
     my_wip = $("#my-profile").data("wip").length;
     if (my_wip == my_wip_limit){
       return {"success":false,"error":"reach your wip_limit"}
     }
-  //}
+  }
 
   if (!isValidKanbanTransition(from_state,to_state)){
     return {"success":false,"error":"Invalid state transition"}
