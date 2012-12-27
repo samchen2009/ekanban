@@ -140,11 +140,15 @@ class KanbansController < ApplicationController
     @kanbans = Kanban.find_all_by_project_id(params[:project_id])
     if @kanbans.nil?
       @trackers = Tracker.all
+      @copiable_kanbans = Kanbans.all
     else
       used_trackers = []
       @kanbans.each {|k| used_trackers << k.tracker if k.is_valid}
       @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
     end
+
+    @copiable_kanbans = Kanban.find(:all, :conditions => ["tracker_id in (?)", @trackers.select{|t| t.id}])
+    @copiable_kanbans.each {|k| k.name += " - #{k.project.name}"}
   end
 
   def create
@@ -217,6 +221,30 @@ class KanbansController < ApplicationController
       end
       format.html { redirect_to :controller => 'projects', :action => 'settings', :id => params[:project_id], :tab => 'Kanban' }
     end
+  end
+
+  # create a new kanban by copying reference.
+  def copy
+    ref_kanban = Kanban.find(params[:ref_id])
+    ref_kanban_panes = KanbanPane.find_all_by_kanban_id(params[:ref_id])
+    ref_workflow = KanbanWorkflow.find_all_by_kanban_id(params[:ref_id])
+
+    new_kanban = ref_kanban.dup
+    new_kanban.project_id = params[:project_id]
+    new_kanban.update_attribute(:is_valid, true)
+    new_kanban.save!
+    ref_kanban_panes.each do |p|
+      new_pane = p.dup
+      new_pane.kanban_id = new_kanban.id
+      new_pane.save!
+    end
+
+    ref_workflow.each do |w|
+      new_w = w.dup
+      new_w.kanban_id = new_kanban.id
+      new_w.save!
+    end
+    redirect_to edit_project_kanban_path(new_kanban.project_id, new_kanban.id, :tab => "Panes")
   end
 
   def pane(pane_id)

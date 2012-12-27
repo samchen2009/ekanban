@@ -1,4 +1,15 @@
-%h2= l(:label_kanban_new)
-
+%h3 New Kanban
 = render :partial => 'form'
+
+%br
+%br
+%br
+- if @kanban.id.nil?
+  = form_tag( {:controller => "kanbans", :action => 'copy'}, :id => 'kanban_copy_form') do
+    %h4 Copy an existed kanban
+    = hidden_field_tag :project_id, params[:project_id]
+    = select_tag "ref_id", options_from_collection_for_select(@copiable_kanbans, "id", "name")
+    = submit_tag "copy"
+%br
+%br
 

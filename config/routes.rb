@@ -24,4 +24,6 @@ RedmineApp::Application.routes.draw do
 	match 'kanbans/setup', :controller => 'kanbans', :action => 'setup', :via => :get
 	match 'kanban_states/setup', :controller=>'kanban_states', :action => 'setup', :via => :get
 	match 'issue_status_kanban_states/update', :controller => 'issue_status_kanban_states', :action => "update", :via => :put
+
+	match 'kanbans/copy', :controller => 'kanbans', :action => "copy"
 end
