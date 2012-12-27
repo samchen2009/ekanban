@@ -1,7 +1,6 @@
 class IssueStatusKanbanStatesController < ApplicationController
 	def update
 		puts params
-		debugger
 		states = KanbanState.find_all_by_tracker_id(params[:tracker_id])
 		all_maps = IssueStatusKanbanState.all
 		old_maps = {}

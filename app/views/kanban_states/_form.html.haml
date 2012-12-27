@@ -1,4 +1,3 @@
-- debugger
 = labelled_form_for :kanban_state, @state, :url =>  @state.id.nil? ? tracker_kanban_states_path(@tracker.id) : tracker_kanban_state_path(@tracker.id, @state.id), :html => {:id => 'kanban-state-form'} do |f|
   .box.tabular
     %p= f.text_field :name, :size => 30, :required => true
