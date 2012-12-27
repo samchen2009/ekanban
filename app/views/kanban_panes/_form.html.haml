@@ -10,7 +10,7 @@
       %em.info "If checked, system will calculate it according to user's wip_limit"
     %p
       = f.select :kanban_state_id, options_from_collection_for_select(@states, "id", "name", @pane.id.nil? ? nil : @pane.kanban_state_id), :label => l(:label_kanban_state_id)
-      = link_to l(:label_kanban_state_new), "kanban_states/new", :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)
+      = link_to l(:label_kanban_state_new), new_tracker_kanban_state_path(@kanban.tracker_id), :class => 'icon icon-add' if User.current.allowed_to?(:manage_categories, @project)
     %p
       = f.select :role_id, options_from_collection_for_select(@roles, "id", "name", @pane.id.nil? ? @pane.role.id : nil)
       %em.info "The role of user work in this pane. e.g. developer for coding pane."

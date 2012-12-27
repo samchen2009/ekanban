@@ -79,7 +79,6 @@ module EKanban
        	# 1. user's wip and permission(role).
        	# 2. corresponding pane.
        	# 3. ...
-        debugger
        	issue = context[:issue]
        	card = KanbanCard.find_by_issue_id(issue.id)
        	assignee = issue.assigned_to

@@ -1,0 +1,9 @@
+= labelled_form_for :kanban_stage, @stage, :url =>  @stage.id.nil? ? kanban_stages_path() : kanban_stage_path(@stage.id), :html => {:id => 'kanban-stage-form'} do |f|
+  .box.tabular
+    %p= f.text_field :name, :size => 30, :required => true
+    %p= f.text_field :description, :size => 80, :required => true
+
+  = submit_tag @stage.id.nil? ? l(:button_create) : l(:button_save)
+  /- path = @pane.id.nil? ? settings_project_path(@project) : edit_project_kanban_path(@project.id,@kanban.id)
+  /- t = @kanban.id.nil? ? {:tab => 'Kanban'} : {:tab => "states"}
+  /= link_to l(:button_cancel), edit_tracker_kanban_state_path(@tracker.id,@state.id)

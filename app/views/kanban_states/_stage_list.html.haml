@@ -1,0 +1,24 @@
+- stages = KanbanStage.all
+- if !stages.nil?
+  %table{:id => "kanban_stage",:class => "list"}
+    %thead
+      %th= l(:field_name)
+      %th= l(:field_description)
+      %tbody
+        -stages.each do |s|
+          %tr{:id => "#{s.id}",:class => "#{cycle 'odd', 'even'}"}
+            %td=h(s.name)
+            %td=h(s.description)
+            %td{:class => "buttons"}
+              %em.info.error{:style => "display:none"} "Destroy failed!"
+              = link_to l(:button_edit), edit_kanban_stage_path(s.id), :class => 'icon icon-edit'
+              = delete_link kanban_stage_path(s.id)
+- else
+  %p{:class => "nodata"}= l(:label_no_data)
+
+%p.hidden{:id => "save-button"}
+  = submit_tag l(:button_save)
+  = link_to l(:label_kanban_stage_new), new_kanban_stage_path(), :class => 'icon icon-add'
+%em.info.error{:style => "display:none"} "Save failure!"
+%br
+%br

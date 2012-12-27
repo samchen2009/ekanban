@@ -1,0 +1,23 @@
+- debugger
+= labelled_form_for :kanban_state, @state, :url =>  @state.id.nil? ? tracker_kanban_states_path(@tracker.id) : tracker_kanban_state_path(@tracker.id, @state.id), :html => {:id => 'kanban-state-form'} do |f|
+  .box.tabular
+    %p= f.text_field :name, :size => 30, :required => true
+    %p= f.select :tracker_id, options_from_collection_for_select(@trackers, "id", "name", @tracker.id), :label => l(:label_tracker)
+    %p
+      = f.select :stage_id, options_from_collection_for_select(@stages, "id", "name", @state.id.nil? ? nil : @state.stage_id), :label => l(:label_kanban_stage)
+      = link_to l(:label_kanban_stage_new), new_kanban_stage_path(), :class => 'icon icon-add'
+    %p
+      = f.check_box :is_default, :label => "Default state?"
+      %em.info "If checked, it'll be the default state"
+    %p
+      = f.check_box :is_initial, :label => "Initial state?"
+      %em.info "If checked, it'll be the start state assosicated with the issue state status, say 'New'"
+    %p
+      = f.check_box :is_closed, :label => "Close state?"
+      %em.info "If checked, it's the closed state that associated with the issue closed status, say 'Closed'"
+    %p= f.text_field :description, :size => 80
+
+  = submit_tag @state.id.nil? ? l(:button_create) : l(:button_save)
+  /- path = @pane.id.nil? ? settings_project_path(@project) : edit_project_kanban_path(@project.id,@kanban.id)
+  /- t = @kanban.id.nil? ? {:tab => 'Kanban'} : {:tab => "states"}
+  /= link_to l(:button_cancel), edit_tracker_kanban_state_path(@tracker.id,@state.id)

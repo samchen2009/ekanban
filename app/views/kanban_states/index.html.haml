@@ -1,0 +1,6 @@
+.contextual
+%h2 Setup Kanban States
+= render :partial =>  'common/tabs', :locals => {:tabs => controller.setup_tabs}
+/= render :partial =>  Rails.root.join('app/views/common/tabs').to_s, :locals => {:tabs => controller.setup_tabs}
+/= render :partial => 'edit_js'
+

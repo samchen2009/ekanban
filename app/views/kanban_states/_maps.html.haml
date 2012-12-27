@@ -1,0 +1,16 @@
+
+- statuses = IssueStatus.all
+- trackers = Tracker.all
+- maps = IssueStatusKanbanState.all
+- trackers.each do |t|
+  = form_tag( {:controller => "issue_status_kanban_states", :action => "update"}, :method=>"put", :id => '#{t.id}') do |f|
+    = hidden_field_tag :tracker_id, t.id
+    = render :partial => 'maps_form', :locals => {:f => f, :tracker => t}
+    = submit_tag l(:button_save)
+    %br
+    %br
+
+:javascript
+  $("input").change(function(){
+    $(this).parent("td").css("background-color","#FF99FF");
+  });

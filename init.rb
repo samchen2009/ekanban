@@ -15,6 +15,7 @@ Redmine::Plugin.register :ekanban do
    permission :view_kanban, :kanbans => :index
   end
   menu :project_menu, :Kanban, {:controller=>'kanbans', :action => 'index'}, :caption => 'Kanbans', :after => :activity, :param => :project_id
+  menu :admin_menu, :Kanban_States, {:controller=>'kanban_states', :action => 'setup'}, :caption => 'Kanban States'
 
 
   Rails.configuration.to_prepare do

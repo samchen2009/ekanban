@@ -1,0 +1,23 @@
+- statuses = IssueStatus.all
+- maps = IssueStatusKanbanState.all
+%h3= "Tracker: #{tracker.name}"
+- states = KanbanState.find_all_by_tracker_id(tracker.id)
+- if !states.nil?
+  %table{:id => "kanban_workflow_table",:class => "list"}
+    %thead
+      %th= " "
+      - w = 75 / statuses.size
+      - statuses.each do |s|
+        %th{:style => "width:#{w}%"}= s.name
+    %tbody
+      - for state in states
+        %tr{:id => "track_state[#{tracker.id}][#{state.id}]",:class => "#{cycle 'odd', 'even'}"}
+          %td{:style => "font-weight:bold;font-size:13px;bold;"}= h(state.name)
+          - for status in statuses
+            - checked = maps.detect {|m| m.kanban_state_id == state.id and m.issue_status_id == status.id}
+            - highlight = checked ? ";background-color:#BBFFBB" : ";"
+            %td{:style => "align:center" + highlight}
+              = check_box_tag "maps[#{state.id }][]", status.id, checked
+- else
+  %p{:class => "nodata"}= l(:label_no_data)
+

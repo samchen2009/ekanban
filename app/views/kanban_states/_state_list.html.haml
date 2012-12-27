@@ -1,0 +1,34 @@
+- trackers = Tracker.all
+- trackers.each do |t|
+  %h3= "Tracker #{t.name}"
+  - states = KanbanState.find_all_by_tracker_id(t.id)
+  - if !states.nil?
+    %table{:id => "kanban_state_#{t.id}",:class => "list"}
+      %thead
+        %th= l(:field_name)
+        %th Is_default?
+        %th Is_initial?
+        %th Is_closed?
+        %th Stage
+        %th Description
+      %tbody
+        -states.each do |s|
+          %tr{:id => "#{s.id}",:class => "#{cycle 'odd', 'even'}"}
+            %td=h(s.name)
+            %td=h(s.is_default)
+            %td=h(s.is_initial)
+            %td=h(s.is_closed)
+            %td=h(s.kanban_stage.name)
+            %td=h(s.description)
+            %td{:class => "buttons"}
+              %em.info.error{:style => "display:none"} "Destroy failed!"
+              = link_to l(:button_edit), edit_tracker_kanban_state_path(t.id,s.id), :class => 'icon icon-edit'
+              = delete_link tracker_kanban_state_path(t.id,s.id)
+  - else
+    %p{:class => "nodata"}= l(:label_no_data)
+  %p.hidden{:id => "save-button"}
+    = submit_tag l(:button_save)
+    = link_to l(:label_kanban_state_new), new_tracker_kanban_state_path(t.id), :class => 'icon icon-add'
+  %em.info.error{:style => "display:none"} "Save failure!"
+  %br
+  %br
