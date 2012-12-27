@@ -157,7 +157,7 @@ end
 class IssueStatus < ActiveRecord::Base
   def self.closed_id
     #IssueStatus.all.each {|x| return x.id if x.is_closed} 
-    status = IssueStatus.where("is_closed = 't'")
+    status = IssueStatus.where("is_closed = ?", true)
     return status.first.id if !status.nil?
   end
 end

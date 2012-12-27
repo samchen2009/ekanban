@@ -44,7 +44,7 @@ class KanbanCard < ActiveRecord::Base
   }
 
   scope :in_progress, lambda {
-    {:conditions => ["#{KanbanPane.table_name}.in_progress='t'"], :include => :kanban_pane}
+    {:conditions => ["#{KanbanPane.table_name}.in_progress = ?", true], :include => :kanban_pane}
   }
 
   scope :open, lambda {|*args|

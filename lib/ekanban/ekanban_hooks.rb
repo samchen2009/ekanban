@@ -23,7 +23,7 @@ module EKanban
       	kanban.name = "Created by system with issue #{issue.id}"
       	kanban.project_id = issue.project_id
       	kanban.tracker_id = issue.tracker_id
-      	kanban.is_valid = true;
+      	kanban.update_attribute(:is_valid,true);
       	return kanban_pane
       end
 

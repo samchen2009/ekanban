@@ -56,7 +56,7 @@ class KanbansController < ApplicationController
     if params[:kanban_id].to_i > 0
         @kanbans << Kanban.find(params[:kanban_id])
     else
-        @kanbans = Kanban.by_project(@project).where("is_valid = 't'")
+        @kanbans = Kanban.by_project(@project).where("is_valid = ?",true)
     end
 
     if params[:member_id].to_i == 0 and params[:principal_id].to_i == 0
@@ -175,7 +175,7 @@ class KanbansController < ApplicationController
       @kanban.description = params[:kanban][:description]
       @kanban.tracker_id  = params[:kanban][:tracker_id]
       @kanban.name  = params[:kanban][:name]
-      @kanban.is_valid  = params[:kanban][:is_valid]
+      @kanban.update_attribute(:is_valid, params[:kanban][:is_valid]);
       @kanban.save
     end
 
@@ -208,7 +208,7 @@ class KanbansController < ApplicationController
   def destroy
     puts params
     @kanban = Kanban.find(params[:id])
-    @kanban.is_valid = 'f'
+    @kanban.update_attribute(:is_valid, false);
     @saved = @kanban.save
     respond_to do |format|
       format.js do
