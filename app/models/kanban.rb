@@ -145,6 +145,12 @@ class User < Principal
     KanbanCard.open().by_user(self).in_progress().size
   end
 
+  def wip_limit
+    id = CustomField.find_by_name("WIP limit").id
+    v = self.custom_value_for(id)
+    v.nil? ? 3 : v.value.to_i
+  end
+
 end
 
 class Principal < ActiveRecord::Base
