@@ -100,8 +100,8 @@ function init_wip(kanban_id,json){
     table.find("#wip_"+ stages[i].kanban_stage.id).data("wip",wip);
     table.find("#wip_"+ stages[i].kanban_stage.id).data("wip_limit",wip_limit);
     //store stage name in each pane's data.
-    $("#pane_"+(i+1)).data("stage",stages[i].kanban_stage.name);
-    $("#pane_"+(i+1)).data("stage_id",stages[i].kanban_stage.id);
+    $("#pane_"+pane_id).data("stage",stages[i].kanban_stage.name);
+    $("#pane_"+pane_id).data("stage_id",stages[i].kanban_stage.id);
   }
 }
 
