@@ -97,7 +97,6 @@ module EKanban
   		    old_state = card.kanban_pane.kanban_state_id
   		    old_pane  = card.kanban_pane
   		  end
-
     		return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
 
     		developer = card.developer

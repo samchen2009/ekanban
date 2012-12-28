@@ -138,6 +138,7 @@ class User < Principal
 
   def has_role?(role,project)
     role = Role.to_role(role)
+    return true if (role.name == "Anonymous" or role.name == "Non member") 
     return self.roles_for_project(Project.to_project(project)).include?(role)
   end
 
