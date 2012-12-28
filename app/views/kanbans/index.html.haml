@@ -113,15 +113,17 @@
 
     $("#search-input").keyup(function(){
       var keywords = $(this).val()
+      var pane = $(this).closest("td");
+      var stage = pane.data("stage_id");
       if (keywords === "") {keywords="#"}
-      $("#pane_1").find(".kanban-card")
+      pane.find(".kanban-card")
         .hide()
         .filter(":contains('"+(keywords)+"')")
         .show();
-      text = $("#wip_backlog").text();
+      text = $("#wip_"+stage).text();
       text = text.split(":");
-      text = "(" + $("#pane_1").children(".kanban-card:visible").length + ":" + text[1];
-      $("#wip_backlog").text(text);
+      text = "(" + pane.children(".kanban-card:visible").length + ":" + text[1];
+      $("#wip_"+stage).text(text);
     }).keyup();
 
     //$( document ).tooltip();
