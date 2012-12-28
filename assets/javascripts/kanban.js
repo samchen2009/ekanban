@@ -167,6 +167,12 @@ function hasRole(role_name)
 }
 
 function hasRoleId(role_id){
+
+  /* "Non-Member" and "Anonymous" is open to anybody */
+  if (role_id == 0 || role_id == 1){
+    return true;
+  }
+
   roles = myRoles();
   for (i=0; i<roles.length; i++){
     if (roles[i].role.id == role_id){
@@ -226,7 +232,7 @@ function cardIsAccepted(card,sender,receiver){
 
   var pane_role = receiver.attr("role_id");
 
-  if (to_stage === from_stage && assignee_changed == false){
+  if (to_stage === from_stage && card.find("#assignee_id").val() == myUserID()){
     return {"success":true,"error":"In the same stage"};
   }
   /*
