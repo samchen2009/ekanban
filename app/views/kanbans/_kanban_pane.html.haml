@@ -22,6 +22,6 @@
         %br
         %strong Description:
         = i.description
-      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority_id}   O:#{assignee_name}"
+      %span{:style=>"margin:4em 0 0 0; text-align:center"}="P#{i.priority.position - 1}   To:#{assignee_name}"
     .card-content
       ="#{i.subject}"
