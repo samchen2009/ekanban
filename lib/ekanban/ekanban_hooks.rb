@@ -82,39 +82,40 @@ module EKanban
        	issue = context[:issue]
        	card = KanbanCard.find_by_issue_id(issue.id)
        	assignee = issue.assigned_to
-  		  new_state = IssueStatusKanbanState.state_id(issue.status_id)
-  		  kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
+        new_state = IssueStatusKanbanState.state_id(issue.status_id)
+        kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
-  		  return false if kanban.nil?
-  		  new_pane = KanbanPane.pane_by(new_state,kanban)
-  		  return flase if new_pane.nil?
+        return false if kanban.nil?
+        new_pane = KanbanPane.pane_by(new_state,kanban)
+        return flase if new_pane.nil?
 
-  		  # Tracker changed.
+        # Tracker changed.
        	if kanban.id != card.kanban_pane.kanban.id
-       		old_state = new_state
-       		old_pane  = new_pane
+            old_state = new_state
+            old_pane  = new_pane
        	else
-  		    old_state = card.kanban_pane.kanban_state_id
-  		    old_pane  = card.kanban_pane
-  		  end
-    		return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
+            old_state = card.kanban_pane.kanban_state_id
+            old_pane  = card.kanban_pane
+        end
+        debugger
+	return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
 
-    		developer = card.developer
-    		verifier  = card.verifier
-    		pre_assignee = developer.has_role?(old_pane.role_id,issue.project) ? developer : verifier
+	developer = card.developer
+	verifier  = card.verifier
+	pre_assignee = developer.has_role?(old_pane.role_id,issue.project) ? developer : verifier
 
-    		#assignee changed? - need to check user wip
-    		if (pre_assignee.id != assignee.id)
-    			# change from developer to verifier?
-    			if assignee.wip == assignee.wip_limit
-    				puts "assignee #{assignee.alias} reached wip_limit already!"
+        #assignee changed? - need to check user wip
+    	if (pre_assignee.id != assignee.id)
+    	# change from developer to verifier?
+	     	if assignee.wip >= assignee.wip_limit
+    			puts "assignee #{assignee.alias} reached wip_limit already!"
     				return false
     			end
     		end
 
     		#issue status change? - need to check pane's wip and wip limit
     		if !KanbanState.in_same_stage?(old_state, new_state)
-    			if new_pane.wip_limit_by_view() == KanbanPane.wip(new_pane)
+    			if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
     				puts "Pane #{new_pane.id} #{new_pane.name} reached wip_limit already!"
     				return false
     			end

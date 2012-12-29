@@ -241,9 +241,9 @@ function cardIsAccepted(card,sender,receiver){
    */
   if ((sender.attr("check_wip") == "false" && receiver.attr("check_wip") == "true") ||
       (card.find("#assignee_id").val() != myUserID() && receiver.attr("check_wip") == "true")){
-    my_wip_limit = $("#my-profile").data("user").user.wip_limit;
+    my_wip_limit = $("#my-profile").data("user").wip_limit;
     my_wip = $("#my-profile").data("wip").length;
-    if (my_wip == my_wip_limit){
+    if (my_wip >= my_wip_limit){
       return {"success":false,"error":"reach your wip_limit"}
     }
   }
@@ -253,7 +253,7 @@ function cardIsAccepted(card,sender,receiver){
   }
 
   /* Check pane's WIPLimit */
-  if (to_wip === to_wip_limit){
+  if (to_wip >= to_wip_limit){
     return {"success":false, "error":"Exeed wip_limit"};
   }
   return {"success":true,"error":"OK"};
