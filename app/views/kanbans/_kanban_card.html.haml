@@ -7,13 +7,20 @@
       = label_tag "Kanban State: "
       = select_tag "kanban_state_id", options_from_collection_for_select(@kanban_states, "id", "name")
     .newline
-      = label_tag "assigned to: "
+      = label_tag "Assigned to: "
       = select_tag "assignee_id", options_from_collection_for_select(@principals,"id", "name")
-    .newline
-      = label_tag "developer: "
+      = label_tag "Developer: "
       = select_tag "developer_id",  options_from_collection_for_select(@principals,"id", "name")
-      = label_tag "verifier"
+    .newline
+      = label_tag "Verifier: "
       = select_tag "verifier_id",  options_from_collection_for_select(@principals,"id", "name")
+      = label_tag "Start_date: "
+      = text_field_tag :start_date, " ", :size => 10, :type => "date"
+      = calendar_for(:start_date)
+    .newline
+      = label_tag "Due_date: "
+      = text_field_tag :due_date, " ", :size => 10, :type => "date"
+      = calendar_for(:due_date)
     .newline
       = label_tag "Keywords: "
       = text_field_tag "keyword"

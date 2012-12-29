@@ -25,7 +25,7 @@ function popupCard(fromPane,toPane,card,popup,event)
   popup.dialog({
     autoOpen: true,
     //modal: isModal,
-    width: "auto"
+    width: "auto",
   });
 }
 

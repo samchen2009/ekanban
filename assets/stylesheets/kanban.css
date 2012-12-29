@@ -2,7 +2,8 @@
     background-image: url("../images/icon-kanban.png");
 }
 
-table {height:600px;table-layout:fixed;width:100%}
+.ui-datepicker {z-index: 9999999 !important}
+table.kanban {height:600px;table-layout:fixed;width:100%}
 table.kanban td,th {border:1px solid #d7d7d7;}
 table.kanban td {vertical-align: top}
 table.kanban {border-collapse: collapse; width: 100%; margin: 10px 0 6px 0;border: 1px solid #d7d7d7;text-align:center}
