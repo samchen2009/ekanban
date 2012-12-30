@@ -57,6 +57,8 @@ function initPopupCard(popup,card,action,sender,receiver){
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
       // no move, set to 0 to skip update.
       popup.find("#kanban_pane_id").val(0);
+      popup.find("#start_date_").val(card.find("#start_date").val());
+      popup.find("#due_date_").val(card.find("#due_date").val());
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
@@ -71,6 +73,16 @@ function initPopupCard(popup,card,action,sender,receiver){
       }
       if (hasRole("validater")){
         card.find("#verifier_id").val(myUserID());
+      }
+      if (receiver.data("stage") == "Planed"){
+        var today = new Date();
+        var m = today.getMonth() + 1;
+        var d = today.getDate();
+        var y = today.getFullYear();
+        var date = y + '/' + (m < 10? '0':'') + m + '/' + (d < 10 ? '0':'') + (d);
+	popup.find("#start_date_").css("required",true);
+        popup.find("#start_date_").val(date);
+        popup.find("#due_date_").css("required",true);
       }
     }
     popup.find("select#assignee_id").val(card.find("#assignee_id").val());

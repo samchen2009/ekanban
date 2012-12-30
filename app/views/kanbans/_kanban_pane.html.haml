@@ -11,6 +11,8 @@
       = hidden_field_tag :developer_id, c.developer_id
       = hidden_field_tag :verifier_id, c.verifier_id
       = hidden_field_tag :subject, i.subject
+      = hidden_field_tag :start_date, i.start_date
+      = hidden_field_tag :due_date, i.due_date
       %span.tip{:style => "font-weight: normal; font-size:11px"}
         = link_to "##{i.id}", issue_path(i)
         = i.subject

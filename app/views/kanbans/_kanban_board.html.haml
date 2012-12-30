@@ -30,12 +30,9 @@
             %th{:id=>"state_#{name}"}=name
 
     %tr{:style=>"height:90%; overflow-y:auto"}
-      - puts panes 
       - panes.inject(0) do |i,pane|
         - if pane.kanban_state.is_closed == false
           %td.kanban-pane{:id=>"pane_#{pane.id}",:state_id=>"#{pane.kanban_state_id}",:role_id=>"#{pane.role_id}",:check_wip=>"#{pane.in_progress}"}
-            - puts pane.kanban_state.is_closed 
-            - puts pane.kanban_state.is_initial
             - if pane.kanban_state.is_initial == true 
               %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
             = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}

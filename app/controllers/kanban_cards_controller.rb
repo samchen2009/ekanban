@@ -36,6 +36,8 @@ class KanbanCardsController < ApplicationController
     @card.kanban_pane_id = params[:kanban_pane_id]  if params[:kanban_pane_id].to_i > 0
     @issue.status_id = params[:issue_status_id]
     @issue.assigned_to_id = params[:assignee_id]
+    @issue.start_date = params[:start_date_]
+    @issue.due_date = params[:due_date_]
 
     @saved = false
     begin
