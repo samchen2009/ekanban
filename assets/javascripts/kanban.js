@@ -89,27 +89,30 @@ function initCardJournals(card,sender,journals){
   for (i = panes.length; i > 0; i--){
     p = panes[i-1].kanban_pane;
     data = []
-    for (j = 0; j < journals.card_journals.length; j++){
-      journal = journals.card_journals[j];
-      if (journal.pane_id == p.id){
-        data.push({
-          from: journal.from,
-          to: journal.to,
-          label: spent_time(journal.from, journal.to),
-          customClass: "ganttGreen"});
+    var journal;
+      for (j = 0; j < journals.card_journals.length; j++){
+        journal = journals.card_journals[j];
+        if (journal.pane_id == p.id){
+          data.push({
+            from: journal.from,
+            to: journal.to,
+            label: spent_time(journal.from, journal.to),
+            customClass: "ganttGreen"});
+        }
       }
-    }
-    //current bar
-    if (sender.attr("id").match(/\d+$/)[0]  == p.id){
-      now = new Date();
-      data.push({
-        from: journal.to,
-        to: now.toString,
-        label: spent_time(journal.to, now.toString()),
-        customClass: "ganttRed"
-      });
-    }
-    json.push({name:p.name, desc:"", values:data});
+
+      //current bar
+      if (sender.attr("id").match(/\d+$/)[0]  == p.id){
+        now = new Date();
+        from = (journal === undefined)? new Date(card.find("#created_on").val()).toString() : journal.to;
+        data.push({
+          from: from,
+          to: now.toString(),
+          label: spent_time(from, now.toString()),
+          customClass: "ganttRed"
+        });
+      }
+      json.push({name:p.name, desc:"", values:data});
   }
   return json;
 }
@@ -157,7 +160,7 @@ function renderCardHistory(popup,card,sender,journals)
                     }
                 }
             });
-
+  $(".kanban-card-history").show();
 }
 
 
@@ -166,18 +169,6 @@ function renderPopupCard(popup,card,action,sender,receiver){
     popup.find("#card-form-header").html("<p>New Issue </p>").show();
   }else{
     var issue_id = card.attr("id");
-    if (card.data("journals") === undefined){
-      kanbanAjaxCall("get",
-                 "/kanban_apis/kanban_card_journals",{"issue_id":issue_id},
-                 function(data,result){
-                  if (result == 0){
-                    renderCardHistory(popup,card,sender,data)
-                    //console.debug(data);
-                  }
-                });
-    }else{
-      //renderCardHistory(popup,card,receiver,card.data('journals'));
-    }
     popup.find("#card_form_header").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
     if (action === "edit"){
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
@@ -186,6 +177,14 @@ function renderPopupCard(popup,card,action,sender,receiver){
       popup.find("#kanban_pane_id").val(0);
       popup.find("#start_date_").val(card.find("#start_date").val());
       popup.find("#due_date_").val(card.find("#due_date").val());
+      kanbanAjaxCall("get",
+                 "/kanban_apis/kanban_card_journals",{"issue_id":issue_id},
+                 function(data,result){
+                  if (result == 0){
+                    renderCardHistory(popup,card,sender,data)
+                    //console.debug(data);
+                  }
+                });
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
@@ -219,7 +218,6 @@ function renderPopupCard(popup,card,action,sender,receiver){
     popup.find("textarea").val("").focus(1);
     popup.find("#indication").hide();
   }
-
 }
 
 function init_wip(kanban_id,json){

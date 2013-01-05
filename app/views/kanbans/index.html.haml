@@ -25,7 +25,7 @@
 #kanban_boards
   = render :partial => "kanban_board", :collection => @kanbans, :as => :kanban
 
-#1popupWindow{:title => "Edit kanban card"}
+#popupWindow{:title => "Edit kanban card"}
   #popupWindowBody
     /= render :partial => "kanban_card"
   #popupWindowFoot
@@ -132,7 +132,7 @@
 
     $( document ).ready(function(){
       $(".kanban-card").bind("dblclick", function(){
-        popupCard($(this).parent(".kanban-pane"),null,$(this),$(this).closest(".kanban-board").find("#popupWindow"),"edit")
+        popupCard($(this).parent(".kanban-pane"),null,$(this),$("#popupWindow"),"edit")
       });
 
       $("#popupSubmit").click(function(){

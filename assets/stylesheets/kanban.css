@@ -151,7 +151,9 @@ table.kanban td#backlog {}
   margin: 1em;
 }
 
-
+.kanban-card-table{
+  table-layout:fixed;
+}
 
 td .kanban-card-form{
   vertical-align: top;
@@ -159,6 +161,7 @@ td .kanban-card-form{
 
 td .kanban-card-history {
   vertical-align: top;
+  display:none;
 }
 
 td .kanban-card-form select{

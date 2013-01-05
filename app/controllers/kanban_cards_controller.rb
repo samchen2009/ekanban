@@ -28,7 +28,6 @@ class KanbanCardsController < ApplicationController
   end
 
   def update
-    debugger
     @issue = Issue.find(params[:issue_id])
     @card = KanbanCard.find_by_issue_id(params[:issue_id])
     old_card = @card.dup
