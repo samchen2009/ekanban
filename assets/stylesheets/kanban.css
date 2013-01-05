@@ -132,7 +132,8 @@ table.kanban td#backlog {}
 #popupWindow{
   display:none;
   min-height:340;
-  min-width:560px;
+  width:100%;
+  height:100%;
   background:#FFFFFF;
   border:2px solid #cecece;
   z-index:2;
@@ -141,37 +142,60 @@ table.kanban td#backlog {}
   /*opacity: 0.2;*/
 }
 
-#popupWindowHeader{
+.popupWindowHeader{
   font-weight: bold;
-  margin: 20px
+  margin: 12px
 }
 
-#popupWindowBody{
+#CardForm{
   margin: 1em;
 }
 
-#popupWindowBody select{
-  width: 12em;
-  float: left;
-  text-align: left;
-  margin: 15px,4em,15px,2em;
-  padding: 2px;
+
+
+td .kanban-card-form{
+  vertical-align: top;
 }
 
-#popupWindowBody label{
+td .kanban-card-history {
+  vertical-align: top;
+}
+
+td .kanban-card-form select{
+  width: 8em;
+  float: left;
+  text-align: left;
+  margin: 4px !important;
+  padding: 2px;
+  vertical-align: top;
+}
+
+.kanban-card-form label{
   float:left;
   width: 8em;
   text-align: right;
-  margin: 15px,1em,15px,2em;
+  margin: 4px !important;
   padding: 2px;
 }
 
-#popupWindowBody textarea{
-  width: 32em;
+.kanban-card-form input{
+  margin: 4px;
+  width: 28em;
+}
+
+.kanban-card-form .hasDatepicker {
+  margin: 4px;
+  width: 14em;
+}
+
+.kanban-card-form textarea{
+  width: 28em;
   height: 12em;
+  margin: 4px;
 }
 
-.newline{
-  clear:both;
-}
+#popupSubmit input{width:auto;}
+.newline {clear:both;}
 
+td.kanban-card-form{width:auto;}
+td.kanban-card-history{width:auto;float:left;}

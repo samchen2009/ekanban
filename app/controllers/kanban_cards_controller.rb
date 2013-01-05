@@ -28,9 +28,11 @@ class KanbanCardsController < ApplicationController
   end
 
   def update
+    debugger
     @issue = Issue.find(params[:issue_id])
     @card = KanbanCard.find_by_issue_id(params[:issue_id])
-    @journal = @issue.init_journal(User.current, params[:comment][:notes])
+    old_card = @card.dup
+    journal = @issue.init_journal(User.current, params[:comment][:notes])
     @card.developer_id = params[:developer_id]
     @card.verifier_id = params[:verifier_id]
     @card.kanban_pane_id = params[:kanban_pane_id]  if params[:kanban_pane_id].to_i > 0
@@ -44,6 +46,8 @@ class KanbanCardsController < ApplicationController
       @saved = save_with_issues();
     rescue ActiveRecord::StaleObjectError
     end
+
+    KanbanCardJournal.create(old_card,@card,journal) if @save == true
 
   	respond_to do |format|
       format.json do

@@ -55,6 +55,16 @@ function getIssueWorkflow(){
                 });
 }
 
+function getIssueJournals(issue_id,callback){
+  kanbanAjaxCall("get",
+                 "/kanban_apis/issue_journals",{"issue_id":issue_id},
+                 function(data,result){
+                  if (result == 0){
+                    return data;
+                  }
+                });
+}
+
 function kanbanAjaxCall(type,url,params,callback){
   $.ajax({
       type: type,

@@ -125,6 +125,57 @@ class Issue < ActiveRecord::Base
     end
     {:conditions => conditions.join(' and ').to_a.concat(values)}
   }
+
+  validate :validate_kanban_card, :if => Proc.new{!self.new_record?}
+
+  def validate_kanban_card
+    # Validate
+      # 1. user's wip and permission(role).
+      # 2. corresponding pane.
+      # 3. ...
+    issue = self
+    card = KanbanCard.find_by_issue_id(issue.id)
+    assignee = issue.assigned_to
+    kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
+    #only apply to issue with kanban created.
+    return true if kanban.nil?
+
+    new_state = IssueStatusKanbanState.state_id(issue.status_id)
+    new_pane = KanbanPane.pane_by(new_state,kanban)
+    errors[:status_id] = "No Kanban Pane associated with Kanban State!" if new_pane.nil?
+
+    # Tracker changed.
+    if kanban.id != card.kanban_pane.kanban.id
+        old_state = new_state
+        old_pane  = new_pane
+    else
+        old_state = card.kanban_pane.kanban_state_id
+        old_pane  = card.kanban_pane
+    end
+    errors.add(:status_id, "Invalid transition from #{old_state} to #{new_state}") if !KanbanWorkflow.transition_allowed?(old_state,new_state)
+
+    if @attributes_before_change
+      before = @attributes_before_change["assigned_to_id"]
+      after = issue.assigned_to_id
+      if before != after and assignee.wip >= assignee.wip_limit and new_pane.in_progress == true
+        errors.add :wip_limit, "assignee #{assignee.alias} reached wip_limit already!"
+      end
+    end
+
+    #issue status change? - need to check pane's wip and wip limit
+    if !KanbanState.in_same_stage?(old_state, new_state)
+      if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
+        errors.add :status_id, "Invalid transition, destination kanban pane reach wip_limit #{new_pane.wip_limit_by_view()}"
+      end
+    end
+
+    #need to check the role (both user's and pane's)
+    if !new_pane.accept_user?(assignee)
+      errors.add :assigned_to_id, "Pane #{new_pane.id} #{new_pane.name} not accept #{assignee.alias}!"
+    end
+
+    #TODO: validate present of start_date and due_date if status is "accepted"
+  end
 end
 
 class User < Principal

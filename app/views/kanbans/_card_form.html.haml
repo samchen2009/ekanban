@@ -1,0 +1,37 @@
+#card_form_header.popupWindowHeader
+= labelled_fields_for "kanban_card" do |f|
+  .box.tabular
+    = form_tag( {:controller => "kanban_cards", :action => 'update'}, :remote => true, :method => :put, :id => 'kanban_card_form') do
+      .newline
+        = label_tag "Issue Status: "
+        = select_tag "issue_status_id", options_from_collection_for_select(@issue_statuss, "id", "name")
+      .newline
+        = label_tag "Kanban State: "
+        = select_tag "kanban_state_id", options_from_collection_for_select(@kanban_states, "id", "name")
+      .newline
+        = label_tag "Assigned to: "
+        = select_tag "assignee_id", options_from_collection_for_select(@principals,"id", "name")
+      .newline
+        = label_tag "Developer: "
+        = select_tag "developer_id",  options_from_collection_for_select(@principals,"id", "name")
+      .newline
+        = label_tag "Verifier: "
+        = select_tag "verifier_id",  options_from_collection_for_select(@principals,"id", "name")
+      .newline
+        = label_tag "Start_date: "
+        = text_field_tag :start_date_, " ", :size => 10, :type => "date"
+        = calendar_for(:start_date_)
+      .newline
+        = label_tag "Due_date: "
+        = text_field_tag :due_date_, " ", :size => 10, :type => "date"
+        = calendar_for(:due_date_)
+      /.newline
+      /= label_tag "Keywords: "
+      /= text_field_tag "keyword"
+      = hidden_field_tag :project_id, params[:project_id]
+      = hidden_field_tag :kanban_pane_id, 0
+      .newline
+        = label_tag "Comment:"
+        = text_area "comment", "notes"
+        = hidden_field_tag "issue_id", 0
+      .newline#popupSubmit{:style => "width:auto"}= submit_tag("Save")

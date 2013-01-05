@@ -16,6 +16,7 @@ RedmineApp::Application.routes.draw do
 
 	resources :kanban_stages
 
+	match 'kanban_apis/kanban_card_journals', :controller => 'kanban_apis', :action => 'kanban_card_journals', :via => :get
 	match 'kanban_apis/kanban_state_issue_status', :controller => 'kanban_apis', :action => 'kanban_state_issue_status', :via => :get
 	match 'kanban_apis/kanban_workflow', :controller => 'kanban_apis', :action => 'kanban_workflow', :via => :get
 	match 'kanban_apis/kanban_states', :controller => 'kanban_apis', :action => 'kanban_states', :via => :get
@@ -24,6 +25,7 @@ RedmineApp::Application.routes.draw do
 	match 'kanbans/setup', :controller => 'kanbans', :action => 'setup', :via => :get
 	match 'kanban_states/setup', :controller=>'kanban_states', :action => 'setup', :via => :get
 	match 'issue_status_kanban_states/update', :controller => 'issue_status_kanban_states', :action => "update", :via => :put
+
 
 	match 'kanbans/copy', :controller => 'kanbans', :action => "copy"
 end

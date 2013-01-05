@@ -1,41 +1,49 @@
-= stylesheet_link_tag 'kanban', :plugin => 'ekanban'
-= link_to l(:label_kanban_setup), edit_project_kanban_path(@project.id,kanban.id), :class => 'icon icon-setup', :style => 'float:right'
-= link_to l(:label_kanban_report), "kanban/show", :class => 'icon icon-report', :style => 'float:right'
-%h3{:style => "margin-top:20px"}= kanban.name
-- panes = controller.panes(kanban)
-- panes_num = panes.size
-%table.kanban{:id=>"kanban_#{kanban.id}"}
-  - if panes_num > 0
-    %tr{:style=>"height:30px"}
-      - stages = controller.stages(panes)
-      - stages.each do |s|
-        - if s.state_name.size == 1
-          %th{:id=>"stage_#{s.id}", :rowspan=>"2", :name=>s.state_name[0]}
-            .plain-text{:style => "width:80%;float:left"}
-              = s.name
-              %span.wip-text{:id => "wip_#{s.id}"}= " "
-            - if s.name.downcase == "backlog"
-              #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
-              #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
+.kanban-board
+  = stylesheet_link_tag 'kanban', :plugin => 'ekanban'
+  = link_to l(:label_kanban_setup), edit_project_kanban_path(@project.id,kanban.id), :class => 'icon icon-setup', :style => 'float:right'
+  = link_to l(:label_kanban_report), "kanban/show", :class => 'icon icon-report', :style => 'float:right'
+  %h3{:style => "margin-top:20px"}= kanban.name
+  - panes = controller.panes(kanban)
+  - panes_num = panes.size
+  %table.kanban{:id=>"kanban_#{kanban.id}"}
+    - if panes_num > 0
+      %tr{:style=>"height:30px"}
+        - stages = controller.stages(panes)
+        - stages.each do |s|
+          - if s.state_name.size == 1
+            %th{:id=>"stage_#{s.id}", :rowspan=>"2", :name=>s.state_name[0]}
+              .plain-text{:style => "width:80%;float:left"}
+                = s.name
+                %span.wip-text{:id => "wip_#{s.id}"}= " "
+              - if s.name.downcase == "backlog"
+                #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
+                #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
 
-              /.icon.icon-minus{:style=>"float:right"}
-        - else
-          %th{:id=>"stage_#{s.id}", :colspan=>"#{s.state_name.size}", :name=>s.name}
-            =s.name
-            %span.wip-text{:id => "wip_#{s.id}"}= "  "
-    %tr
-      - stages.each do |s|
-        - if s.state_name.size > 1
-          - s.state_name.each do |name|
-            %th{:id=>"state_#{name}"}=name
+                /.icon.icon-minus{:style=>"float:right"}
+          - else
+            %th{:id=>"stage_#{s.id}", :colspan=>"#{s.state_name.size}", :name=>s.name}
+              =s.name
+              %span.wip-text{:id => "wip_#{s.id}"}= "  "
+      %tr
+        - stages.each do |s|
+          - if s.state_name.size > 1
+            - s.state_name.each do |name|
+              %th{:id=>"state_#{name}"}=name
 
-    %tr{:style=>"height:90%; overflow-y:auto"}
-      - panes.inject(0) do |i,pane|
-        - if pane.kanban_state.is_closed == false
-          %td.kanban-pane{:id=>"pane_#{pane.id}",:state_id=>"#{pane.kanban_state_id}",:role_id=>"#{pane.role_id}",:check_wip=>"#{pane.in_progress}"}
-            - if pane.kanban_state.is_initial == true 
-              %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
-            = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}
+      %tr{:style=>"height:90%; overflow-y:auto"}
+        - panes.inject(0) do |i,pane|
+          - if pane.kanban_state.is_closed == false
+            %td.kanban-pane{:id=>"pane_#{pane.id}",:state_id=>"#{pane.kanban_state_id}",:role_id=>"#{pane.role_id}",:check_wip=>"#{pane.in_progress}"}
+              - if pane.kanban_state.is_initial == true 
+                %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
+              = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}
+
+  #popupWindow{:title => "Edit kanban card"}
+    .popupWindowBody
+      = render :partial => "kanban_card", :locals => {:kanban => kanban}
+    .popupWindowFoot
+  = content_tag "div", "", :id => "kanban-panes-data", :data => {:panes => panes.to_json}
+
 
 = javascript_include_tag "kanban", :plugin => :ekanban
 :javascript

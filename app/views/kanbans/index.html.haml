@@ -8,10 +8,12 @@
 
 / = javascript_include_tag 'kanban.js', :plugin => 'scrum2b' %>
 = stylesheet_link_tag 'kanban', :plugin => :ekanban
+= stylesheet_link_tag "jQuery-Gantt-style", :plugin => :ekanban
 = javascript_include_tag "jquery-1.8.2.js", :plugin => :ekanban
 /= stylesheet_link_tag "http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css"
 = stylesheet_link_tag "jquery-ui-1.9.2.css", :plugin => :ekanban
 = javascript_include_tag "jquery-ui-1.9.2.js", :plugin => :ekanban
+= javascript_include_tag "jquery.fn.gantt.js", :plugin => :ekanban
 = javascript_include_tag "select_list_move"
 = javascript_include_tag "kanban", :plugin => :ekanban
 = javascript_include_tag "kanban_api", :plugin => :ekanban
@@ -23,9 +25,9 @@
 #kanban_boards
   = render :partial => "kanban_board", :collection => @kanbans, :as => :kanban
 
-#popupWindow{:title => "Edit kanban card"}
+#1popupWindow{:title => "Edit kanban card"}
   #popupWindowBody
-    = render :partial => "kanban_card"
+    /= render :partial => "kanban_card"
   #popupWindowFoot
 
 / Get rails variables from templates.
@@ -65,7 +67,7 @@
           if (!confirm("Are you sure? Click 'OK' will update the moving to server")){
             ui.sender.sortable("cancel");
           }else{
-            var popup = $("#popupWindow");
+            var popup = $(this).closest(".kanban-board").find("#popupWindow");
             popupCard(ui.sender,$(this),ui.item,popup,"drop");
             updatePanesWip(ui.sender,$(this));
           }
@@ -130,7 +132,7 @@
 
     $( document ).ready(function(){
       $(".kanban-card").bind("dblclick", function(){
-        popupCard(null,null,$(this),$("#popupWindow"),"edit")
+        popupCard($(this).parent(".kanban-pane"),null,$(this),$(this).closest(".kanban-board").find("#popupWindow"),"edit")
       });
 
       $("#popupSubmit").click(function(){

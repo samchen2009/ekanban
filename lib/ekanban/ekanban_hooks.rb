@@ -12,7 +12,7 @@ module EKanban
  	  end
 
 
-    class ControllerIssuesEditBeforeSaveHook < Redmine::Hook::ViewListener
+    class ControllerIssuesSaveHook < Redmine::Hook::ViewListener
 
       def tracker_changed?(issue, card)
       	return card.kanban_pane.Kanban.tracker_id != issue.tracker_id
@@ -29,63 +29,54 @@ module EKanban
 
       def controller_issues_new_after_save(context={})
       	issue = context[:issue]
+        journal = context[:journal]
       	card = KanbanCard.new
       	kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
-      	#KanbanCard.transaction do
-      		saved = false;
-      		if kanban.nil?
-      			saved = false
-      			kanban = create_kanban_from_issue(issue)
-      			if !kanban.save()
-      				Redmine::Rollback()
-      				return false
-      			end
-      		end
+        return true if kanban.nil?
+        pane = KanbanPane.find_by_kanban_id(kanban.id)
+     		if pane.nil?
+     			#by default add a backlog pane.
+     			pane = KanbanPane.new()
+     			pane.kanban_id = kanban.id
+          backlog = KanbanState.find_by_name("Backlog")
+     			pane.kanban_state_id = backlog.id
+     			pane.wip_limit = 999
+     			pane.wip_limit_auto = false;
+     			pane.role_id = 1 #anonymous
+     			pane.in_progress = false
+     			if !pane.save()
+     				Redmine::Rollback()
+     				return false
+     			end
+     		end
 
-      		pane = KanbanPane.find_by_kanban_id(kanban.id)
+     		card.kanban_pane_id = pane.id
+     		card.issue_id = issue.id
+     		card.developer_id = issue.assigned_to_id
+     		card.verifier_id = issue.assigned_to_id
 
-      		if pane.nil?
-      			#by default add a backlog pane.
-      			pane = KanbanPane.new()
-      			pane.kanban_id = kanban.id
-      			pane.kanban_state_id = 1
-      			pane.wip_limit = 999
-      			pane.wip_limit_auto = false;
-      			pane.role_id = 1 #anonymous
-      			pane.in_progress = false
-      			if !pane.save()
-      				Redmine::Rollback()
-      				return false
-      			end
-      		end
-
-      		card.kanban_pane_id = pane.id
-      		card.issue_id = issue.id
-      		card.developer_id = issue.assigned_to_id
-      		card.verifier_id = issue.assigned_to_id
-
-      		if !card.save()
-      			Redmine::Rollback()
-      			return false
-      		end
-      	#end
+     		if !card.save()
+     			Redmine::Rollback()
+     			return false
+        else
+          KanbanCardJournal.build(nil,card,journal)
+     		end
       	true
       end
 
-      def controller_issues_edit_before_save(context={})
-
-       	# Check
-       	# 1. user's wip and permission(role).
-       	# 2. corresponding pane.
-       	# 3. ...
+      # This callback will be invoked from issue's update action when user update issue from "issues"
+      # Issue updated from Kanban will go though anothe path, kanban_card's update action.
+      def controller_issues_edit_after_save(context={})
+       	# Assume the validation has been done in the validate callback
        	issue = context[:issue]
        	card = KanbanCard.find_by_issue_id(issue.id)
+        old_card = card.dup
        	assignee = issue.assigned_to
         new_state = IssueStatusKanbanState.state_id(issue.status_id)
         kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
-        return false if kanban.nil?
+        return true if kanban.nil?
         new_pane = KanbanPane.pane_by(new_state,kanban)
         return flase if new_pane.nil?
 
@@ -97,68 +88,24 @@ module EKanban
             old_state = card.kanban_pane.kanban_state_id
             old_pane  = card.kanban_pane
         end
-        debugger
-	return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
+        return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
 
-	developer = card.developer
-	verifier  = card.verifier
-	pre_assignee = developer.has_role?(old_pane.role_id,issue.project) ? developer : verifier
+        journal = context[:journal]
+        detail = journal.details.detect {|x| x.prop_key == "assigned_to_id"}
 
-        #assignee changed? - need to check user wip
-    	if (pre_assignee.id != assignee.id)
-    	# change from developer to verifier?
-	     	if assignee.wip >= assignee.wip_limit
-    			puts "assignee #{assignee.alias} reached wip_limit already!"
-    				return false
-    			end
-    		end
-
-    		#issue status change? - need to check pane's wip and wip limit
-    		if !KanbanState.in_same_stage?(old_state, new_state)
-    			if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
-    				puts "Pane #{new_pane.id} #{new_pane.name} reached wip_limit already!"
-    				return false
-    			end
-    		end
-
-    		final_assignee = nil
-    		#need to check the wip_limit (both user's and pane's)
-    		if !new_pane.accept_user?(assignee)
-    			puts "Pane #{new_pane.id} #{new_pane.name} not accept #{assignee.alias}!"
-    			if (assignee.id != developer.id) and (assignee.id != verifier.id)
-    				puts "Assignee is new, rejected!"
-    				return false
-    			else
-    				if (assignee.id == developer.id)
-    					if !new_pane.accept_user?(verifier)
-    						puts "assignee is developer, verifier #{verifier.alias} not accept"
-    						return false
-    					end
-    					final_assignee = verifier
-    				else
-    					if !new_pane.accept_user?(developer)
-    						puts "assignee is verifier, check developer"
-    						return false
-    					end
-    					final_assignee = developer
-    				end
-    			end
-    		else
-    			#new assignee accpeted. change verifier or developoer.
-    			final_assignee = assignee
-    			developer = final_assignee if assignee.has_role?("Developer", issue.project)
-    			verifier  = final_assignee if assignee.has_role?("Verifier", issue.project)
-    		end
-
-    		#issue update.
-    		issue.assigned_to_id = final_assignee.id
+        #Assignee changed
+        if !detail.nil?
+          old_assignee = detail.old_value;
+          card.developer_id = assignee.id if assignee.has_role?("Developer", issue.project)
+          card.verifier_id  = assignee.id if assignee.has_role?("Verifier", issue.project)
+        end
 
     		#kanban card update
-    		card.developer_id = developer.id
-    		card.verifier_id = verifier.id
     		card.kanban_pane_id = new_pane.id
 
-    		return card.save!
+        if card.save
+          KanbanCardJournal.build(old_card,card,journal)
+        end
       end
     end
   end

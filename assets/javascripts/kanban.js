@@ -17,15 +17,15 @@ function updateWip(wip,wip_limit,stage){
 /* Popup window */
 function popupCard(fromPane,toPane,card,popup,event)
 {
-  initPopupCard(popup,card,event,fromPane,toPane);
-  //$.blockUI({
-  //  message: $("#popupWindow")
-  //});
+  renderPopupCard(popup,card,event,fromPane,toPane);
   var isModal = (event == "drop")? true : false;
+  var w = (event == "drop")? "auto" : "1024px";
+  var h = (event == "drop")? "auto" : "720px";
   popup.dialog({
     autoOpen: true,
     //modal: isModal,
-    width: "auto",
+    width: w,
+    //height: h,
   });
 }
 
@@ -33,8 +33,7 @@ function popupCard(fromPane,toPane,card,popup,event)
 function updateCard(popup,card,sender,receiver){
 }
 
-function kanbanStateToIssueStatus(state_id)
-{
+function kanbanStateToIssueStatus(state_id){
   var issue_status_id = 9999;
   var t = $("#kanban-data").data("kanban_state_issue_status").kanban_state_issue_status;
   for (i = 0; i < t.length; i++){
@@ -46,12 +45,140 @@ function kanbanStateToIssueStatus(state_id)
   return issue_status_id;
 }
 
-function initPopupCard(popup,card,action,sender,receiver){
+function filterJournals(journals){
+  prop_keys = ["priority_id", "fixed_version_id", "done_ratio"];
+
+  for (i = journals.length; i > 0; i--){
+    journal = journals[i-1];
+    for (j = journal.details.length; j > 0; j--){
+      detail = journal.details[j-1];
+      if ($.inArray(detail.journal_detail.prop_key, prop_keys) == -1){
+        console.debug()
+        journal.details.splice(j-1,1);
+      }
+    }
+    if (journal.details.length == 0 && journal.note == ""){
+      journals.splice(i-1,1);
+    }
+
+  }
+}
+
+function spent_time(from,to){
+  var msPerMin  = 60*1000;
+  var msPerHour = 3600 * 1000;
+  var msPerDay = 24*msPerHour;
+  ms = new Date(to) - new Date(from);
+  if (ms < msPerHour){
+    str = Math.round(ms/msPerMin).toString() + "M";
+  }else if (ms < msPerDay){
+    str = Math.round(ms/msPerHour).toString() + "H";
+  }else{
+    str = Math.round(ms/msPerDay).toString() + "D";
+  }
+  return str;
+}
+
+
+function initCardJournals(card,sender,journals){
+  filterJournals(journals.issue_journals);
+  card.data("journals",journals);
+  panes = $("#kanban-panes-data").data("panes");
+
+  var json = [];
+  for (i = panes.length; i > 0; i--){
+    p = panes[i-1].kanban_pane;
+    data = []
+    for (j = 0; j < journals.card_journals.length; j++){
+      journal = journals.card_journals[j];
+      if (journal.pane_id == p.id){
+        data.push({
+          from: journal.from,
+          to: journal.to,
+          label: spent_time(journal.from, journal.to),
+          customClass: "ganttGreen"});
+      }
+    }
+    //current bar
+    if (sender.attr("id").match(/\d+$/)[0]  == p.id){
+      now = new Date();
+      data.push({
+        from: journal.to,
+        to: now.toString,
+        label: spent_time(journal.to, now.toString()),
+        customClass: "ganttRed"
+      });
+    }
+    json.push({name:p.name, desc:"", values:data});
+  }
+  return json;
+}
+
+/*TODO: take UTC into account */
+function renderCardHistory(popup,card,sender,journals)
+{
+  json = initCardJournals(card,sender, journals);
+
+  var msPerHour = 3600*1000;
+  var msPerDay = 24*msPerHour;
+  var msPerWeek = 7*msPerDay;
+  var msPerMonth = 30*msPerDay;
+
+  started_at = new Date(card.find("#start_date").val());
+  due_at = new Date(card.find("#due_date").val());
+  today = new Date();
+  created_at = new Date(card.find("#created_on").val());
+
+  total_elapsed = today - created_at;
+  if (total_elapsed < 1*msPerDay){
+    scale = "hours";
+  }else if (total_elapsed <= 12*msPerMonth){
+    scale = "days";
+  }else{
+    scale = "weeks";
+  }
+
+  $("#card_history.gantt").gantt({
+                source:json,
+                navigate: "scroll",
+                scale: scale,
+                //maxScale: scales[1],
+                //minScale: scales[0],
+                itemsPerPage: 10,
+                onItemClick: function(data) {
+                    alert("Item clicked - show some details");
+                },
+                onAddClick: function(dt, rowId) {
+                    alert("Empty space clicked - add an item!");
+                },
+                onRender: function() {
+                    if (window.console && typeof console.log === "function") {
+                        console.log("chart rendered");
+                    }
+                }
+            });
+
+}
+
+
+function renderPopupCard(popup,card,action,sender,receiver){
   if (action === "new"){
-    popup.find("#popupWindowHeader").html("<p>New Issue </p>").show();
+    popup.find("#card-form-header").html("<p>New Issue </p>").show();
   }else{
     var issue_id = card.attr("id");
-    popup.find("#popupWindowHeader").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
+    if (card.data("journals") === undefined){
+      kanbanAjaxCall("get",
+                 "/kanban_apis/kanban_card_journals",{"issue_id":issue_id},
+                 function(data,result){
+                  if (result == 0){
+                    renderCardHistory(popup,card,sender,data)
+                    //console.debug(data);
+                  }
+                });
+    }else{
+      //renderCardHistory(popup,card,receiver,card.data('journals'));
+    }
+    popup.find("#card_form_header").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
     if (action === "edit"){
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
@@ -80,7 +207,7 @@ function initPopupCard(popup,card,action,sender,receiver){
         var d = today.getDate();
         var y = today.getFullYear();
         var date = y + '/' + (m < 10? '0':'') + m + '/' + (d < 10 ? '0':'') + (d);
-	popup.find("#start_date_").css("required",true);
+        popup.find("#start_date_").css("required",true);
         popup.find("#start_date_").val(date);
         popup.find("#due_date_").css("required",true);
       }
@@ -92,6 +219,7 @@ function initPopupCard(popup,card,action,sender,receiver){
     popup.find("textarea").val("").focus(1);
     popup.find("#indication").hide();
   }
+
 }
 
 function init_wip(kanban_id,json){
@@ -134,12 +262,6 @@ function updatePanesWip(sender, receiver){
      sender.data("wip",from_wip);
      receiver.data("wip",to_wip);
    }
-}
-
-//SETTING UP OUR POPUP
-//0 means disabled; 1 means enabled;
-function createPopupCard(card){
-	$("#PopupWindowBody").html("<p> Comming soon </p>");
 }
 
 

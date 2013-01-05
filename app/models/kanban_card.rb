@@ -4,6 +4,8 @@ class KanbanCard < ActiveRecord::Base
   belongs_to :developer, :class_name => :User
   belongs_to :verifier,  :class_name => :User
   belongs_to :kanban_pane, :class_name => :KanbanPane
+  has_many :issue_journals, :through => "issue"
+  has_many :kanban_card_journals
 
   scope :by_group, lambda {|group|
     return if group.nil?
