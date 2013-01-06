@@ -166,12 +166,12 @@
 }
 
 .fn-gantt-hint {
-    border: 5px solid #edc332;
+    border: 1px solid #edc332;
     background-color: #fff5d4;
     padding: 10px;
     position: absolute;
     display: none;
-    z-index: 11;
+    z-index: 111111111;
         -webkit-border-radius: 4px;
         -moz-border-radius: 4px;
         border-radius: 4px;
@@ -184,6 +184,7 @@
     position: absolute;
     z-index: 10;
     text-align: center;
+    border: 1px;
         -webkit-box-shadow: 0 0 1px rgba(0,0,0,0.25) inset;
         -moz-box-shadow: 0 0 1px rgba(0,0,0,0.25) inset;
         box-shadow: 0 0 1px rgba(0,0,0,0.25) inset;

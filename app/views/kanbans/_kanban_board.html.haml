@@ -38,10 +38,7 @@
                 %input#search-input.small{:type=>"text",:style=>"display:none;width:90%;margin:0px;align:center"}
               = render :partial => "kanban_pane", :locals=>{:kanban_id => kanban.id, :pane_id => pane.id}
 
-  #popupWindow{:title => "Edit kanban card"}
-    .popupWindowBody
-      = render :partial => "kanban_card", :locals => {:kanban => kanban}
-    .popupWindowFoot
+  
   = content_tag "div", "", :id => "kanban-panes-data", :data => {:panes => panes.to_json}
 
 

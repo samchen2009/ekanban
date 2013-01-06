@@ -51,7 +51,7 @@ class KanbanCard < ActiveRecord::Base
 
   scope :open, lambda {|*args|
     is_closed = args.size > 0 ? !args.first : false
-    is_closed_id = IssueStatus.closed_id; 
+    is_closed_id = IssueStatus.closed_id;
     {:conditions => ["#{Issue.table_name}.status_id #{is_closed ? "" : "!"}= ?", is_closed_id], :include => [:issue]}
   }
 

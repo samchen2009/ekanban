@@ -88,7 +88,7 @@ module EKanban
             old_state = card.kanban_pane.kanban_state_id
             old_pane  = card.kanban_pane
         end
-        return false if !KanbanWorkflow.transition_allowed?(old_state,new_state)
+        return false if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
 
         journal = context[:journal]
         detail = journal.details.detect {|x| x.prop_key == "assigned_to_id"}

@@ -1,8 +1,8 @@
 .contextual
   %span Your current wip:
-  = link_to "#{User.current.wip} ", my_page_path()
+  = link_to "#{User.current.wip} ", my_page_path(), :id => "my-wip"
   %span  Limit:
-  = link_to "#{User.current.wip_limit} ", edit_user_path(User.current.id)
+  = link_to "#{User.current.wip_limit} ", edit_user_path(User.current.id), :id => "my-wip-limit"
   = link_to l(:label_kanban_new), new_project_kanban_path(@project.id), :class => 'icon icon-add'
 %h2 Kanbans
 
@@ -27,7 +27,7 @@
 
 #popupWindow{:title => "Edit kanban card"}
   #popupWindowBody
-    /= render :partial => "kanban_card"
+    = render :partial => "kanban_card"
   #popupWindowFoot
 
 / Get rails variables from templates.
@@ -63,11 +63,10 @@
         if (!ui.item.hasClass('acceptable')){
           ui.sender.sortable("cancel");
         }else{
-
           if (!confirm("Are you sure? Click 'OK' will update the moving to server")){
             ui.sender.sortable("cancel");
           }else{
-            var popup = $(this).closest(".kanban-board").find("#popupWindow");
+            var popup = $("#popupWindow");
             popupCard(ui.sender,$(this),ui.item,popup,"drop");
             updatePanesWip(ui.sender,$(this));
           }

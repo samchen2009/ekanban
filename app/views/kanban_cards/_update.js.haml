@@ -1,7 +1,12 @@
+$("#ajax-indicator").hide();
 - if @saved
-  $("#ajax-indicator").hide();
   :plain
     $("#popupWindow").dialog("close");
+    getUserWipAndLimit($("#my-profile").data("user").user.id);
+    $("#popupWindow").find("#errorExplanation").hide();
+    $("#popupWindow").find("#errorExplanation").text("");
+    $("#{@issue.id}").appendTo($("pane_#{@card.kanban_pane_id}"));
 - else
   :plain
-    $("#popupWindow").find("#indication").css("color","red").css("float","right").text("error! #{errors}").show();
+    $("#popupWindow").find("#errorExplanation").text(" Commit failed, please check with system admin!")
+    $("#popupWindow").find("#errorExplanation").show();

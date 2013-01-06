@@ -152,8 +152,9 @@ class Issue < ActiveRecord::Base
         old_state = card.kanban_pane.kanban_state_id
         old_pane  = card.kanban_pane
     end
-    errors.add(:status_id, "Invalid transition from #{old_state} to #{new_state}") if !KanbanWorkflow.transition_allowed?(old_state,new_state)
+    errors.add(:status_id, "Invalid transition from #{old_state} to #{new_state}") if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
 
+    #assignee changed?
     if @attributes_before_change
       before = @attributes_before_change["assigned_to_id"]
       after = issue.assigned_to_id
@@ -167,12 +168,17 @@ class Issue < ActiveRecord::Base
       if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
         errors.add :status_id, "Invalid transition, destination kanban pane reach wip_limit #{new_pane.wip_limit_by_view()}"
       end
+
+      if assignee.wip >= assignee.wip_limit  and  new_pane.in_progress == true
+        errors.add :wip_limit, "assignee #{assignee.alias} reached wip_limit already!"
+      end
     end
 
     #need to check the role (both user's and pane's)
     if !new_pane.accept_user?(assignee)
       errors.add :assigned_to_id, "Pane #{new_pane.id} #{new_pane.name} not accept #{assignee.alias}!"
     end
+    puts errors if errors.full_messages.any?
 
     #TODO: validate present of start_date and due_date if status is "accepted"
   end

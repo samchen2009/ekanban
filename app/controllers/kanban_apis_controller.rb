@@ -55,6 +55,22 @@ class KanbanApisController < ApplicationController
 		render :json => {:wip => wip, :wip_limit => wip_limit}
 	end
 
+	def detail_to_desc(journal)
+		prop_keys = ["status_id","priority_id", "fixed_version_id", "done_ratio","category_id","assigned_to_id"]
+		actions = ['Set','Changed',"Set","",'Set', 'Change']
+		classes = ["IssueStatus", "Enumeration","Version", "","IssueCategory", "User"]
+		desc = ""
+		journal.details.each do |d|
+			index = prop_keys.index(d.prop_key)
+			next if index.nil?
+			old_value = classes[index] == "" ?  d.old_value : d.old_value.nil? ? "null" : eval(classes[index]).find(d.old_value).name
+			new_value = classes[index] == "" ?  d.value : d.value.nil? ? "null" : eval(classes[index]).find(d.value).name
+			#desc += "  #{actions[index]} #{prop_keys[index].split("_id")[0]} from '#{old_value}' to '#{new_value}'<br/>"
+			desc += "  <strong>* #{prop_keys[index].split("_id")[0]}:</strong> '#{old_value}'  ->  '#{new_value}'<br/>"
+		end
+		desc
+	end
+
     #Json format
     #  : => {pane:(id), from:(datetime), to:(datetime), assignee:(name)}
     #    :details => [{note:, prop_key: ("priority_id", "fixed_version_id", "done_ratio"),:old_value, :new_value}]
@@ -75,6 +91,7 @@ class KanbanApisController < ApplicationController
 				if (!started)
 				  start[:from] = j.created_at.utc.strftime("%Y/%m/%d %H:%M:%S UTC")
 				  start[:journal_id] = j.issue_journal_id
+				  start[:author] = {:id => issue.author.id, :name => issue.author.alias, :email => issue.author.mail}
 				else
 				  start[:to] = j.created_at.utc.strftime("%Y/%m/%d %H:%M:%S UTC")
 				  puts "collect: #{start[:from]} - #{start[:to]}, pand:#{start[:pane_id]}"
@@ -104,12 +121,16 @@ class KanbanApisController < ApplicationController
 				start[:from] = start[:to] if started
 			end
 		end
+		if (card.kanban_card_journals.size > 0)
+			start[:to] = Time.now.utc.strftime("%Y/%m/%d %H:%M:%S UTC")
+			card_journals << start
+		end
 
 		issue_journals = []
 		issue.journals.each do |j|
-			j.created_on = j.created_on.strftime("%Y/%m/%d %H:%M:%S UTC")
+			desc = detail_to_desc(j)
 			issue_journals << {
-				:journal => j, :details => j.details
+				:journal => j, :details => j.details, :desc => desc, :author => User.find(j.user_id).alias
 			}
 		end
 		render :json => {:card_journals => card_journals,:issue_journals => issue_journals}

@@ -7,6 +7,9 @@ function getUserWipAndLimit(user_id){
                     if (result == 0){
                       $("#my-profile").data("user").wip_limit = data.wip_limit;
                       $("#my-profile").data("wip",data.wip);
+                      $("a#my-wip").text(data.wip.length);
+                      $("a#my-wip-limit").text(data.wip_limit);
+                      return data;
                     }else{
                       return undefined;
                     }

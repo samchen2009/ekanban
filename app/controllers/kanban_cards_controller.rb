@@ -19,22 +19,21 @@ class KanbanCardsController < ApplicationController
   def save_with_issues()
     Issue.transaction do
       # TODO: Rename hook
-      if ( !@card.save || !@issue.save || !@journal.save)
-        raise ActiveRecord::Rollback
-        return false
-      end
+      #must save @issue first, otherwise, the wip check will failed.
+      return @card.save && @journal.save if @issue.save
     end
-    true
+    false
   end
 
   def update
     @issue = Issue.find(params[:issue_id])
     @card = KanbanCard.find_by_issue_id(params[:issue_id])
     old_card = @card.dup
-    journal = @issue.init_journal(User.current, params[:comment][:notes])
+    @journal = @issue.init_journal(User.current, params[:comment][:notes])
     @card.developer_id = params[:developer_id]
     @card.verifier_id = params[:verifier_id]
-    @card.kanban_pane_id = params[:kanban_pane_id]  if params[:kanban_pane_id].to_i > 0
+    pane = KanbanPane.find_by_kanban_id_and_kanban_state_id(@card.kanban_pane.kanban.id, params[:kanban_state_id])
+    @card.kanban_pane_id = pane.id
     @issue.status_id = params[:issue_status_id]
     @issue.assigned_to_id = params[:assignee_id]
     @issue.start_date = params[:start_date_]
@@ -45,8 +44,7 @@ class KanbanCardsController < ApplicationController
       @saved = save_with_issues();
     rescue ActiveRecord::StaleObjectError
     end
-
-    KanbanCardJournal.create(old_card,@card,journal) if @save == true
+    KanbanCardJournal.build(old_card,@card,@journal) if @saved == true
 
   	respond_to do |format|
       format.json do
@@ -58,7 +56,7 @@ class KanbanCardsController < ApplicationController
         end
       end
       format.js do
-        render :partial => "update", :locals => {"errors" => "unknown"}
+        render :partial => "update", :locals => {"errors" => "Error! Please check with admin!"}
       end
     end
   end

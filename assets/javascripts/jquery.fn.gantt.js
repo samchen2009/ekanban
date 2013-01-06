@@ -1581,7 +1581,9 @@
                 //return eval("new" + dateStr.replace(/\//g, " "));
                 //var date = eval("new" + dateStr.replace(/\//g, " "));
                 //return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes());
-                return new Date(dateStr);
+                /* Modified by samchen2009@gmail.com to accept rails's time string, dateStr here is UTC time */
+                var d = new Date(dateStr);
+                return isNaN(d.getTime()) ? new Date() : d;
             },
 
             // Generate an id for a date

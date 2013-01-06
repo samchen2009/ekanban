@@ -19,8 +19,9 @@ function popupCard(fromPane,toPane,card,popup,event)
 {
   renderPopupCard(popup,card,event,fromPane,toPane);
   var isModal = (event == "drop")? true : false;
-  var w = (event == "drop")? "auto" : "1024px";
-  var h = (event == "drop")? "auto" : "720px";
+  //var w = (event == "drop")? "auto" : "1024px";
+  //var h = (event == "drop")? "auto" : "720px";
+  var w = "1024px";
   popup.dialog({
     autoOpen: true,
     //modal: isModal,
@@ -36,7 +37,7 @@ function updateCard(popup,card,sender,receiver){
 function kanbanStateToIssueStatus(state_id){
   var issue_status_id = 9999;
   var t = $("#kanban-data").data("kanban_state_issue_status").kanban_state_issue_status;
-  for (i = 0; i < t.length; i++){
+  for (var i = 0; i < t.length; i++){
     if (t[i].issue_status_kanban_state.kanban_state_id == state_id){
       issue_status_id = t[i].issue_status_kanban_state.issue_status_id;
       break;
@@ -45,15 +46,27 @@ function kanbanStateToIssueStatus(state_id){
   return issue_status_id;
 }
 
-function filterJournals(journals){
-  prop_keys = ["priority_id", "fixed_version_id", "done_ratio"];
+function issueStatusToKanbanState(status_id){
+  var kanban_state_id = 9999;
+  var t = $("#kanban-data").data("kanban_state_issue_status").kanban_state_issue_status;
+  for (var i = 0; i < t.length; i++){
+    if (t[i].issue_status_kanban_state.issue_status_id == status_id){
+      kanban_state_id = t[i].issue_status_kanban_state.kanban_state_id;
+      break;
+    }
+  }
+  return kanban_state_id;
+}
 
-  for (i = journals.length; i > 0; i--){
+function filterJournals(journals){
+  prop_keys = ["priority_id", "fixed_version_id", "done_ratio", "assigned_to_id"];
+
+  for (var i = journals.length; i > 0; i--){
     journal = journals[i-1];
-    for (j = journal.details.length; j > 0; j--){
+    journal.journal.journal.created_on = journal.journal.journal.created_on.replace(/\-/g,"\/").replace(/Z/g," ").replace(/T/g," ") + " UTC";
+    for (var j = journal.details.length; j > 0; j--){
       detail = journal.details[j-1];
       if ($.inArray(detail.journal_detail.prop_key, prop_keys) == -1){
-        console.debug()
         journal.details.splice(j-1,1);
       }
     }
@@ -79,40 +92,66 @@ function spent_time(from,to){
   return str;
 }
 
+function cardHint(card,card_journal, journals){
+  var id = card_journal.journal_id;
+
+  var desc = ""
+
+  if (id == 0){
+    var author = card_journal.author.name;
+    desc = "Created by <strong>" + author + "</strong> at " + card_journal.from + "<br/>" + " <strong>Developer: </strong>" + card_journal.developer.name + " <strong>Verifier:</strong>" + card_journal.verifier.name + "<br/>";
+  }
+
+  for (var j in journals){
+    var journal = journals[j].journal.journal;
+    if (journal.id == id){
+      var author = journals[j].author;
+      var note = journal.notes;
+      var desc = journals[j].desc;
+      var at = journal.created_on;
+      desc = "<strong>"+ author + "</strong> wrote:<br>" + " '" + note + "'<br/>" + "<br/>" + desc + "<br/>" + "at " + at;
+    }
+  }
+  return desc.replace(/\n/g, "<br />");;
+}
+
 
 function initCardJournals(card,sender,journals){
   filterJournals(journals.issue_journals);
   card.data("journals",journals);
-  panes = $("#kanban-panes-data").data("panes");
+  var panes = $("#kanban-panes-data").data("panes");
 
   var json = [];
-  for (i = panes.length; i > 0; i--){
-    p = panes[i-1].kanban_pane;
-    data = []
+  for (var i = panes.length; i > 0; i--){
+    var p = panes[i-1].kanban_pane;
+    var data = []
     var journal;
-      for (j = 0; j < journals.card_journals.length; j++){
+
+    if (journals.card_journals.length == 0 && sender.attr("id").match(/\d+$/)[0]  == p.id){
+      var now = new Date();
+      var from = new Date(card.find("#created_on").val()).toString();
+      data.push({
+        from: from,
+        to: now.toString(),
+        label: spent_time(from, now.toString()),
+        customClass: "ganttRed",
+        desc: "No journal",
+      });
+    }else{
+      for (var j = 0; j < journals.card_journals.length; j++){
         journal = journals.card_journals[j];
         if (journal.pane_id == p.id){
           data.push({
             from: journal.from,
             to: journal.to,
             label: spent_time(journal.from, journal.to),
-            customClass: "ganttGreen"});
+            customClass: "ganttGreen",
+            desc: cardHint(card,journal,journals.issue_journals),
+          });
         }
       }
-
-      //current bar
-      if (sender.attr("id").match(/\d+$/)[0]  == p.id){
-        now = new Date();
-        from = (journal === undefined)? new Date(card.find("#created_on").val()).toString() : journal.to;
-        data.push({
-          from: from,
-          to: now.toString(),
-          label: spent_time(from, now.toString()),
-          customClass: "ganttRed"
-        });
-      }
-      json.push({name:p.name, desc:"", values:data});
+    }
+    json.push({name:p.name, desc:"", values:data});
   }
   return json;
 }
@@ -120,19 +159,20 @@ function initCardJournals(card,sender,journals){
 /*TODO: take UTC into account */
 function renderCardHistory(popup,card,sender,journals)
 {
-  json = initCardJournals(card,sender, journals);
+  var json = initCardJournals(card,sender, journals);
 
   var msPerHour = 3600*1000;
   var msPerDay = 24*msPerHour;
   var msPerWeek = 7*msPerDay;
   var msPerMonth = 30*msPerDay;
 
-  started_at = new Date(card.find("#start_date").val());
-  due_at = new Date(card.find("#due_date").val());
-  today = new Date();
-  created_at = new Date(card.find("#created_on").val());
+  var started_at = new Date(card.find("#start_date").val());
+  var due_at = new Date(card.find("#due_date").val());
+  var today = new Date();
+  var created_at = new Date(card.find("#created_on").val());
 
-  total_elapsed = today - created_at;
+  var total_elapsed = today - created_at;
+  var scale;
   if (total_elapsed < 1*msPerDay){
     scale = "hours";
   }else if (total_elapsed <= 12*msPerMonth){
@@ -163,28 +203,43 @@ function renderCardHistory(popup,card,sender,journals)
   $(".kanban-card-history").show();
 }
 
+function status_state_change(element){
+  value = element.val();
+  id = element.attr("id");
+  if (id == "kanban_state_id"){
+    var el = $("#popupWindow").find("#issue_status_id");
+    el.val(kanbanStateToIssueStatus(value));
+  }else if (id == "issue_status_id"){
+    var el = $("#popupWindow").find("#kanban_state_id");
+    el.val(issueStatusToKanbanState(value));
+  }
+}
 
 function renderPopupCard(popup,card,action,sender,receiver){
+  $("#popupWindow").find("#errorExplanation").text("").hide();
+  $("#popupWindow").find("#kanban_state_id").bind("change", function(){
+      status_state_change($(this));
+  });
+  $("#popupWindow").find("#issue_status_id").bind("change", function(){
+      status_state_change($(this));
+  });
   if (action === "new"){
     popup.find("#card-form-header").html("<p>New Issue </p>").show();
   }else{
     var issue_id = card.attr("id");
+    kanbanAjaxCall("get",
+                 "/kanban_apis/kanban_card_journals",{"issue_id":issue_id},
+                 function(data,result){
+                  if (result == 0){
+                    renderCardHistory(popup,card,sender,data)
+                    //console.debug(data);
+                  }});
     popup.find("#card_form_header").html("<a href='/issues/" + issue_id + "'>#" +  issue_id +"</a>" + ": " + card.find("#subject").val()).show();
     if (action === "edit"){
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
       // no move, set to 0 to skip update.
       popup.find("#kanban_pane_id").val(0);
-      popup.find("#start_date_").val(card.find("#start_date").val());
-      popup.find("#due_date_").val(card.find("#due_date").val());
-      kanbanAjaxCall("get",
-                 "/kanban_apis/kanban_card_journals",{"issue_id":issue_id},
-                 function(data,result){
-                  if (result == 0){
-                    renderCardHistory(popup,card,sender,data)
-                    //console.debug(data);
-                  }
-                });
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
@@ -200,17 +255,31 @@ function renderPopupCard(popup,card,action,sender,receiver){
       if (hasRole("validater")){
         card.find("#verifier_id").val(myUserID());
       }
-      if (receiver.data("stage") == "Planed"){
-        var today = new Date();
-        var m = today.getMonth() + 1;
-        var d = today.getDate();
-        var y = today.getFullYear();
-        var date = y + '/' + (m < 10? '0':'') + m + '/' + (d < 10 ? '0':'') + (d);
-        popup.find("#start_date_").css("required",true);
-        popup.find("#start_date_").val(date);
-        popup.find("#due_date_").css("required",true);
-      }
     }
+    var start_date = popup.find("#start_date_");
+    start_date.val(card.find("#start_date_").val());
+    var due_date = popup.find("#due_date_");
+    due_date.val(card.find("#due_date_").val());
+    var today = new Date();
+    var m,d,y,date;
+    if (start_date.val() == ""){
+      m = today.getMonth() + 1;
+      d = today.getDate();
+      y = today.getFullYear();
+      date = y + '/' + (m < 10? '0':'') + m + '/' + (d < 10 ? '0':'') + (d);
+      start_date.css("required",true);
+      start_date.val(date);
+    }
+    if (due_date.val() == ""){
+      due_date.css("required",true);
+      today.setDate(today.getDate()+2);
+      m = today.getMonth() + 1;
+      d = today.getDate();
+      y = today.getFullYear();
+      date = y + '/' + (m < 10? '0':'') + m + '/' + (d < 10 ? '0':'') + (d);
+      due_date.val(date);
+    }
+
     popup.find("select#assignee_id").val(card.find("#assignee_id").val());
     popup.find("select#developer_id").val(card.find("#developer_id").val());
     popup.find("select#verifier_id").val(card.find("#verifier_id").val());
@@ -225,8 +294,8 @@ function init_wip(kanban_id,json){
   var stages = json[1];
   if (typeof(panes[0]) == "undefined") return;
   //table = $("#kanban_" + panes[0].kanban_pane.kanban_id)
-  table = $("#kanban_" + kanban_id);
-  for (i=0; i<stages.length; i++){
+  var table = $("#kanban_" + kanban_id);
+  for (var i=0; i<stages.length; i++){
     pane_id = panes[i].kanban_pane.id
     if (i > 0 && (stages[i].kanban_stage.id === stages[i-1].kanban_stage.id)){
       wip += $("#pane_"+pane_id).children(":visible").length;
@@ -264,9 +333,9 @@ function updatePanesWip(sender, receiver){
 
 
 function kanbanStateToStage(state_id){
-  stage_id = 9999;
+  var stage_id = 9999;
   var t = $("#kanban-data").data("kanban_states").kanban_states;
-  for (i = 0; i < t.length; i++){
+  for (var i = 0; i < t.length; i++){
     if (t[i].kanban_state.id == state_id){
       stage_id = t[i].kanban_state.stage_id;
       break;
@@ -287,10 +356,14 @@ function myUserID(){
   return $("#my-profile").data("user").user.id;
 }
 
+function myKanbanId(el){
+  return el.closest(".kanban").attr("id").match(/\d+$/)[0];
+}
+
 function hasRole(role_name)
 {
-  roles = myRoles();
-  for (i=0; i<roles.length;i++){
+  var roles = myRoles();
+  for (var i=0; i<roles.length;i++){
     if (roles[i].role.name.toLowerCase() == role_name.toLowerCase()){
       return true;
     }
@@ -305,8 +378,8 @@ function hasRoleId(role_id){
     return true;
   }
 
-  roles = myRoles();
-  for (i=0; i<roles.length; i++){
+  var roles = myRoles();
+  for (var i=0; i<roles.length; i++){
     if (roles[i].role.id == role_id){
       return true;
     }
@@ -324,9 +397,10 @@ function kanbanPaneRole(pane_id){
 }
 
 function isValidKanbanTransition(from,to){
-  t = $("#kanban-data").data("kanban_workflow").kanban_workflow;
-  for (i = 0; i < t.length; i++){
-    if (t[i].kanban_workflow.old_state_id == from && to == t[i].kanban_workflow.new_state_id){
+  var t = $("#kanban-data").data("kanban_workflow").kanban_workflow;
+  var kanban_id = myKanbanId(from);
+  for (var i = 0; i < t.length; i++){
+    if (t[i].kanban_workflow.old_state_id == from && to == t[i].kanban_workflow.new_state_id && t[i].kanban_workflow.kanban_id == kanban_id){
       if (t[i].kanban_workflow.check_role){
         return hasRoleId(t[i].kanban_workflow.role_id);
       }
@@ -337,6 +411,10 @@ function isValidKanbanTransition(from,to){
 }
 
 function isValidIssueTransition(from,to){
+
+}
+
+function updateMyWip(){
 
 }
 
