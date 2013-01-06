@@ -46,6 +46,10 @@ class KanbanCardsController < ApplicationController
     end
     KanbanCardJournal.build(old_card,@card,@journal) if @saved == true
 
+    if !@saved
+      @errors = ""
+      @issue.errors.full_messages.each {|s| @errors += (s + ";")}
+    end
   	respond_to do |format|
       format.json do
         if @saved
@@ -56,7 +60,7 @@ class KanbanCardsController < ApplicationController
         end
       end
       format.js do
-        render :partial => "update", :locals => {"errors" => "Error! Please check with admin!"}
+        render :partial => "update"
       end
     end
   end

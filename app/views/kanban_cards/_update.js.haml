@@ -8,5 +8,5 @@ $("#ajax-indicator").hide();
     $("#{@issue.id}").appendTo($("pane_#{@card.kanban_pane_id}"));
 - else
   :plain
-    $("#popupWindow").find("#errorExplanation").text(" Commit failed, please check with system admin!")
+    $("#popupWindow").find("#errorExplanation").text("  #{@errors}")
     $("#popupWindow").find("#errorExplanation").show();

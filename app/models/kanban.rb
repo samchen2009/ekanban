@@ -152,31 +152,31 @@ class Issue < ActiveRecord::Base
         old_state = card.kanban_pane.kanban_state_id
         old_pane  = card.kanban_pane
     end
-    errors.add(:status_id, "Invalid transition from #{old_state} to #{new_state}") if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
+    errors.add("Invalid Tranistion", "Cannot move from '#{old_pane.name}' to '#{new_pane.name}'") if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
 
     #assignee changed?
     if @attributes_before_change
       before = @attributes_before_change["assigned_to_id"]
       after = issue.assigned_to_id
       if before != after and assignee.wip >= assignee.wip_limit and new_pane.in_progress == true
-        errors.add :wip_limit, "assignee #{assignee.alias} reached wip_limit already!"
+        errors.add "Wip Limit Error", ": #{assignee.alias} have #{assignee.wip} in progress, overloading! Change owner or increase its wip_limit"
       end
     end
 
     #issue status change? - need to check pane's wip and wip limit
     if !KanbanState.in_same_stage?(old_state, new_state)
       if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
-        errors.add :status_id, "Invalid transition, destination kanban pane reach wip_limit #{new_pane.wip_limit_by_view()}"
+        errors.add "Wip Limit Error", ": No resource in Pane #{new_pane.name}, increase their loading(wip_limit) or add new resources}"
       end
 
       if assignee.wip >= assignee.wip_limit  and  new_pane.in_progress == true
-        errors.add :wip_limit, "assignee #{assignee.alias} reached wip_limit already!"
+        errors.add "Wip Limit Error", ": #{assignee.alias} have #{assignee.wip} in progress, overloading! Change owner or increase his wip_limit"
       end
     end
 
     #need to check the role (both user's and pane's)
     if !new_pane.accept_user?(assignee)
-      errors.add :assigned_to_id, "Pane #{new_pane.id} #{new_pane.name} not accept #{assignee.alias}!"
+      errors.add "Assignee Error", ":Pane #{new_pane.name} doesn't accept #{assignee.alias}, check his roles!"
     end
     puts errors if errors.full_messages.any?
 
