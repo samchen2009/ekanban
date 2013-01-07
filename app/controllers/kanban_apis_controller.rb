@@ -100,16 +100,17 @@ class KanbanApisController < ApplicationController
 				end
 
 				details.each do |d|
+
 					if d.prop_key == "kanban_pane_id"
 						puts "pane #{start[:pane_id]} -> #{d.new_value} (#{d.old_value})"
 						start[:pane_id] = d.new_value
 					end
 					if d.prop_key == "developer_id"
-						developer = User.find(d.new_value)
+						developer = d.new_value.nil? ? User.find_by_lastname("Anonymous") : User.find(d.new_value)
 						start[:developer] = {:id => developer.id, :name => developer.alias, :email => developer.mail}
 					end
 					if d.prop_key == "verifier_id"
-						verifier = User.find(d.new_value)
+						verifier = d.new_value.nil? ? User.find_by_lastname("Anonymous") : User.find(d.new_value)
 						start[:verifier] = {:id => verifier.id, :name => verifier.alias, :email => verifier.mail}
 					end
 				end

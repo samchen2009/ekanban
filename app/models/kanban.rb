@@ -128,6 +128,8 @@ class Issue < ActiveRecord::Base
 
   validate :validate_kanban_card, :if => Proc.new{!self.new_record?}
 
+  validates_presence_of :assigned_to
+
   def validate_kanban_card
     # Validate
       # 1. user's wip and permission(role).
@@ -139,6 +141,11 @@ class Issue < ActiveRecord::Base
     kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
     #only apply to issue with kanban created.
     return true if kanban.nil?
+
+    if issue[:assigned_to_id].nil?
+      errors.add("Assignee Error", "No Assignee set!")
+      return
+    end
 
     new_state = IssueStatusKanbanState.state_id(issue.status_id)
     new_pane = KanbanPane.pane_by(new_state,kanban)
