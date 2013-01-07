@@ -396,9 +396,8 @@ function kanbanPaneRole(pane_id){
   return $("pane_" + pane_id).attr("role_id");
 }
 
-function isValidKanbanTransition(from,to){
+function isValidKanbanTransition(kanban_id,from,to){
   var t = $("#kanban-data").data("kanban_workflow").kanban_workflow;
-  var kanban_id = myKanbanId(from);
   for (var i = 0; i < t.length; i++){
     if (t[i].kanban_workflow.old_state_id == from && to == t[i].kanban_workflow.new_state_id && t[i].kanban_workflow.kanban_id == kanban_id){
       if (t[i].kanban_workflow.check_role){
@@ -431,6 +430,7 @@ function updateMyWip(){
 function cardIsAccepted(card,sender,receiver){
   var user_id   = card.find("#assignee_id").val();
   var status_id = card.find("#issue_status_id").val();
+  var kanban_id = myKanbanId(card);
   table = sender.parents("table");
 
   var to_state = receiver.attr("state_id");
@@ -458,7 +458,7 @@ function cardIsAccepted(card,sender,receiver){
     }
   }
 
-  if (!isValidKanbanTransition(from_state,to_state)){
+  if (!isValidKanbanTransition(kanban_id,from_state,to_state)){
     return {"success":false,"error":"Invalid state transition"}
   }
 
