@@ -32,10 +32,10 @@ table.kanban td#backlog {}
 .hidden {display:none}
 
 .kanban-pane {width:auto;min-width:160px;max-width:300px;max-height:600px;}
-.kanban-card { margin: 5px;width:90%;float:left;}
+.kanban-card { margin: 2px;max-width:105px;width:auto;float:left;}
 .card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }
-.card-content { padding: 0.4em; overflow:visible;text-align: left}
+.card-content { padding: 0.4em; overflow:visible;text-align: left; color:#323232;}
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
 .wip-text {color:blue;}
