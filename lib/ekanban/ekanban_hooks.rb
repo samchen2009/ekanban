@@ -33,28 +33,15 @@ module EKanban
       	card = KanbanCard.new
       	kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
-        return true if kanban.nil?
-        pane = KanbanPane.find_by_kanban_id(kanban.id)
-     		if pane.nil?
-     			#by default add a backlog pane.
-     			pane = KanbanPane.new()
-     			pane.kanban_id = kanban.id
-          backlog = KanbanState.find_by_name("Backlog")
-     			pane.kanban_state_id = backlog.id
-     			pane.wip_limit = 999
-     			pane.wip_limit_auto = false;
-     			pane.role_id = 1 #anonymous
-     			pane.in_progress = false
-     			if !pane.save()
-     				Redmine::Rollback()
-     				return false
-     			end
-     		end
+        state_id = IssueStatusKanbanState.state_id(issue.status_id)
+        pane = KanbanPane.pane_by(state_id, kanban);
+        return true if pane.nil?
 
      		card.kanban_pane_id = pane.id
      		card.issue_id = issue.id
      		card.developer_id = issue.assigned_to_id
-     		card.verifier_id = issue.assigned_to_id
+     		card.verifier_id = issue.author_id
+        card.kanban_pane_id = pane.id
 
      		if !card.save()
      			Redmine::Rollback()
