@@ -216,11 +216,21 @@ function status_state_change(element,card){
   }
 }
 
+function updateStateSelect(card,popup){
+  tracker_id = card.find("#tracker_id").val();
+  $.each($("#kanban-data").data("kanban_state_issue_status"), function(index,value){
+    if (value.tracker_id != tracker_id){
+      popup.find("#kanban_state_id option[value='" + value.kanban_state_id + "']").remove()
+    }
+  });
+}
+
 function renderPopupCard(popup,card,action,sender,receiver){
   $("#popupWindow").find("#errorExplanation").text("").hide();
   $("#popupWindow").find("#kanban_state_id").bind("change", function(){
       status_state_change($(this),card);
   });
+  updateStateSelect(card,popup);
   $("#popupWindow").find("#issue_status_id").bind("change", function(){
       status_state_change($(this),card);
   });
