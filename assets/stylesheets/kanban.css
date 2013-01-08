@@ -33,7 +33,7 @@ table.kanban td#backlog {}
 
 .kanban-pane {width:auto;min-width:160px;max-width:300px;max-height:600px;}
 .kanban-card { margin: 5px;width:90%;float:left;}
-.card-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0em; text-align: left; overflow:visible; }
+.card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }
 .card-content { padding: 0.4em; overflow:visible;text-align: left}
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
