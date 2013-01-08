@@ -135,7 +135,6 @@ class Issue < ActiveRecord::Base
     kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
     return true if kanban.nil?
 
-    debugger
     state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
     if (state_id.nil?)
       errors.add(:status_id, ":No kanban state associated with status '#{issue.issue_status.name}', contact redmine admin!")
