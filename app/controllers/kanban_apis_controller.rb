@@ -34,7 +34,7 @@ class KanbanApisController < ApplicationController
 		else
 			wip = KanbanPane.wip(params[:pane_id],nil,params[:user_id]);
 		end
-		wip_limit = User.find(params[:user_id]).wip_limit
+		wip_limit = Principal.find(params[:user_id]).wip_limit
 		render :json => {:wip => wip, :wip_limit => wip_limit}
 	end
 
@@ -62,7 +62,7 @@ class KanbanApisController < ApplicationController
 	def detail_to_desc(journal)
 		prop_keys = ["status_id","priority_id", "fixed_version_id", "done_ratio","category_id","assigned_to_id"]
 		actions = ['Set','Changed',"Set","",'Set', 'Change']
-		classes = ["IssueStatus", "Enumeration","Version", "","IssueCategory", "User"]
+		classes = ["IssueStatus", "Enumeration","Version", "","IssueCategory", "Principal"]
 		desc = ""
 		journal.details.each do |d|
 			index = prop_keys.index(d.prop_key)
@@ -110,11 +110,11 @@ class KanbanApisController < ApplicationController
 						start[:pane_id] = d.new_value
 					end
 					if d.prop_key == "developer_id"
-						developer = d.new_value.nil? ? User.find_by_lastname("Anonymous") : User.find(d.new_value)
+						developer = d.new_value.nil? ? Principal.find_by_lastname("Anonymous") : Principal.find(d.new_value)
 						start[:developer] = {:id => developer.id, :name => developer.alias, :email => developer.mail}
 					end
 					if d.prop_key == "verifier_id"
-						verifier = d.new_value.nil? ? User.find_by_lastname("Anonymous") : User.find(d.new_value)
+						verifier = d.new_value.nil? ? Principal.find_by_lastname("Anonymous") : Principal.find(d.new_value)
 						start[:verifier] = {:id => verifier.id, :name => verifier.alias, :email => verifier.mail}
 					end
 				end
@@ -135,7 +135,7 @@ class KanbanApisController < ApplicationController
 		issue.journals.each do |j|
 			desc = detail_to_desc(j)
 			issue_journals << {
-				:journal => j, :details => j.details, :desc => desc, :author => User.find(j.user_id).alias
+				:journal => j, :details => j.details, :desc => desc, :author => Principal.find(j.user_id).alias
 			}
 		end
 		render :json => {:card_journals => card_journals,:issue_journals => issue_journals}

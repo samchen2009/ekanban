@@ -49,6 +49,19 @@ class Group < Principal
 
     wip_limit = users.inject(0) {|sum,user| sum + user.wip_limit}
   end
+
+  def wip(role=nil, project=nil)
+    if role.nil? or project.nil?
+      users = User.in_group(self)
+    else
+      project = Project.to_project(project)
+      role = Role.to_role(role)
+      users = User.member_of(project).in_group(self)
+      users.select!{|u| u.roles_for_project(project).include?(role)}
+    end
+
+    wip = users.inject(0) {|sum,user| sum + user.wip}
+  end
 end
 
 class Project < ActiveRecord::Base
@@ -160,7 +173,8 @@ class Issue < ActiveRecord::Base
     end
 
     assignee = issue.assigned_to
-    if assignee.wip >= assignee.wip_limit  and  pane.in_progress == true
+    wip = assignee.is_a?(Group) ? assignee.wip(pane.role_id, issue.project_id) : assignee.wip
+    if wip >= wip_limit  and  pane.in_progress == true
       errors.add :assigned_to_id, ":Cannot assign issue to #{assignee.alias}, who is overloading now! Change assignee or increase his/her wip_limit"
     end
 
@@ -179,6 +193,7 @@ class Issue < ActiveRecord::Base
     issue = self
     card = KanbanCard.find_by_issue_id(issue.id)
     assignee = issue.assigned_to
+
     kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
     #only apply to issue with kanban created.
     return true if kanban.nil?
@@ -187,6 +202,10 @@ class Issue < ActiveRecord::Base
     new_pane = KanbanPane.pane_by(new_state,kanban)
     errors[:status_id] = ":No Kanban Pane associated with Kanban State!" if new_pane.nil?
 
+    if assignee.is_a?(Group) and new_pane.kanban_state.is_initial == true
+      errors.add(:assigned_to_id, "Cannot assign issue to a group in this stage, only in 'New Issue' can!")
+      return true
+    end
     # Tracker changed.
     if kanban.id != card.kanban_pane.kanban.id
         old_state = new_state
@@ -213,8 +232,10 @@ class Issue < ActiveRecord::Base
 
       end
 
-      if assignee.wip >= assignee.wip_limit  and  new_pane.in_progress == true
-        errors.add :assigned_to_id, ":Cannot assign issue to #{assignee.alias}, who is overloading now! Change owner or increase its wip_limit"
+      assignee = issue.assigned_to
+      wip = assignee.is_a?(Group) ? assignee.wip(new_pane.role_id, issue.project_id) : assignee.wip
+      if wip >= wip_limit  and  new_pane.in_progress == true
+        errors.add :assigned_to_id, ":Cannot assign issue to #{assignee.alias}, who is overloading now! Change assignee or increase his/her wip_limit"
       end
     end
 
