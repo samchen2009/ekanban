@@ -14,6 +14,7 @@
       = hidden_field_tag :start_date, i.start_date
       = hidden_field_tag :due_date, i.due_date
       = hidden_field_tag :created_on, i.created_on.utc.strftime("%Y/%m/%d %H:%M:%S UTC")
+      = hidden_field_tag :tracker_id, i.tracker_id
       %span.tip{:style => "font-weight: normal; font-size:11px"}
         = link_to "##{i.id}", issue_path(i)
         = i.subject

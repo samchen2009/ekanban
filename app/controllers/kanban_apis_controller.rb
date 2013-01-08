@@ -1,7 +1,11 @@
 class KanbanApisController < ApplicationController
 
 	def kanban_state_issue_status
-		render :json => {:kanban_state_issue_status => IssueStatusKanbanState.all}
+		json = []
+		IssueStatusKanbanState.all.select {|k|
+			json << {:id => k.id, :issue_status_id => k.issue_status_id, :kanban_state_id => k.kanban_state_id, :tracker_id => k.kanban_state.tracker_id}
+		}
+		render :json => json
 	end
 
 	def kanban_workflow

@@ -36,22 +36,22 @@ function updateCard(popup,card,sender,receiver){
 
 function kanbanStateToIssueStatus(state_id){
   var issue_status_id = 9999;
-  var t = $("#kanban-data").data("kanban_state_issue_status").kanban_state_issue_status;
+  var t = $("#kanban-data").data("kanban_state_issue_status");
   for (var i = 0; i < t.length; i++){
-    if (t[i].issue_status_kanban_state.kanban_state_id == state_id){
-      issue_status_id = t[i].issue_status_kanban_state.issue_status_id;
+    if (t[i].kanban_state_id == state_id){
+      issue_status_id = t[i].issue_status_id;
       break;
     }
   }
   return issue_status_id;
 }
 
-function issueStatusToKanbanState(status_id){
+function issueStatusToKanbanState(status_id, tracker_id){
   var kanban_state_id = 9999;
-  var t = $("#kanban-data").data("kanban_state_issue_status").kanban_state_issue_status;
+  var t = $("#kanban-data").data("kanban_state_issue_status");
   for (var i = 0; i < t.length; i++){
-    if (t[i].issue_status_kanban_state.issue_status_id == status_id){
-      kanban_state_id = t[i].issue_status_kanban_state.kanban_state_id;
+    if (t[i].issue_status_id  == status_id && t[i].tracker_id == tracker_id){
+      kanban_state_id = t[i].kanban_state_id;
       break;
     }
   }
@@ -203,7 +203,7 @@ function renderCardHistory(popup,card,sender,journals)
   $(".kanban-card-history").show();
 }
 
-function status_state_change(element){
+function status_state_change(element,card){
   value = element.val();
   id = element.attr("id");
   if (id == "kanban_state_id"){
@@ -211,17 +211,18 @@ function status_state_change(element){
     el.val(kanbanStateToIssueStatus(value));
   }else if (id == "issue_status_id"){
     var el = $("#popupWindow").find("#kanban_state_id");
-    el.val(issueStatusToKanbanState(value));
+    var tracker_id = card.find("#tracker_id").val();
+    el.val(issueStatusToKanbanState(value,tracker_id));
   }
 }
 
 function renderPopupCard(popup,card,action,sender,receiver){
   $("#popupWindow").find("#errorExplanation").text("").hide();
   $("#popupWindow").find("#kanban_state_id").bind("change", function(){
-      status_state_change($(this));
+      status_state_change($(this),card);
   });
   $("#popupWindow").find("#issue_status_id").bind("change", function(){
-      status_state_change($(this));
+      status_state_change($(this),card);
   });
   if (action === "new"){
     popup.find("#card-form-header").html("<p>New Issue </p>").show();
