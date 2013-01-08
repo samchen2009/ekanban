@@ -119,7 +119,7 @@ function cardHint(card,card_journal, journals){
 function initCardJournals(card,sender,journals){
   filterJournals(journals.issue_journals);
   card.data("journals",journals);
-  var panes = $("#kanban-panes-data").data("panes");
+  var panes = sender.closest(".kanban-board").find("#kanban-panes-data").data("panes");
 
   var json = [];
   for (var i = panes.length; i > 0; i--){
