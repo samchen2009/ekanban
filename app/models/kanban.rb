@@ -136,7 +136,7 @@ class Issue < ActiveRecord::Base
     return true if kanban.nil?
 
     debugger
-    state_id = IssueStatusKanbanState.state_id(issue.status_id)
+    state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
     if (state_id.nil?)
       errors.add(:status_id, ":No kanban state associated with status '#{issue.issue_status.name}', contact redmine admin!")
       return false
@@ -184,7 +184,7 @@ class Issue < ActiveRecord::Base
     #only apply to issue with kanban created.
     return true if kanban.nil?
 
-    new_state = IssueStatusKanbanState.state_id(issue.status_id)
+    new_state = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
     new_pane = KanbanPane.pane_by(new_state,kanban)
     errors[:status_id] = ":No Kanban Pane associated with Kanban State!" if new_pane.nil?
 

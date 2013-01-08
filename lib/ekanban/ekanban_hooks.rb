@@ -33,7 +33,7 @@ module EKanban
       	card = KanbanCard.new
       	kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
-        state_id = IssueStatusKanbanState.state_id(issue.status_id)
+        state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
         pane = KanbanPane.pane_by(state_id, kanban);
         return true if pane.nil?
 
@@ -60,7 +60,7 @@ module EKanban
        	card = KanbanCard.find_by_issue_id(issue.id)
         old_card = card.dup
        	assignee = issue.assigned_to
-        new_state = IssueStatusKanbanState.state_id(issue.status_id)
+        new_state = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
         kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
 
         return true if kanban.nil?
