@@ -1,4 +1,4 @@
-.clearfix
+.clearfix{:style => "width:100%"}
   /= form_tag( {:project_id => @project}, :method => :get, :id => 'kanban_query_form') do
   /= form_tag :action => 'index',:project_id =>  params[:project_id]
   = form_tag( {:controller => "kanbans", :action => 'index'}, :method => :get, :id => 'kanban_query_form') do
@@ -7,6 +7,8 @@
     = select_tag "member_id", options_for_select([["All Members",0]]) + options_from_collection_for_select(@members,"id", "name", params[:member_id] || 0)
     = hidden_field_tag :project_id, params[:project_id]
     = link_to_function l(:button_apply), 'submit_query_form("kanban_query_form")', {:class => 'icon icon-checked'}
-
+    = search_field_tag "kanban-search", "", :class => "small", :style=>"float:right;width:200px"
+    = label_tag "Search Card:", "Find:",:style => "float:right;margin-top:5px;margin-right:5px"
+    /%input#kanban-search{:type=>"text",:style=>"width:150px;"}
 
 

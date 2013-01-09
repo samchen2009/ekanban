@@ -93,11 +93,12 @@ class KanbansController < ApplicationController
 
   def cards(pane_id)
     pane = KanbanPane.find(pane_id)
-    cards = KanbanCard.joins(:priority).find(:all, :conditions => ["kanban_pane_id = ?",pane.id], :order => "#{Enumeration.table_name}.position ASC")
     if !@member.nil?
-       cards = cards.by_member(@member)
+       cards = KanbanCard.by_member(@member).joins(:priority).find(:all, :conditions => ["kanban_pane_id = ?",pane.id], :order => "#{Enumeration.table_name}.position ASC")
     elsif !@principal.nil?
-       cards = cards.by_group(@principal)
+       cards = KanbanCard.by_group(@principal).joins(:priority).find(:all, :conditions => ["kanban_pane_id = ?",pane.id], :order => "#{Enumeration.table_name}.position ASC")
+    else
+       cards = KanbanCard.joins(:priority).find(:all, :conditions => ["kanban_pane_id = ?",pane.id], :order => "#{Enumeration.table_name}.position ASC")
     end
     cards
   end

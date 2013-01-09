@@ -3,7 +3,7 @@
 }
 
 .ui-datepicker {z-index: 9999999 !important}
-table.kanban {height:600px;table-layout:fixed;width:100%}
+table.kanban {min-height:350px;overflow:auto;max-height:600px;table-layout:fixed;width:100%}
 table.kanban td,th {border:1px solid #d7d7d7;}
 table.kanban td {vertical-align: top}
 table.kanban {border-collapse: collapse; width: 100%; margin: 10px 0 6px 0;border: 1px solid #d7d7d7;text-align:center}
@@ -32,7 +32,9 @@ table.kanban td#backlog {}
 .hidden {display:none}
 
 .kanban-pane {width:auto;min-width:160px;max-width:300px;max-height:600px;}
-.kanban-card { margin: 2px;width:45%;float:left;height:100px;}
+.kanban-card { margin: 2px;width:45%;float:left;}
+.card-max-height {height:100px;}
+.card-min-height {height:auto;}
 .kanban-card span.tip {overflow:visible !important;}
 .card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }

@@ -1,14 +1,121 @@
-/* On droppable accept is invoked */
-function onDroppableAccept(){
-    //alert("ssss")
-    console.debug("ssss")
+
+function kanban_init()
+{
+  $( ".kanban-pane" ).sortable({
+    connectWith: ".kanban-pane",
+    start: function(event,ui){
+      ui.item.removeClass("acceptable");
+    },
+    receive: function(event,ui){
+      /* check */
+      result = cardIsAccepted(ui.item,ui.sender,$(this));
+      if (result.success){
+        ui.item.addClass("acceptable");
+      }else{
+        console.debug("rejected:" + result.error);
+        ui.item.removeClass("acceptable");
+      }
+      if (!ui.item.hasClass('acceptable')){
+        ui.sender.sortable("cancel");
+      }else{
+        if (!confirm("Are you sure? Click 'OK' will update the moving to server")){
+          ui.sender.sortable("cancel");
+        }else{
+          var popup = $("#popupWindow");
+          popupCard(ui.sender,$(this),ui.item,popup,"drop");
+          updatePanesWip(ui.sender,$(this));
+        }
+      }
+    },
+    remove: function(event,ui){
+      ui.item.removeClass("acceptable");
+    },
+  });
+
+  $(".kanan-card").draggable({
+    connectToSortable: '.kanban-pane',
+    revert: "invalid"
+  });
+
+  $( ".kanban-card" ).addClass( "ui-helper-clearfix ui-corner-all ")
+    .find( ".card-header" )
+      .addClass( "ui-widget-header ui-corner-all" )
+      .prepend( "<span class='ui-icon ui-icon-minusthick'></span>")
+      .end()
+    .find( ".card-content" );
+
+  $( ".card-header .ui-icon" ).click(function() {
+    $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
+    $( this ).parents( ".kanban-card:first" ).find( ".card-content" ).toggle();
+    $( this ).parents( ".kanban-card:first" ).toggleClass("card-min-height card-max-height");
+  });
+  $( ".kanban-pane" ).disableSelection();
+  $( ".backlog-search" ).enableSelection();
+
+  $("table").find("#backlog-minus-icon").click(function(){
+    $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
+    $(this).closest("table").find("td:eq(0)").find(".card-header .ui-icon").trigger("click");
+  });
+
+  $("th").find("#backlog-search-icon").click(function(){
+    var input = $(this).closest("table").find("#backlog-search");
+    input.toggle();
+    if (input.is("autofocus"))
+      input.focus(0);
+    else
+      input.focus(1);
+    input.val("");
+    input.trigger("keyup");
+  });
+
+  $("#kanban-search").keyup(function(){
+    var keywords = $.trim($(this).val());
+    if (keywords === "") {keywords = "#"}
+    $(".kanban-card").hide().filter(":contains('"+(keywords)+"')").show();
+  });
+
+  $("#backlog-search").keyup(function(){
+    var keywords = $.trim($(this).val());
+    var pane = $(this).closest("td");
+    var stage = pane.data("stage_id");
+    if (keywords === "") {keywords="#"}
+    pane.find(".kanban-card")
+      .hide()
+      .filter(":contains('"+(keywords)+"')")
+      .show();
+    text = $("#wip_"+stage).text();
+    text = text.split(":");
+    text = "(" + pane.children(".kanban-card:visible").length + ":" + text[1];
+    $("#wip_"+stage).text(text);
+  }).keyup();
+
+    //$( document ).tooltip();
+
+  $(".kanban-card").bind("dblclick", function(){
+    popupCard($(this).parent(".kanban-pane"),null,$(this),$("#popupWindow"),"edit")
+  });
+
+  $("#popupSubmit").click(function(){
+    /* Ajax update card here */
+    updateCard();
+  });
+  $(".kanban-card a").css("color","blue");
+  //Ajax Call.
+  getKanbanStateIssueStatus();
+  getKanbanStates();
+  getKanbanWorkflow();
+  getUserWipAndLimit($("#my-profile").data("user").user.id);
+
+
+
+  $(".kanban-card:contains('P0')").addClass("p1-color")
+  $(".kanban-card:contains('P1')").addClass("p2-color")
+  $(".kanban-card:contains('P2')").addClass("p3-color")
+  $(".kanban-card:contains('P3')").addClass("p4-color")
+  $(".kanban-card:contains('P4')").addClass("p5-color")
+
 }
 
-/* When user drop the draggable */
-function onDroppableDrop(event,ui){
-    //alert(arguments.callee.toString())
-    console.debug("iiiiiiiiii")
-}
 
 function updateWip(wip,wip_limit,stage){
 	$("wip_"+stage).html("<span class:wip-text> (" + wip + ":" +wip_limit +")");
