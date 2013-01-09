@@ -1,10 +1,11 @@
-class KanbanCard < ActiveRecord::Base 
+class KanbanCard < ActiveRecord::Base
   unloadable
   belongs_to :issue
   belongs_to :developer, :class_name => :User
   belongs_to :verifier,  :class_name => :User
   belongs_to :kanban_pane, :class_name => :KanbanPane
-  has_many :issue_journals, :through => "issue"
+  has_many :issue_journals, :through => :issue, :source => :journals
+  has_one :priority, :through => :issue, :source => :priority
   has_many :kanban_card_journals
 
   scope :by_group, lambda {|group|
