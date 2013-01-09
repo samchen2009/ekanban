@@ -33,9 +33,10 @@ table.kanban td#backlog {}
 
 .kanban-pane {width:auto;min-width:160px;max-width:300px;max-height:600px;}
 .kanban-card { margin: 2px;width:45%;float:left;height:100px;}
+.kanban-card span.tip {overflow:visible !important;}
 .card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }
-.card-content { margin:1px;padding: 1px; overflow:hidden;text-align: left; color:#303030;}
+.card-content { margin:1px;padding: 1px; height:75%; overflow:hidden;text-align: left; color:#303030;}
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
 .wip-text {color:blue;}
