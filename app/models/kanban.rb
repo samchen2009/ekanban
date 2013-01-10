@@ -236,7 +236,7 @@ class Issue < ActiveRecord::Base
       assignee = issue.assigned_to
       wip = assignee.is_a?(Group) ? assignee.wip(new_pane.role_id, issue.project_id) : assignee.wip
       wip_limit = assignee.wip_limit
-      if new_pane.in_progress == true  and wip >= wip_limit
+      if old_pane.in_progress == false and new_pane.in_progress == true  and wip >= wip_limit
         errors.add :assigned_to_id, ":Cannot assign issue to #{assignee.alias}, who is overloading now! Change assignee or increase his/her wip_limit"
       end
     end
