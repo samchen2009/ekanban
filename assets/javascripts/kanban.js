@@ -68,10 +68,11 @@ function kanban_init()
     input.trigger("keyup");
   });
 
-  $("#kanban-search").keyup(function(){
+  $(".find-card").keyup(function(){
     var keywords = $.trim($(this).val());
     if (keywords === "") {keywords = "#"}
-    $(".kanban-card").hide().filter(":contains('"+(keywords)+"')").show();
+    kanban_boards = $($(this).attr("selector"));
+    kanban_boards.find($(".kanban-card")).hide().filter(":contains('"+(keywords)+"')").show();
   });
 
   $("#backlog-search").keyup(function(){

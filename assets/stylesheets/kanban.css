@@ -51,6 +51,8 @@ table.kanban td#backlog {}
 .icon-minus{ background-image: url(../images/icon-minux.png); }
 .icon-plus{ background-image: url(../images/icon-plus.png); }
 
+.find-card{padding: 1px}
+
 .p1-color{background-color: #ff6666}
 .p2-color{background-color: #ffc1c1}
 .p3-color{background-color: #ccff99}
