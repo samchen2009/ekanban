@@ -1,7 +1,7 @@
 .kanban-board
   = stylesheet_link_tag 'kanban', :plugin => 'ekanban'
   = link_to l(:label_kanban_setup), edit_project_kanban_path(@project.id,kanban.id), :class => 'icon icon-setup', :style => 'float:right'
-  = link_to l(:label_kanban_report), "kanban/show", :class => 'icon icon-report', :style => 'float:right'
+  = link_to l(:label_kanban_report), {:controller => "kanban_reports", :action => "index"}, :class => 'icon icon-report', :style => 'float:right'
   = search_field_tag "kanban-search", "", :class => "small find-card", :style=>"float:right;width:150px",:selector=>"#kanban_#{kanban.id}"
   = label_tag "search card:", "find:",:style => "float:right;margin-top:5px;margin-right:5px"
   %h3{:style => "margin-top:20px"}= kanban.name

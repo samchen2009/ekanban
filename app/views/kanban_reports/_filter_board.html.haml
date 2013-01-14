@@ -1,0 +1,12 @@
+.clearfix{:style => "width:100%"}
+  /= form_tag( {:project_id => @project}, :method => :get, :id => 'kanban_query_form') do
+  /= form_tag :action => 'index',:project_id =>  params[:project_id]
+  = form_tag( {:controller => "kanban_reports", :action => 'index'}, :method => :get, :id => 'kanban_query_form') do
+    = select_tag "project_id", options_for_select([["All Projects",0]]) + options_from_collection_for_select(@projects, "id", "name",params[:project_id] || 0)
+    = select_tag "kanban_id", options_for_select([["All Kanbans",0]]) + options_from_collection_for_select(@kanbans, "id", "name",params[:kanban_id] || 0)
+    = select_tag "group_id", options_for_select([["All Groups",0]]) + options_from_collection_for_select(@groups,"id", "alias", params[:group_id] || 0)
+    = select_tag "member_id", options_for_select([["All Members",0]]) + options_from_collection_for_select(@members,"id", "name", params[:member_id] || 0)
+    = submit_tag l(:button_apply),{:class => 'icon icon-checked'}
+    /%input#kanban-search{:type=>"text",:style=>"width:150px;"}
+
+

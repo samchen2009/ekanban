@@ -1,0 +1,12 @@
+.contextual
+  %span Charts:
+  = link_to "#{User.current.wip} ", my_page_path(), :id => "my-wip"
+%h2 Kanban Report - Comming soon
+
+= javascript_include_tag "sorttable.js", :plugin => :ekanban
+
+#kanban_filter
+  = render :partial => "filter_board"
+
+#kanban_reports{:style => "clear:both"}
+  = render :partial => "user_issues"

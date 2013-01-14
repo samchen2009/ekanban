@@ -97,6 +97,7 @@ end
 
 class Issue < ActiveRecord::Base
 
+  has_one :kanban_card
   scope :belong_to_group, lambda {|group|
     group_id = group.nil? ? User.current_group : group.is_a?(Group) ? group.id : group.to_i
     {:conditions => ["#{Issue.table_name}.assigned_to_id IN (SELECT gu.user_id FROM #{table_name_prefix}groups_users#{table_name_suffix} gu WHERE gu.group_id = ?)", group_id]}

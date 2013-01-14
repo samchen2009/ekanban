@@ -1,0 +1,43 @@
+.autoscroll
+  %table.list.sortable
+    %thead
+      %tr{:style => "text-align:left"}
+        - controller.columns.each do |column|
+          %th= l(("label_" + column).to_sym)
+        /%th= l(:label_group)
+        /%th= l(:label_total)
+        /%th= l(:label_wip)
+        /%th= l(:label_wip_limit)
+        /%th= "Loading(%)"
+        /%th= "Planed"
+        /%th= "testing"
+    %tbody
+      - sum = []
+      - controller.columns.each_with_index do |column,i|
+        - sum << 0
+      -for user in controller.users(params[:group_id],params[:project_id])
+        %tr.user{:id => "#{user.id}",:class => "#{cycle 'odd', 'even'}"}
+          - controller.columns.each_with_index do |column,i|
+            - case column
+            - when "name"
+              %td.username
+                = avatar(user, :size => "14")
+                = link_to h(user.alias), edit_user_path(user)
+                - sum[i] += 1
+            - when "group"
+              %td= user.groups.map{|g| g.name}.join(" ")
+              - sum[i] = 0
+            - else
+              - data = controller.td_link_and_text(user,column) || {}
+              - sum[i] += data[:count].to_i if !data[:count].nil?
+              - if data[:params].nil?
+                %td= link_to "#{data[:count]}"
+              - else
+                %td= link_to "#{data[:count]}", issues_path(data[:params])
+  %table.list
+    %tbody
+      %tr
+        - controller.columns.each_with_index do |column,i|
+          %td{:style => "text-align:center"}= sum[i]
+
+
