@@ -2,10 +2,9 @@ class KanbanReportsController < ApplicationController
 
 	def users(group=nil,project=nil)
 		#get the users in a group according to project.
-		debugger
 		group = (group == nil? || group == "0") ? nil : Group.to_group(group)
 		project = (project == nil? || project == "0") ? nil : Project.to_project(project)
-		users = group.nil? ? User.find(:all, :conditions => ["lastname != 'Admin' and lastname !='Anonymous'"]) : group.users.sort
+		users = group.nil? ? User.find(:all, :conditions => ["lastname != 'Admin' and lastname !='Anonymous'"]) : User.in_group(group)
 		if project
 			users.reject! {|u| !u.member_of?(project)}
 		end
@@ -18,11 +17,15 @@ class KanbanReportsController < ApplicationController
 		@projects = Project.find_all_by_is_public_and_status(true,1)
 		@kanbans =  Kanban.find_all_by_is_valid(true)
 		@members = User.all
+
+		@project = Project.find(params[:project_id]) if !params[:project_id].nil? and params[:project_id]!="0"
+		@group = Group.find(params[:group_id]) if !params[:group_id].nil? and params[:group_id]!="0"
 		@wip_statuses = statuses("In Progress")
 		@planed_statuses = statuses("Planed")
 		@test_statuses = statuses("Test")
 		@release_statuses = statuses("Release")
 		@closed_statuses = statuses("Closed")
+		@in_progress_statuses = statuses("In Progress")
 	end
 
 	def columns()
@@ -36,11 +39,11 @@ class KanbanReportsController < ApplicationController
 		when "total"
 			return total_issues(user);
 		when "wip"
-			return {:count => user.wip, :params=>wip_issues_params(user)}
+			return issues_count_and_link(user,@in_progress_statuses)
 		when "wip_limit"
 			return {:count => user.wip_limit, :params => edit_user_path(user.id)}
 		when "loading"
-			return {:count => user.wip * 100 / user.wip_limit,:params => nil}
+			return {:count =>  issues_count_and_link(user,@in_progress_statuses)[:count] * 100 / user.wip_limit,:params => nil}
 		when "planed"
 			return issues_count_and_link(user,@planed_statuses)
 		when "test"
@@ -50,24 +53,39 @@ class KanbanReportsController < ApplicationController
 
  	def issues_count_and_link(principal,statuses)
  		if principal.nil?
- 			conditions = ["assigned_to_id=? ",principal.id]
- 		else
  			conditions = ["assigned_to_id != 0"]
+ 		else principal.nil?
+ 			conditions = ["assigned_to_id=? ",principal.id]
  		end
-		statuses.each_with_index do |x,i|
-			rp = (i == 0) ? "and" : "or"
-			conditions[0] += " #{rp} " + "status_id = ?"
-			conditions << x
-		end
+
+ 		if !@project.nil?
+ 			conditions[0] += " and project_id=? "
+ 			conditions << @project.id
+ 		else
+ 			conditions[0] += " and project_id!=0 "
+ 		end
+
+ 		conditions[0] += " and status_id in (?)"
+ 		conditions << statuses
+		#statuses.each_with_index do |x,i|
+		#	rp = (i == 0) ? "and" : "or"
+		#	conditions[0] += " #{rp} " + "status_id = ?"
+		#	conditions << x
+		#end
 		count = Issue.count(:conditions => conditions)
-		params = {:set_filter => "1",:f => [:status_id,:assigned_to_id],
-			:op => {:status_id => "=", :assigned_to_id => "="},
-			:v => {:assigned_to_id => ["#{principal.id}"], :status_id => statuses}}
+		project_ids = @project.nil? ? @projects.map {|p| p.id} : [@project.id]
+		params = {:set_filter => "1",:f => [:status_id,:assigned_to_id,:project_id],
+			:op => {:status_id => "=", :assigned_to_id => "=", :project_id => "="},
+			:v => {:assigned_to_id => ["#{principal.id}"], :status_id => statuses, :project_id => project_ids}}
 		return  {:count => count, :params => params}
  	end
 
 	def total_issues(principal)
-		count = Issue.open.count(:conditions => "assigned_to_id=#{principal.id}")
+		if @project.nil?
+			count = Issue.open.count(:conditions => "assigned_to_id=#{principal.id}")
+		else
+			count = Issue.open.count(:conditions => "assigned_to_id=#{principal.id} and project_id=#{@project.id}")
+		end
 		if principal.nil?
 			params = {:set_filter => "1",:f => [:status_id],
 			:op => {:status_id => 'o'}}
@@ -88,41 +106,14 @@ class KanbanReportsController < ApplicationController
 	end
 
 	def wip_issues_params(user)
-		return {:set_filter => "1",:f => [:status_id,:assigned_to_id],
+		if @project.nil?
+			return {:set_filter => "1",:f => [:status_id,:assigned_to_id],
 			:op => {:status_id => "=", :assigned_to_id => "="},
-			:v => {:assigned_to_id => ["#{user.id}"], :status_id => @wip_statuses}
-		}
-	end
-
-	def planed_issues(principal)
-		conditions = ["assigned_to_id=? ",principal.id]
-		@planed_statuses.each do |x|
-			rp = (@planed_statuses.first == x) ? "and" : "or"
-			conditions[0] += " #{rp} " + "status_id = ?"
-			conditions << x
+			:v => {:assigned_to_id => ["#{user.id}"], :status_id => @wip_statuses}}
+		else
+			return {:set_filter => "1",:f => [:status_id,:assigned_to_id,:project_id],
+			:op => {:status_id => "=", :assigned_to_id => "=",:project_id => "="},
+			:v => {:assigned_to_id => ["#{user.id}"], :status_id => @wip_statuses},:project_id => @project.id}
 		end
-		count = Issue.count(:conditions => conditions)
-
-		params = {:set_filter => "1",:f => [:status_id,:assigned_to_id],
-			:op => {:status_id => "=", :assigned_to_id => "="},
-			:v => {:assigned_to_id => ["#{principal.id}"], :status_id => @planed_statuses}}
-		return  {:count => count, :params => params}
 	end
-
-	def testing_issues(principal)
-		conditions = ["#{KanbanCard.table_name}.developer_id=? ",principal.id]
-		@test_statuses.each do |x|
-			rp = (@test_statuses.first == x) ? "and" : "or"
-			conditions[0] += " #{rp} " + "status_id = ?"
-			conditions << x
-		end
-		count = Issue.count(:conditions => conditions, :include => :kanban_card)
-
-		params = {:set_filter => "1",:f => [:status_id,:assigned_to_id],
-			:op => {:status_id => "=", :assigned_to_id => "="},
-			:v => {:assigned_to_id => ["#{principal.id}"], :status_id => @planed_statuses}}
-		return  {:count => count, :params => params}
-	end
-
-
 end

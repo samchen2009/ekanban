@@ -25,7 +25,7 @@
                 = link_to h(user.alias), edit_user_path(user)
                 - sum[i] += 1
             - when "group"
-              %td= user.groups.map{|g| g.name}.join(" ")
+              %td= user.groups.map{|g| g.alias}.join(" ")
               - sum[i] = 0
             - else
               - data = controller.td_link_and_text(user,column) || {}
