@@ -212,8 +212,8 @@ class Issue < ActiveRecord::Base
     new_pane = KanbanPane.pane_by(new_state,kanban)
     errors[:status_id] = ":No Kanban Pane associated with Kanban State!" if new_pane.nil?
 
-    if assignee.is_a?(Group) and new_pane.kanban_state.is_initial == true
-      errors.add(:assigned_to_id, "Cannot assign issue to a group in this stage, only in 'New Issue' can!")
+    if assignee.is_a?(Group) and new_pane.in_progress == true
+      errors.add(:assigned_to_id, "Cannot assign issue to a group in 'In Progress' stage!")
       return true
     end
     # Tracker changed.
