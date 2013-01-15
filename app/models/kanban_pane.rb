@@ -83,16 +83,25 @@ class KanbanPane < ActiveRecord::Base
   def accept_user?(user)
 
     #1 I still have space?
-    return false if self.wip_limit_by_view() == KanbanPane.wip(self)
+    if self.wip_limit_by_view() <= KanbanPane.wip(self)
+      puts "wip_limit #{self.wip_limit_by_view()} <= wip #{KanbanPane.wip(self)}"
+      return false 
+    end
 
-    user = User.to_user(user)
+    user = user.is_a?(User) ? User.to_user(user) : Group.to_group(user)
     project = self.kanban.project
 
     # He is a member of my project?
-    return false if !user.member_of?(project)
+    if !user.member_of?(project)
+      puts "user #{user.alias} is not a member of project #{project.name}"
+      return false
+    end
 
     # user match my role?
-    return false if !user.has_role?(self.role_id, project)
+    if !user.has_role?(self.role_id, project)
+      puts "user #{user.alias} does not have a role #{self.role_id}"
+      return false
+    end
 
     true
   end

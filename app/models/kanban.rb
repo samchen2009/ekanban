@@ -36,6 +36,14 @@ class Group < Principal
     group = group.nil? ? nil : group.is_a?(Group) ? group : Group.find(group)
   end
 
+  def member_of?(project)
+    !self.users.detect {|u| u.member_of?(project)}.nil?
+  end
+
+  def has_role?(role, project)
+    !self.users.detect {|u| u.has_role?(role,project)}.nil?
+  end
+
   def wip_limit(role=nil, project=nil)
 
     if role.nil? or project.nil?
