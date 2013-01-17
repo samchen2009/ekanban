@@ -357,8 +357,8 @@ function renderPopupCard(popup,card,action,sender,receiver){
     if (action === "edit"){
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
-      // no move, set to 0 to skip update.
-      popup.find("#kanban_pane_id").val(0);
+      var pane_id = sender.attr("id").match(/\d+$/)[0];
+      popup.find("#kanban_pane_id").val(pane_id);
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
