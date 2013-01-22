@@ -248,6 +248,9 @@ function initCardJournals(card,sender,journals){
     }else{
       for (var j = 0; j < journals.card_journals.length; j++){
         journal = journals.card_journals[j];
+        if (typeof(journal.pane_id) == "undefined" && sender.attr("id").match(/\d+$/)[0]  == p.id){
+           journal.pane_id = p.id;
+        }
         if (journal.pane_id == p.id){
           data.push({
             from: journal.from,
@@ -261,6 +264,7 @@ function initCardJournals(card,sender,journals){
     }
     json.push({name:p.name, desc:"", values:data});
   }
+  
   return json;
 }
 

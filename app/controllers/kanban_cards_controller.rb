@@ -33,7 +33,7 @@ class KanbanCardsController < ApplicationController
     @card.developer_id = params[:developer_id]
     @card.verifier_id = params[:verifier_id]
     if params[:kanban_state_id].nil?
-	pane = KanbanPane.find(params[:kanban_pane_id]
+	pane = KanbanPane.find(params[:kanban_pane_id])
     else
     	pane = KanbanPane.find_by_kanban_id_and_kanban_state_id(@card.kanban_pane.kanban.id, params[:kanban_state_id])
     end
