@@ -1,0 +1,34 @@
+%p
+.autoscroll
+  %table.list.sortable{:style=>"border:1px"}
+    %thead
+      %tr{:style => "text-align:left;"}
+        /- controller.weekly_columns.each do |column|
+        /  %th= column
+        /l(("label_" + column).to_sym)
+        %th Project
+        %th Owner
+        %th Issue
+        %th Description
+        %th Status
+        %th Group
+        %th Summary
+        %th Todo
+    %tbody
+      - controller.weekly_journals.each_with_index do |journal,i|
+        - issue = journal.issue
+        - card = issue.kanban_card
+        - user = issue.assigned_to
+        %tr{:class => "#{cycle 'odd', 'even'}"}
+          %td{:style=>"width:10%"}= issue.project.name
+          %td.username{:style=>"width:8%"}
+            = avatar(user, :size => "14")
+            = link_to h(user.alias), edit_user_path(user)
+          %td{:style=>"width:5%"}= link_to "##{issue.id}", issue_path(issue.id)
+          %td{:style => "width:15%;word-wrap: break-word;"}= issue.subject
+          %td{:style=>"width:5%"}= card.kanban_pane.name
+          %td= issue.assigned_to.groups.map{|g| g.alias}.join(" ")
+          %td{:style=>"width:25%;"}= simple_format(controller.summary_and_todo(journal.notes)[0])
+          %td{:style=>"width:22%"}= simple_format(controller.summary_and_todo(journal.notes)[1])
+
+%p *Add "Weekly" and "Todo:" in the issue notes will generate weekly report automatically.

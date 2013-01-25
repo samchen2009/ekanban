@@ -26,6 +26,33 @@ class KanbanReportsController < ApplicationController
 		@release_statuses = statuses("Release")
 		@closed_statuses = statuses("Closed")
 		@in_progress_statuses = statuses("In Progress")
+
+		@from = params[:from]
+		@to = params[:to]
+	end
+
+	def weekly_journals
+		journals = Journal.issues.between(@from,@to).contains("Weekly")
+	end
+	def summary_and_todo(notes)
+		notes = notes.gsub(/\r?\n/, '<br/>')
+		summary = todo = ""
+		matches = /.*[t|T]odo:(.*$)/.match(notes)
+		todo = matches[1] if !matches.nil?
+		matches = matches.nil? ? /.*[w|W]eekly:(.*$)/.match(notes) : /.*[w|W]eekly:(.*?)[t|T]odo:/.match(notes)
+		summary = matches[1] if !matches.nil?
+		return summary,todo
+	end
+
+	def weekly_columns()
+		return ["Owner","#","ID","Issue", "Status", "Project", "Group", "Weekly Summary","Todo"]
+	end
+
+	def kanban_reports_tabs
+    	tabs = [{:name => 'Statistics', :action => :kanban_statistics, :partial => 'statistics', :label => :label_kanban_statistics},
+            {:name => 'Weekly', :action => :kanban_weekly, :partial => 'weekly', :label => :label_kanban_weekly},
+            {:name => 'Charts', :action => :kanban_chart, :partial => 'charts', :label => :label_kanban_charts},
+            ]
 	end
 
 	def columns()

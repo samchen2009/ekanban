@@ -22,3 +22,4 @@ class KanbanCardJournal < ActiveRecord::Base
                        :new_value => new_card.verifier_id) if old_card.verifier_id != new_card.verifier_id
 	end
 end
+
