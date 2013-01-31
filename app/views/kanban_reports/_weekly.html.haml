@@ -18,7 +18,7 @@
       - controller.weekly_journals.each_with_index do |journal,i|
         - issue = journal.issue
         - card = issue.kanban_card
-        - user = issue.assigned_to
+        - user = journal.user
         %tr{:class => "#{cycle 'odd', 'even'}"}
           %td{:style=>"width:10%"}= issue.project.name
           %td.username{:style=>"width:8%"}
