@@ -37,9 +37,9 @@ class KanbanReportsController < ApplicationController
 	def summary_and_todo(notes)
 		notes = notes.gsub(/\r?\n/, '<br/>')
 		summary = todo = ""
-		matches = /.*[t|T]odo:(.*$)/.match(notes)
+		matches = (/.*[t|T]odo:(.*$)/i).match(notes)
 		todo = matches[1] if !matches.nil?
-		matches = matches.nil? ? /.*[w|W]eekly:(.*$)/.match(notes) : /.*[w|W]eekly:(.*?)[t|T]odo:/.match(notes)
+		matches = matches.nil? ? (/.*weekly:(.*$)/i).match(notes) : (/.*weekly:(.*?)todo:/i).match(notes)
 		summary = matches[1] if !matches.nil?
 		return summary,todo
 	end
