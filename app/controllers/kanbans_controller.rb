@@ -148,7 +148,7 @@ class KanbansController < ApplicationController
       @trackers = Tracker.all.reject {|t| used_trackers.include?(t)}
     end
 
-    @copiable_kanbans = Kanban.find(:all, :conditions => ["tracker_id in (?) and is_valid = true", @trackers.select{|t| t.id}])
+    @copiable_kanbans = Kanban.find(:all, :conditions => ["tracker_id in (?) and is_valid = ?", @trackers.select{|t| t.id}, true])
     @copiable_kanbans.each {|k| k.name += " - #{k.project.name}"}
   end
 

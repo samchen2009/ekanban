@@ -1,4 +1,9 @@
 require 'redmine'
+require_dependency 'project'
+require_dependency 'principal'
+require_dependency 'user'
+require_dependency 'issue'
+require_dependency 'role'
 require 'ekanban/ekanban_hooks'
 require 'ekanban/redmine_patches'
 
