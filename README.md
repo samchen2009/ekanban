@@ -18,7 +18,7 @@ Now, this plugins only work (at least, only verified) on Redmine 2.1.x.
 
 unpack it into #{RAILS_ROOT}/plugins
 
-Name the unpacked folder 'AgileDwarf'
+Name the unpacked folder 'ekanban'
 
 OR instead of downloading and unpacking
 
