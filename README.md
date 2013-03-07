@@ -5,7 +5,7 @@ Thank you for your interest in eKanban.
 
 eKanban is a redmine plugin to support Kanban - an agile software development method.
 
-Please visit www.e-kaifa.com/projects/mybloh/kanbans to see the demo.
+You can visit www.e-kaifa.com/projects/mybloh/kanbans to see the demo.
 
 account: guest
 password: redmine
@@ -48,19 +48,27 @@ It adds the followings to redmine.
 
 ### Kanban Board
 
-'Kanban Board' is a board to visualize the issue status of a tracker.
-* Drag & Drop support for issue between different states.
+'Kanban Board' is a board to visualize the issues in a specific tracker.
+* Drag & Drop issue between different states.
 * Double click to view issue(kanban card) status and history.
 * Quickly filter issue(kanban card).
-* Prioritising stories/issues with different color.
-* Issue weekly report and other charts.
-* Setup/Manage Kanban.
+* Prioritising stories/issues with different colors.
+* Issue weekly report and various charts(TBD).
+* Config/Manange Kanbans.
 * Indicate user's wip and wip limit.
 
-### Kanban State/Stages/Panes
+### Kanban State/Stage/Pane
 
 * Kanban state is corresponding to a issue status.
-* Kanban stage is corresponding to a period in project process, it may contain several kanban states.
-* Kanban pane is a column in kanban board that corresponding to a kanban state.
-* Relationship: Kanban board have several kanban stages, every kanban stages have at least one kanban panes, not every kanban state will be show in kanban board, for example, the 'closed' state.
+* Kanban stage is a generic stage in project process, it contains one or more kanban states.
+* Kanban pane is a column (corresponding to a kanban state) in kanban board that actually holds issues. 
+* Relationship: Kanban board have several kanban stages, every kanban stages have at least one kanban panes, not all kanban states are shown in kanban board, the 'closed' state.
+
+### WIP/WIP Limit
+* WIP: work(issue) in progress. 
+* WIP Limit: The max number of issue that a member, a group or a stage can work on at the same time. WIP Limit have 2 modes:
+  * auto: WIP Limit is calculated (check the 'auto' in 'kanban pane' setup tab) automatically by system.
+  * user: User define the value. For example, set "Backlog"'s wip_limit as 100.
+* Only specific panes (have "in progress" checked in the 'kanban pane' setup tab) will consume WIP.
+
 
