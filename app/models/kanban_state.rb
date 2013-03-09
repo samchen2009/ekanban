@@ -4,6 +4,9 @@ class KanbanState < ActiveRecord::Base
   belongs_to :kanban_stage,  :foreign_key => :stage_id
   has_many  :issue_status_kanban_state
   has_many :issue_status, :through => :issue_status_kanban_state
+  validates_presence_of :tracker
+  validates_presence_of :kanban_stage
+
 
   def self.to_id(state)
     state_id = state.nil? ? nil : state.is_a?(KanbanState) ? state.id : state.to_i

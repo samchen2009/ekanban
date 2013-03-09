@@ -13,21 +13,28 @@ class KanbanPanesController < ApplicationController
     respond_with([@panes,stages]);
   end
 
+  def states_left(kanban)
+    used_states = []
+    states = KanbanState.find_all_by_tracker_id(kanban.tracker_id)
+    kanban.kanban_pane.each {|p| used_states << p.kanban_state}
+    states = states.reject{|s| used_states.include?(s)}
+  end
+
   def new
     @project = Project.find(params[:project_id])
     @kanban = Kanban.find(params[:kanban_id])
-    used_states = []
-    @states = KanbanState.find_all_by_tracker_id(@kanban.tracker_id)
-    @kanban.kanban_pane.each {|p| used_states << p.kanban_state}
-    @states = @states.reject{|s| used_states.include?(s)}
+    @states = states_left(@kanban)
     @roles = Role.all
     @pane = KanbanPane.new
   end
 
   def create
+    @project = Project.find(params[:project_id])
     @kanban = Kanban.find(params[:kanban_id])
     @pane = KanbanPane.new(params[:kanban_pane])
     @pane.kanban_id = params[:kanban_id]
+    @roles = Role.all
+    @states = states_left(@kanban)
     position = @kanban.kanban_pane.maximum(:position)
     @pane.position = position.nil? ? 1: position + 1
     if request.post? && @pane.save

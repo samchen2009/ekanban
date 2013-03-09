@@ -7,6 +7,8 @@ class KanbanPane < ActiveRecord::Base
   has_many    :kanban_card
   has_many    :issue, :through=>:kanban_card, :order => "priority_id ASC, updated_on DESC, issue_id DESC"
 
+  validates_presence_of :kanban_state
+
   PROJECT_VIEW = 0
   GROUP_VIEW = 1
   USER_VIEW = 2
