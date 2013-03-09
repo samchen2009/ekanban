@@ -24,9 +24,11 @@ OR instead of downloading and unpacking
 
     cd $(RAILS_ROOT)/plugins
     git clone https://github.com/samchen2009/ekanban.git
+    
+Add "gem 'haml'" to your #{RAILS_ROOT}/Gemfile    
 
 In #{RAILS_ROOT} run the command
-    
+        
     bundle install
     rake redmine:plugins:migrate
   
