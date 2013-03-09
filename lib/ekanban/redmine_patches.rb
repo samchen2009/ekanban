@@ -30,7 +30,7 @@ module EKanban
         base.send(:include, InstanceMethods)
         base.class_eval do
             unloadable
-            alias_method_chain :project_settings_tabs, :hook
+            alias_method_chain :project_settings_tabs, :ekanban
         end
       end
 
@@ -38,8 +38,8 @@ module EKanban
       end
 
       module InstanceMethods
-        def project_settings_tabs_with_hook
-            tabs = project_settings_tabs_without_hook
+        def project_settings_tabs_with_ekanban
+            tabs = project_settings_tabs_without_ekanban
             call_hook(:helper_projects_settings_tabs, { :tabs => tabs })
             return tabs
         end
