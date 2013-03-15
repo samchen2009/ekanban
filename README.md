@@ -40,6 +40,7 @@ Change settings for plugin via
     
     Administration -> Kanban States
   
+  
 
 ABOUT eKanban
 -----------------
@@ -62,9 +63,9 @@ It adds the followings to redmine.
 ### Kanban State/Stage/Pane
 
 * Kanban state is corresponding to a issue status.
-* Kanban stage is a generic stage in project process, it contains one or more kanban states.
+* Kanban stage is a generic stage in project process, it consist of at least one state.
 * Kanban pane is a column (corresponding to a kanban state) in kanban board that actually holds issues. 
-* Relationship: Kanban board have several kanban stages, every kanban stages have at least one kanban panes, not all kanban states are shown in kanban board, the 'closed' state.
+* Kanban Workflow: the transitions between different kanban pane. 
 
 ### WIP/WIP Limit
 * WIP: work(issue) in progress. 
@@ -72,5 +73,44 @@ It adds the followings to redmine.
   * auto: WIP Limit is calculated (check the 'auto' in 'kanban pane' setup tab) automatically by system.
   * user: User define the value. For example, set "Backlog"'s wip_limit as 100.
 * Only specific panes (have "in progress" checked in the 'kanban pane' setup tab) will consume WIP.
+
+USAGE
+-----------------
+
+### Setup Kanban States
+  
+1. Go to "Administrator" -> "Kanban States"
+
+2. Select tab "Kanban Stages" and "New Kanban Stage", in www.e-kaifa.com, we have the following kanban stages created, **Backlog**, **Planed**, **Development**, **Test**, **Release**, **Closed**.
+
+3. Select tab "Kanban State" and "New Kanban State", each kanban state should be designed to match the issue status accordingly. Given that Kanban is a "Pull" system, you should basically have 2 states - "In progress" and "Done" for stages that need to consume WIP. For example, in www.e-kaifa.com, we created 2 states: **In Progress** and **Solved" in **Development** stage.
+    
+4. Finally, to make the issue transition reflecting in the Kanban, select the 3rd tab to associate the issue status with kanban state.
+
+ 
+### Create and Setup a Kanban
+
+1. Go to "Project" -> "Kanban" and click "New Kanban". 
+
+2. Select a "Tracker", which specify the scope of states may be used by this kanban. 
+
+3. You can copy an "existing" kanban if any to simplize the setup process.
+
+4. Back to the Kanban board and click "Setup" icon.
+
+5. Select the tab **Pane**, and add the column to be shown in a Kanban.   
+NOTE: You can drag and drop the row of pane to reorder their position in the Kanban.  
+
+6. In the "New Kanban Pane" page, you should specify
+  * WIP_Limit: a explicit number or 'auto'? Normally, you should select 'auto' for pane will consume resource.  
+  * Role: who will work on this stage? This will affect the WIP/WIP_Limit calculation.  
+  * Work In Progress: Whether consume resource in the state? For instance, 'Backlog' pane should not be checked.  
+
+7. Final step, select the tab "kanban workflow" to setup the Kanban workflow.
+
+
+## Typical Kanban Workflow
+
+You could visit www.e-kaifa.com/projects/3/kanbans/1/edit to view a typical kanban workflow for software development. 
 
 
