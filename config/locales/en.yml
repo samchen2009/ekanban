@@ -28,6 +28,8 @@ en:
   label_name: "Name"
   label_planed: "Planed"
   label_testing: "Testing"
+  label_workload: "Workload(%)"
+  label_closed: "Closed"
   label_kanban_statistics: "Statistics"
   label_kanban_weekly: "Weekly report"
   label_kanban_charts: "Charts"

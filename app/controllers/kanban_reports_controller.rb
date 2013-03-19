@@ -20,12 +20,12 @@ class KanbanReportsController < ApplicationController
 
 		@project = Project.find(params[:project_id]) if !params[:project_id].nil? and params[:project_id]!="0"
 		@group = Group.find(params[:group_id]) if !params[:group_id].nil? and params[:group_id]!="0"
-		@wip_statuses = statuses("In Progress")
-		@planed_statuses = statuses("Planed")
-		@test_statuses = statuses("Test")
-		@release_statuses = statuses("Release")
-		@closed_statuses = statuses("Closed")
-		@in_progress_statuses = statuses("In Progress")
+		@wip_statuses = @in_progress_statuses = in_progress_statuses()
+		#@planed_statuses = statuses("Planed")
+		#@test_statuses = statuses("Test")
+		#@release_statuses = statuses("Release")
+		#@closed_statuses = statuses("Closed")
+		@closed_statuses = closed_statuses()
 
 		@from = params[:from]
 		@to = params[:to]
@@ -56,8 +56,8 @@ class KanbanReportsController < ApplicationController
 	end
 
 	def columns()
-		return ["name", "group", "total", "wip", "wip_limit", "loading",
-			"planed","testing"
+		return ["name", "group", "total", "wip", "wip_limit", "workload", "closed"
+			#"planed","testing"
 		]
 	end
 
@@ -69,12 +69,14 @@ class KanbanReportsController < ApplicationController
 			return issues_count_and_link(user,@in_progress_statuses)
 		when "wip_limit"
 			return {:count => user.wip_limit, :params => edit_user_path(user.id)}
-		when "loading"
+		when "workload"
 			return {:count =>  issues_count_and_link(user,@in_progress_statuses)[:count] * 100 / user.wip_limit,:params => nil}
 		when "planed"
 			return issues_count_and_link(user,@planed_statuses)
 		when "test"
 			return issues_count_and_link(user,@test_statuses)
+		when "closed"
+			return issues_count_and_link(user,@closed_statuses)
 		end
  	end
 
@@ -122,6 +124,15 @@ class KanbanReportsController < ApplicationController
 			:v => {:assigned_to_id => ["#{principal.id}"]}}
 		end
 		return {:count => count, :params => params}
+	end
+
+	# get 'in_progress' status
+	def in_progress_statuses()
+		KanbanPane.all.map {|p| IssueStatusKanbanState.status_id(p.kanban_state.id) if p.in_progress == true}.compact.uniq
+	end
+
+	def closed_statuses()
+		KanbanState.all.map {|s| IssueStatusKanbanState.status_id(s.id) if s.is_closed == true}.compact.uniq
 	end
 
 	def statuses(stage_name)
