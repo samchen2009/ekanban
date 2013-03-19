@@ -24,6 +24,7 @@ module EKanban
       	kanban.project_id = issue.project_id
       	kanban.tracker_id = issue.tracker_id
       	kanban.update_attribute(:is_valid,true);
+        # kanban_pane is invalid here, there's no context
       	return kanban_pane
       end
 
@@ -65,7 +66,7 @@ module EKanban
 
         return true if kanban.nil?
         new_pane = KanbanPane.pane_by(new_state,kanban)
-        return flase if new_pane.nil?
+        return false if new_pane.nil?
 
         # Tracker changed.
        	if kanban.id != card.kanban_pane.kanban.id
