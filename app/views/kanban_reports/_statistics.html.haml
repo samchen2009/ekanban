@@ -36,10 +36,14 @@
                 %td= link_to "#{data[:count]}"
               - else
                 %td= link_to "#{data[:count]}", issues_path(data[:params])
-  %table.list
-    %tbody
-      %tr
+      %tr.user{:id => "sumary",:class => "#{cycle 'odd', 'even'}"}
         - controller.columns.each_with_index do |column,i|
-          %td{:style => "text-align:center"}= sum[i]
+          - case column
+          - when 'name'
+            %td= "Total: #{sum[i]}"
+          - when "workload"
+            %td= sum[i]/sum[0]
+          - else
+            %td= sum[i]
 
 
