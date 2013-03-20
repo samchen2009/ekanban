@@ -33,6 +33,8 @@ In #{RAILS_ROOT} run the command
     rake redmine:plugins:migrate
   
 Restart Redmine
+
+    Add a field "WIP Limit" (format:integer) in 'Administrator' -> 'Custom fields' -> 'User'    
  
 Change settings for plugin via 
 
