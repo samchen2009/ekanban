@@ -15,8 +15,9 @@ class KanbanStagesController < ApplicationController
 
 	def destroy
 		@stage = KanbanStage.find(params[:id])
-		@stage.delete
-		render :action => "index"
+		@stage.destroy
+		#render :action => "index"
+		redirect_to :controller => "kanban_states", :action => "setup", :tab => 'Stages', :errors => @stage.errors.full_messages
 	end
 
 	def edit

@@ -1,3 +1,8 @@
+- if params[:errors]
+  #errorExplanation
+    -params[:errors].each do |e|
+      %li= "#{h e}"
+
 - stages = KanbanStage.all
 - if !stages.nil?
   %table{:id => "kanban_stage",:class => "list"}

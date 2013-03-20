@@ -68,4 +68,10 @@ class KanbanPanesController < ApplicationController
   	@stage = @pane.kanban_state.kanban_stage
   	respond_with([@pane,@stage])
   end
+
+  def destroy
+    @pane = KanbanPane.find(params[:id])
+    @pane.destroy
+    redirect_to edit_project_kanban_path(params[:project_id],params[:kanban_id], {:tab => "Panes", :errors => @pane.errors.full_messages})
+  end
 end

@@ -193,6 +193,7 @@ class Issue < ActiveRecord::Base
       errors.add :assigned_to_id, ":Pane #{new_pane.name} doesn't accept #{assignee.alias}, check his/her roles!"
     end
     puts errors if errors.full_messages.any?
+    errors.blank?
   end
 
   def validate_kanban_card_update
@@ -255,7 +256,7 @@ class Issue < ActiveRecord::Base
       errors.add :assigned_to_id, ":Cannot assign issue to #{assignee.alias}, Pane #{new_pane.name} doesn't accept him/her, check his roles and wip_limit!"
     end
     puts errors if errors.full_messages.any?
-
+    errors.blank?
     #TODO: validate present of start_date and due_date if status is "accepted"
   end
 end

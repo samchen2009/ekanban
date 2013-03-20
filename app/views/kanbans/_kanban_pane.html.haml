@@ -1,6 +1,7 @@
 -controller.cards(pane_id).each do |c|
   - i = c.issue
   - assignee_name = controller.assignee_name(i.assigned_to)
+  - pane = KanbanPane.find(pane_id)
   .kanban-card.card-max-height.tooltip{:id=>"#{i.id}"}
     /,:title=>"##{i.priority_id}:#{i.subject}<br>To:#{assignee_name}<br>#{i.description}"}
     .card-header{:style => "overflow:hidden; font-size:10px"}
@@ -8,7 +9,7 @@
       = avatar(i.assigned_to, :size => "12", :title=>assignee_name, :style=>"float:right")
       = hidden_field_tag :issue_status_id, i.status_id
       = hidden_field_tag :assignee_id, i.assigned_to_id
-      = hidden_field_tag :kanban_state_id, c.kanban_pane.kanban_state.id
+      = hidden_field_tag :kanban_state_id, pane.kanban_state.id
       = hidden_field_tag :developer_id, c.developer_id
       = hidden_field_tag :verifier_id, c.verifier_id
       = hidden_field_tag :subject, i.subject
@@ -27,6 +28,9 @@
         %br
         %strong Description:
         = i.description
-    .card-content{:style => "font-size:10px"}
+    .card-content{:style => "font-size:10px;position:relative"}
       %span{:style=>"margin:4em 0 0 0; text-align:center;font-weight:bold;color:navy"}="P#{i.priority.position - 1}"
       ="#{i.subject}"
+      - if KanbanWorkflow.transition_allowed?(pane.kanban_state, KanbanState.close_state(pane.kanban),pane.kanban.id)
+        .close_check_box
+          = check_box_tag 'close_issue', '', false, :style => "float:right;position:absolute;bottom:0"

@@ -8,6 +8,7 @@ class KanbanPane < ActiveRecord::Base
   has_many    :issue, :through=>:kanban_card, :order => "priority_id ASC, updated_on DESC, issue_id DESC"
 
   validates_presence_of :kanban_state
+  before_destroy :check_cards_and_workflow
 
   PROJECT_VIEW = 0
   GROUP_VIEW = 1
@@ -15,9 +16,9 @@ class KanbanPane < ActiveRecord::Base
 
   attr_accessor :view
 
-  scope :by_kanban, lambda {|kanban| 
+  scope :by_kanban, lambda {|kanban|
     kanban_id = Kanban.to_id(kanban)
-    where(:kanban_id => kanban_id) 
+    where(:kanban_id => kanban_id)
   }
 
   def open_cards()
@@ -106,6 +107,21 @@ class KanbanPane < ActiveRecord::Base
     end
 
     true
+  end
+
+  def check_cards_and_workflow
+    count = self.kanban_card.count
+    if count > 0
+      errors.add("","Cannot delete pane #{self.name}, #{count} cards still in this pane!")
+    end
+
+    flows = KanbanWorkflow.find(:all, :conditions => ["(old_state_id = ? or new_state_id = ?) and kanban_id = ?", self.kanban_state.id, self.kanban_state.id, self.kanban.id])
+    count = 0
+    count = flows.size if !flows.nil?
+    if count > 0
+      errors.add("","Cannot delete pane #{self.name}, #{count} workflow still associated with this pane!")
+    end
+    errors.blank?
   end
 end
 

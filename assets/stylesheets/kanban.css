@@ -39,6 +39,7 @@ table.kanban td#backlog {}
 .card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }
 .card-content { margin:1px;padding: 1px; height:75%; overflow:hidden;text-align: left; color:#303030;}
+.card-foot { margin:1px;padding: 1px; height:10px; overflow:hidden;text-align: left; color:#303030;}
 .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
 .ui-sortable-placeholder * { visibility: hidden; }
 .wip-text {color:blue;}
@@ -50,6 +51,7 @@ table.kanban td#backlog {}
 .icon-search{width:13px;height:13px; padding:1px;background-image: url(../images/icon-search.png); }
 .icon-minus{ background-image: url(../images/icon-minux.png); }
 .icon-plus{ background-image: url(../images/icon-plus.png); }
+.icon-goto{ background-image: url(../images/goto.png); }
 
 .find-card{padding: 1px}
 

@@ -19,7 +19,7 @@ class KanbanStatesController < ApplicationController
 
 	def destroy
 		@state = KanbanState.find(params[:id])
-		@state.delete
+		@state.destroy
 		render :action => "index"
 	end
 

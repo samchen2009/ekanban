@@ -1,5 +1,10 @@
 %h2 Kanban Panes
 
+- if params[:errors]
+  #errorExplanation
+    -params[:errors].each do |e|
+      %li= "#{h e}"
+
 -panes = controller.panes(@kanban)
 -if !panes.nil?
   %table{:id => "pane-list-table",:class => "list"}
