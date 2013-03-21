@@ -116,3 +116,8 @@ NOTE: You can drag and drop the row of pane to reorder their position in the Kan
 You could visit www.e-kaifa.com/projects/3/kanbans/1/edit to view a typical kanban workflow for software development. 
 
 
+LICENSE
+-----------------
+
+The MIT License (MIT) Copyright (c) 2012-2013 Shan Chen
+
