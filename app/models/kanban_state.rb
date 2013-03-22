@@ -38,7 +38,8 @@ class KanbanState < ActiveRecord::Base
 
   def self.close_state(kanban)
     return nil if kanban.nil?
-    kanban.kanban_pane.all.detect {|p| p.kanban_state.is_closed == true}.kanban_state
+    pane = kanban.kanban_pane.detect {|p| p.kanban_state.is_closed == true}
+    pane.nil? ? nil: pane.kanban_state
   end
 
 end

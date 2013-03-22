@@ -66,5 +66,30 @@ class KanbanCard < ActiveRecord::Base
     true
   end
 
+  def self.build(issue, journal, save = true)
+    card = KanbanCard.new
+    kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
+
+    state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
+    pane = KanbanPane.pane_by(state_id, kanban);
+    return nil if pane.nil?
+
+    card.kanban_pane_id = pane.id
+    card.issue_id = issue.id
+    card.developer_id = issue.assigned_to_id
+    card.verifier_id = issue.author_id
+    card.kanban_pane_id = pane.id
+
+    return card if save == false
+
+    if !card.save()
+      Redmine::Rollback()
+      return nil
+    else
+      KanbanCardJournal.build(nil,card,journal) if journal
+    end
+    card
+  end
+
 end
 

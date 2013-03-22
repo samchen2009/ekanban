@@ -162,7 +162,7 @@ class Issue < ActiveRecord::Base
       errors.add(:status_id, ":No kanban state associated with status '#{issue.issue_status.name}', contact redmine admin!")
       return false
     end
-    pane = KanbanPane.pane_by(state_id, kanban);
+    pane = KanbanPane.pane_by(state_id, kanban)
     if pane.nil?
       errors.add(:status_id, ":No kanban pane associated with status '#{issue.issue_status.name}', contact redmine admin!")
       return false
@@ -178,7 +178,7 @@ class Issue < ActiveRecord::Base
 
     #issue status change? - need to check pane's wip and wip limit
     if pane.wip_limit_by_view() <= KanbanPane.wip(pane)
-      errors.add :assigned_to_id, ":No resource left in Pane #{new_pane.name}, increase their wip_limit) or add new resources!}"
+      errors.add :assigned_to_id, ":No resource left in Pane #{new_pane.name}, increase their wip_limit or add new resources!}"
     end
 
     assignee = issue.assigned_to
@@ -201,22 +201,41 @@ class Issue < ActiveRecord::Base
       # 1. user's wip and permission(role).
       # 2. corresponding pane.
       # 3. ...
-    issue = self
-    card = KanbanCard.find_by_issue_id(issue.id)
+    issue = self.dup
     assignee = issue.assigned_to
 
+    card = KanbanCard.find_by_issue_id(issue.id)
     kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
     #only apply to issue with kanban created.
     return true if kanban.nil?
 
+    # update existing issue after kanban created.
+    if card.nil?
+      # create a 'fake' obj
+      issue.status_id = @attributes_before_change["status_id"]
+      issue.assigned_to = @attributes_before_change["assigned_to"]
+      card = KanbanCard.build(issue, nil,false)
+      # recover the obj.
+      issue = self
+      if card.nil?
+        errors[:kanban_card] = "Cannot create a Kanban card, check your kanban setting"
+        # FIXME: you can change it to false to allow issue to be updated.
+        return false
+      end
+    end
+
     new_state = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
     new_pane = KanbanPane.pane_by(new_state,kanban)
-    errors[:status_id] = ":No Kanban Pane associated with Kanban State!" if new_pane.nil?
+    if new_pane.nil?
+      errors[:status_id] = ":No Kanban Pane exist that associated with Kanban State!"
+      return true
+    end
 
     if assignee.is_a?(Group) and new_pane.in_progress == true
       errors.add(:assigned_to_id, "Cannot assign issue to a group in 'In Progress' stage!")
-      return true
+      return false
     end
+
     # Tracker changed.
     if kanban.id != card.kanban_pane.kanban.id
         old_state = new_state
@@ -225,7 +244,9 @@ class Issue < ActiveRecord::Base
         old_state = card.kanban_pane.kanban_state_id
         old_pane  = card.kanban_pane
     end
-    errors.add(:status_id, ":Cannot move from '#{old_pane.name}' to '#{new_pane.name}'") if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
+    if !KanbanWorkflow.transition_allowed?(old_state,new_state,kanban.id)
+      errors.add(:status_id, ":Cannot move from '#{old_pane.name}' to '#{new_pane.name}'") 
+    end
 
     #assignee changed?
     if @attributes_before_change
@@ -240,7 +261,6 @@ class Issue < ActiveRecord::Base
     if !KanbanState.in_same_stage?(old_state, new_state)
       if new_pane.wip_limit_by_view() <= KanbanPane.wip(new_pane)
         errors.add :status_id, ":Cannot set kanban state to #{new_pane.name}, no resource left, increase their wip_limit or add new resources}"
-
       end
 
       assignee = issue.assigned_to

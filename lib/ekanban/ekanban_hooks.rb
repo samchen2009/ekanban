@@ -29,41 +29,24 @@ module EKanban
       end
 
       def controller_issues_new_after_save(context={})
-      	issue = context[:issue]
-        journal = context[:journal]
-      	card = KanbanCard.new
-      	kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
-
-        state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
-        pane = KanbanPane.pane_by(state_id, kanban);
-        return true if pane.nil?
-
-     		card.kanban_pane_id = pane.id
-     		card.issue_id = issue.id
-     		card.developer_id = issue.assigned_to_id
-     		card.verifier_id = issue.author_id
-        card.kanban_pane_id = pane.id
-
-     		if !card.save()
-     			Redmine::Rollback()
-     			return false
-        else
-          KanbanCardJournal.build(nil,card,journal)
-     		end
+      	card = KanbanCard.build(context[:issue], context[:journal])
       	true
       end
 
       # This callback will be invoked from issue's update action when user update issue from "issues"
-      # Issue updated from Kanban will go though anothe path, kanban_card's update action.
+      # Issue updated from Kanban will go though another path, kanban_card's update action.
       def controller_issues_edit_after_save(context={})
        	# Assume the validation has been done in the validate callback
        	issue = context[:issue]
        	card = KanbanCard.find_by_issue_id(issue.id)
+        if card.nil?
+          card = KanbanCard.build(issue, context[:journal])
+          return false if card.nil?
+        end
         old_card = card.dup
        	assignee = issue.assigned_to
         new_state = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
         kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
-
         return true if kanban.nil?
         new_pane = KanbanPane.pane_by(new_state,kanban)
         return false if new_pane.nil?
