@@ -1,11 +1,15 @@
 require 'redmine'
-require_dependency 'project'
-require_dependency 'principal'
-require_dependency 'user'
-require_dependency 'issue'
-require_dependency 'role'
 require 'ekanban/ekanban_hooks'
 require 'ekanban/redmine_patches'
+require 'ekanban/issue_patch'
+require 'ekanban/group_patch'
+require 'ekanban/issue_status_patch'
+require 'ekanban/journal_patch'
+require 'ekanban/principal_patch'
+require 'ekanban/project_patch'
+require 'ekanban/role_patch'
+require 'ekanban/user_patch'
+
 
 Redmine::Plugin.register :ekanban do
   name 'Ekanban Plugin'
@@ -30,6 +34,38 @@ Redmine::Plugin.register :ekanban do
 
     unless ProjectsController.included_modules.include? EKanban::Patches::ProjectsControllerPatch
       ProjectsController.send(:include, EKanban::Patches::ProjectsControllerPatch)
+    end
+
+    unless Issue.included_modules.include? EKanban::Patches::IssuePatch
+      Issue.send(:include, EKanban::Patches::IssuePatch)
+    end
+
+    unless IssueStatus.included_modules.include? EKanban::Patches::IssueStatusPatch
+      IssueStatus.send(:include, EKanban::Patches::IssueStatusPatch)
+    end
+
+    unless Project.included_modules.include? EKanban::Patches::ProjectPatch
+      Project.send(:include, EKanban::Patches::ProjectPatch)
+    end
+
+    unless Group.included_modules.include? EKanban::Patches::GroupPatch
+      Group.send(:include, EKanban::Patches::GroupPatch)
+    end
+
+    unless User.included_modules.include? EKanban::Patches::UserPatch
+      User.send(:include, EKanban::Patches::UserPatch)
+    end
+
+    unless Principal.included_modules.include? EKanban::Patches::PrincipalPatch
+      Principal.send(:include, EKanban::Patches::PrincipalPatch)
+    end
+
+    unless Journal.included_modules.include? EKanban::Patches::JournalPatch
+      Journal.send(:include, EKanban::Patches::JournalPatch)
+    end
+
+    unless Role.included_modules.include? EKanban::Patches::RolePatch
+      Role.send(:include, EKanban::Patches::RolePatch)
     end
   end
 end

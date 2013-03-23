@@ -1,5 +1,3 @@
-require_relative "kanban.rb"
-
 class KanbanCard < ActiveRecord::Base
   unloadable
   belongs_to :issue

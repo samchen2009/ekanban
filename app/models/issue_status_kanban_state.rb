@@ -14,10 +14,3 @@ class IssueStatusKanbanState < ActiveRecord::Base
   	return rec.first.issue_status_id if !rec.first.nil?
   end
 end
-
-
-class IssueStatus < ActiveRecord::Base
-  unloadable
-  has_many :issue_status_kanban_state
-  has_many :kanban_state, :through => :issue_status_kanban_state
-end
