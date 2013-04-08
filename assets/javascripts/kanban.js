@@ -81,9 +81,13 @@ function kanban_init()
     var issue_ids = [];
     cards = $(this).closest("table").find("#pane_"+pane_id).find(".kanban-card");
     for (var i = 0; i < cards.length; i++){
-      issue_ids.push(cards[i].id);
+      if ($(cards[i]).find("#close_check_box").is(":checked")){
+        issue_ids.push(cards[i].id);
+      }
     }
-    close_issues(issue_ids, pane_id);
+    if (issue_ids.length){
+      close_issues(issue_ids, pane_id);
+    }
   });
 
   $("th").find("#backlog-search-icon").click(function(){
@@ -553,7 +557,8 @@ function isValidKanbanTransition(kanban_id,from,to){
   for (var i = 0; i < t.length; i++){
     if (t[i].kanban_workflow.old_state_id == from && to == t[i].kanban_workflow.new_state_id && t[i].kanban_workflow.kanban_id == kanban_id){
       if (t[i].kanban_workflow.check_role){
-        return hasRoleId(t[i].kanban_workflow.role_id);
+        //Manager can perform any transition.
+        return hasRoleId(t[i].kanban_workflow.role_id) || hasRole("Manager");
       }
       return true;
     }

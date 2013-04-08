@@ -11,6 +11,7 @@ class KanbanWorkflow < ActiveRecord::Base
   def self.transition_allowed?(current,expect,kanban_id)
     return false if expect.nil?
     return true if KanbanState.to_id(current) == KanbanState.to_id(expect)
+    return true if User.current.has_role?("Manager", Kanban.find(kanban_id).project)
   	transition = KanbanWorkflow.where("old_state_id=? and new_state_id=? and kanban_id=?",KanbanState.to_id(current),KanbanState.to_id(expect),kanban_id)
   	return !transition.empty?
   end
