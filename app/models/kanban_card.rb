@@ -88,6 +88,5 @@ class KanbanCard < ActiveRecord::Base
     end
     card
   end
-
 end
 

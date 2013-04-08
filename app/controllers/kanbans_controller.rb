@@ -1,28 +1,3 @@
-class  KanbanStageHelper
-
-  attr_reader :id,:name,:state_name
-  attr_accessor :wip,:wip_limit
-
-
-  def initialize (id, name, state_name)
-    @state_name = []
-    @name = name
-    @id = id
-    @state_name << state_name
-    @wip = 10;
-    @wip_limit = 100;
-
-  end
-
-  def add(state_name)
-    @state_name << state_name if !@state_name.include?(state_name)
-  end
-
-  def state_num
-    @state_name.size
-  end
-end
-
 
 class KanbansController < ApplicationController
   unloadable
@@ -107,23 +82,23 @@ class KanbansController < ApplicationController
     assignee.is_a?(Principal)? assignee.alias : "unassigned"
   end
 
-  def stages(panes)
+  def stages_and_panes(panes)
     return nil if panes.empty?
     stages = []
     panes.each do |p|
       next if p.kanban_state.is_closed == true
       state = p.kanban_state
-      p.name = state.name
       stage = state.kanban_stage
-      stages << KanbanStageHelper.new(stage.id,stage.name, p.name) if stages.empty?
-      i = stages.index {|s| s.name == stage.name}
-      if !i.nil?
-        stages[i].add (p.name)
+
+      st = stages.detect {|s| s[:stage].id == stage.id}
+      if !st
+        stages << {:stage => stage, :panes => ([] << p), :states => ([]<<state)}
       else
-        stages << KanbanStageHelper.new(stage.id, stage.name, p.name)
+        st[:panes] << p
+        st[:states] << state
       end
     end
-    return stages
+    stages
   end
 
   def states(panes)
@@ -255,5 +230,4 @@ class KanbansController < ApplicationController
     pane = pane(pane_id)
     stage = Stage.find(pane.stage_id) if !pane.nil?
   end
-
 end

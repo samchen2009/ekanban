@@ -52,6 +52,10 @@ table.kanban td#backlog {}
 .icon-minus{ background-image: url(../images/icon-minux.png); }
 .icon-plus{ background-image: url(../images/icon-plus.png); }
 .icon-goto{ background-image: url(../images/goto.png); }
+.icon-downexpend{ background-image: url(arrow_expended.png);}
+.menu-holder{position:absolute;left:90%;top:15px; z-index:500;width:140px;text-align:left}
+.menu-icon{float:left;margin-right:4px;display:inline-block;}
+.menu-text{font-size: 11px}
 
 .find-card{padding: 1px}
 

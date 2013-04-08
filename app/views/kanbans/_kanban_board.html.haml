@@ -10,28 +10,56 @@
   %table.kanban{:id=>"kanban_#{kanban.id}"}
     - if panes_num > 0
       %tr{:style=>"height:30px"}
-        - stages = controller.stages(panes)
+        - stages = controller.stages_and_panes(panes)
         - stages.each do |s|
-          - if s.state_name.size == 1
-            %th{:id=>"stage_#{s.id}", :rowspan=>"2", :name=>s.state_name[0]}
+          - if s[:panes].size == 1
+            %th{:id=>"stage_#{s[:stage].id}", :rowspan=>"2", :name=>s[:panes].first.name}
               .plain-text{:style => "width:80%;float:left"}
-                = s.name
-                %span.wip-text{:id => "wip_#{s.id}"}= " "
-              - if s.name.downcase == "backlog"
-                #backlog-search-icon.ui-icon.icon-search{:style=>"float:left"}
-                #backlog-minus-icon.ui-icon.ui-icon-minusthick{:style=>"float:left"}
-                /.icon.icon-minus{:style=>"float:right"}
+                = s[:stage].name
+                %span.wip-text{:id => "wip_#{s[:stage].id}"}= " "
+                /%span.ui-icon.ui-icon-minus{:style=>"float:right;width:8px;height:8px"}
+              .menu-icon{:style=>"position:relative"}
+                .ui-icon-triangle-1-s.ui-icon{:style=>"position:absolute;left:80%"}
+                %ul.menu-holder{:style=>"display:none"}
+                  %li{:id=>"li_collapse_all_#{s[:panes].first.id}"}
+                    %a
+                      %span.ui-icon.ui-icon-minus.menu-icon{:title=>"Collapse All"}
+                      .menu-text Collapse All
+                  - if KanbanWorkflow.transition_allowed?(s[:states].first,KanbanState.close_state(kanban),kanban.id)
+                    %li{:id=>"li_check_all_#{s[:panes].first.id}"}
+                      %a
+                        %span.ui-icon.ui-icon-check.menu-icon{:title=>"Check All"}
+                        .menu-text Check All
+                    %li{:id=>"li_close_#{s[:panes].first.id}"}
+                      %a
+                        %span.ui-icon.ui-icon-seek-end.menu-icon{:title=>"Close All"}
+                        .menu-text Closee Selected
           - else
-            %th{:id=>"stage_#{s.id}", :colspan=>"#{s.state_name.size}", :name=>s.name}
-              =s.name
-              %span.wip-text{:id => "wip_#{s.id}"}= "  "
+            %th{:id=>"stage_#{s[:stage].id}", :colspan=>"#{s[:panes].size}", :name=>s[:stage].name}
+              =s[:stage].name
+              %span.wip-text{:id => "wip_#{s[:stage].id}"}= "  "
       %tr
         - stages.each do |s|
-          - if s.state_name.size > 1
-            - s.state_name.each do |name|
-              %th{:id=>"state_#{name}"}=name
-            /- if KanbanWorkflow.transition_allowed?(pane.kanban_state, KanbanState.close_state(pane.kanban),pane.kanban.id)
-            /  #move-to-close.icon-goto{:style=>"float:right"}
+          - if s[:panes].size > 1
+            - s[:panes].each do |pane|
+              %th{:id=>"pane_#{pane.name}"}
+                .plain-text{:style => "width:80%;float:left"}=pane.name
+                .menu-icon{:style=>"position:relative"}
+                  .ui-icon-triangle-1-s.ui-icon{:style=>"position:absolute;left:80%"}
+                  %ul.menu-holder{:style=>"display:none"}
+                    %li{:id=>"li_collapse_all_#{pane.id}"}
+                      %a
+                        %span.ui-icon.ui-icon-minus.menu-icon{:title=>"Collapse All"}
+                        .menu-text Collapse All
+                    - if KanbanWorkflow.transition_allowed?(pane.kanban_state, KanbanState.close_state(kanban),kanban.id)
+                      %li{:id=>"li_check_all_#{pane.id}"}
+                        %a
+                          %span.ui-icon.ui-icon-check.menu-icon{:title=>"Check All"}
+                          .menu-text Check All
+                      %li{:id=>"li_close_#{pane.id}"}
+                        %a
+                          %span.ui-icon.ui-icon-seek-end.menu-icon{:title=>"Close All"}
+                          .menu-text Close Selected
       %tr{:style=>"height:90%; overflow-y:auto"}
         - panes.inject(0) do |i,pane|
           - if pane.kanban_state.is_closed == false

@@ -20,6 +20,31 @@ class KanbanApisController < ApplicationController
 		roles = User.find(params[:user_id]).roles_for_project(params[:project_id])
 		render :json => {"roles" => roles}
 	end
+
+	def close_issues
+	    ids = params[:issue_ids]
+	    pane = KanbanPane.find(params[:pane_id]);
+	    closed_ids = []
+
+	    ids.each do |id|
+			issue = Issue.find(id)
+			card = KanbanCard.find_by_issue_id(id)
+			issue.status_id = IssueStatus.find_by_is_closed(true).id
+			note = "Closed by #{User.current.alias}(#{User.current.mail}) from Kanban."
+			journal = issue.init_journal(User.current, note)
+			if issue.save
+				closed_ids << id
+				old_card = card.dup
+				new_state = KanbanState.close_state(pane.kanban)
+				new_pane = KanbanPane.pane_by(new_state, pane.kanban)
+				card.kanban_pane_id = new_pane.id
+				KanbanCardJournal.build(old_card,card,journal) if (journal.save and card.save)
+			end
+	    end
+	    render :json => {"closed_ids" => closed_ids}
+	end
+
+
 	# params
 	#   wip:
 	#     pane_id:  get wip in specific pane (specific project, 0 means total wip (in other panes, in other projects)

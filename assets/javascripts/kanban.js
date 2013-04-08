@@ -32,6 +32,16 @@ function kanban_init()
     },
   });
 
+  $(".ui-icon-triangle-1-s.ui-icon").click(function(event){
+      $('html').one('click',function() {
+        $('.menu-holder').hide();
+      });
+      $(this).parent().find('.menu-holder').menu().toggle();
+      event.stopPropagation();
+    }
+  );
+
+
   $(".kanan-card").draggable({
     connectToSortable: '.kanban-pane',
     revert: "invalid"
@@ -44,7 +54,7 @@ function kanban_init()
       .end()
     .find( ".card-content" );
 
-  $( ".card-header .ui-icon" ).click(function() {
+  $( ".card-header > .ui-icon-minusthick" ).click(function() {
     $( this ).toggleClass( "ui-icon-minusthick" ).toggleClass( "ui-icon-plusthick" );
     $( this ).parents( ".kanban-card:first" ).find( ".card-content" ).toggle();
     $( this ).parents( ".kanban-card:first" ).toggleClass("card-min-height card-max-height");
@@ -52,9 +62,28 @@ function kanban_init()
   $( ".kanban-pane" ).disableSelection();
   $( ".backlog-search" ).enableSelection();
 
-  $("table").find("#backlog-minus-icon").click(function(){
-    $(this).toggleClass("ui-icon-minusthick").toggleClass("ui-icon-plusthick");
-    $(this).closest("table").find("td:eq(0)").find(".card-header .ui-icon").trigger("click");
+  $("table").find("li[id^='li_collapse_all']").click(function(){
+    $(this).find("span").toggleClass("ui-icon-minus").toggleClass("ui-icon-plus");
+    $(this).find(".menu-text").text($(this).find("span").hasClass("ui-icon-minus") ? "Collapse all" : "Expend All");
+    pane_id = $(this).attr("id").match(/\d+$/)[0];
+    $(this).closest("table").find("#pane_"+pane_id).find(".card-header .ui-icon").trigger("click");
+  });
+
+  $("table").find("li[id^='li_check_all']").click(function(){
+    $(this).find("span").toggleClass("ui-icon-check").toggleClass("ui-icon-closethick");
+    $(this).find(".menu-text").text($(this).find("span").hasClass("ui-icon-check") ? "Check all" : "Uncheck all");
+    pane_id = $(this).attr("id").match(/\d+$/)[0];
+    $(this).closest("table").find("#pane_"+pane_id).find("#close_check_box").trigger('click');
+  });
+
+  $("table").find("li[id^='li_close']").click(function(){
+    pane_id = $(this).attr("id").match(/\d+$/)[0];
+    var issue_ids = [];
+    cards = $(this).closest("table").find("#pane_"+pane_id).find(".kanban-card");
+    for (var i = 0; i < cards.length; i++){
+      issue_ids.push(cards[i].id);
+    }
+    close_issues(issue_ids, pane_id);
   });
 
   $("th").find("#backlog-search-icon").click(function(){
@@ -590,4 +619,15 @@ function cardIsAccepted(card,sender,receiver){
     return {"success":false, "error":"Exeed wip_limit"};
   }
   return {"success":true,"error":"OK"};
+}
+
+function close_issues(ids,pane_id){
+  kanbanAjaxCall("put",
+               "/kanban_apis/close_issues",{"issue_ids":ids, "pane_id":pane_id},
+                function(data,result){
+                if (result == 0){
+                  for (var i = 0; i < data.closed_ids.length; i++){
+                    $("table").find("#"+data.closed_ids[i].toString()).remove();
+                  }
+                }});
 }

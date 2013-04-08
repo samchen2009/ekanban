@@ -33,5 +33,5 @@
       ="#{i.subject}"
       - close_state = KanbanState.close_state(pane.kanban)
       - if KanbanWorkflow.transition_allowed?(pane.kanban_state, close_state ,pane.kanban.id)
-        .close_check_box
-          = check_box_tag 'close_issue', '', false, :style => "float:right;position:absolute;bottom:0"
+        .close-check-box
+          = check_box_tag 'close_check_box', '', false, :style => "float:right;position:absolute;bottom:0"
