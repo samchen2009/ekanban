@@ -553,6 +553,7 @@ function kanbanPaneRole(pane_id){
 }
 
 function isValidKanbanTransition(kanban_id,from,to){
+  if (hasRole("Manager")) {return true};
   var t = $("#kanban-data").data("kanban_workflow").kanban_workflow;
   for (var i = 0; i < t.length; i++){
     if (t[i].kanban_workflow.old_state_id == from && to == t[i].kanban_workflow.new_state_id && t[i].kanban_workflow.kanban_id == kanban_id){
