@@ -32,7 +32,7 @@ table.kanban td#backlog {}
 .hidden {display:none}
 
 .kanban-pane {width:auto;min-width:160px;max-width:300px;max-height:600px;}
-.kanban-card { margin: 2px;width:45%;float:left;}
+.kanban-card { margin: 2px;width:45%;max-width:80px;float:left;}
 .card-max-height {height:100px;}
 .card-min-height {height:auto;}
 .kanban-card span.tip {overflow:visible !important;}

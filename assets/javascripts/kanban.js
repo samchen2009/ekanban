@@ -41,7 +41,6 @@ function kanban_init()
     }
   );
 
-
   $(".kanan-card").draggable({
     connectToSortable: '.kanban-pane',
     revert: "invalid"
@@ -140,14 +139,39 @@ function kanban_init()
   getKanbanWorkflow();
   getUserWipAndLimit($("#my-profile").data("user").user.id);
 
+  $(".cards-per-column").each(function(index){
+    getCardsPerCol($(this));
+  });
 
+  $(".cards-per-column").change(function(){
+    setCardWidth($(this));
+  });
 
   $(".kanban-card:contains('P0')").addClass("p1-color")
   $(".kanban-card:contains('P1')").addClass("p2-color")
   $(".kanban-card:contains('P2')").addClass("p3-color")
   $(".kanban-card:contains('P3')").addClass("p4-color")
   $(".kanban-card:contains('P4')").addClass("p5-color")
+}
 
+function getCardsPerCol(input){
+  var kanban = input.parent(".kanban-board");
+  var card = kanban.find(".kanban-card");
+  var card_w = card.width();
+  if (card){
+    var pane_w = card.parent(".kanban-pane").width();
+    input.val(parseInt(pane_w/card_w));
+  }
+}
+
+function setCardWidth(input){
+  var n = parseInt(input.val());
+  var kanban = input.parent(".kanban-board");
+  if (kanban){
+    var pane_w = kanban.find(".kanban-pane").width();
+    var card_w = parseInt((pane_w - 12)/n);
+    kanban.find(".kanban-card").css("max-width","").width(card_w);
+  }
 }
 
 
