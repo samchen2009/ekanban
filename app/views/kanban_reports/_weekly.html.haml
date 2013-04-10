@@ -14,6 +14,7 @@
         %th Group
         %th Summary
         %th Todo
+        %th Updated at
     %tbody
       - controller.weekly_journals.each_with_index do |journal,i|
         - issue = journal.issue
@@ -30,5 +31,6 @@
           %td= issue.assigned_to.groups.map{|g| g.alias}.join(" ")
           %td{:style=>"width:25%;"}= simple_format(controller.summary_and_todo(journal.notes)[0])
           %td{:style=>"width:22%"}= simple_format(controller.summary_and_todo(journal.notes)[1])
+          %td= journal.created_on
 
 %p *Add "Weekly" and "Todo:" in the issue notes will generate weekly report automatically.
