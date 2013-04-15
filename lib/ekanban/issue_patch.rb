@@ -70,12 +70,12 @@ module EKanban
 
           state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
           if (state_id.nil?)
-            errors.add(:status_id, ":No kanban state associated with status '#{issue.issue_status.name}', contact redmine admin!")
+            errors.add(:status_id, ":No kanban state associated with status '#{issue.status.name}', contact redmine admin!")
             return false
           end
           pane = KanbanPane.pane_by(state_id, kanban)
           if pane.nil?
-            errors.add(:status_id, ":No kanban pane associated with status '#{issue.issue_status.name}', contact redmine admin!")
+            errors.add(:status_id, ":No kanban pane associated with status '#{issue.status.name}', contact redmine admin!")
             return false
           end
 
