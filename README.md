@@ -34,7 +34,7 @@ In #{RAILS_ROOT} run the command
   
 Restart Redmine
 
-    Add a field "WIP Limit" (format:integer) in 'Administrator' -> 'Custom fields' -> 'User'    
+    Add a field "WIP limit" (format:integer) in 'Administrator' -> 'Custom fields' -> 'User'    
  
 Change settings for plugin via 
 
