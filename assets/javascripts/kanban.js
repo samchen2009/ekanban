@@ -437,9 +437,9 @@ function renderPopupCard(popup,card,action,sender,receiver){
       }
     }
     var start_date = popup.find("#start_date_");
-    start_date.val(card.find("#start_date_").val());
+    start_date.val(card.find("#start_date").val());
     var due_date = popup.find("#due_date_");
-    due_date.val(card.find("#due_date_").val());
+    due_date.val(card.find("#due_date").val());
     var today = new Date();
     var m,d,y,date;
     if (start_date.val() == ""){
