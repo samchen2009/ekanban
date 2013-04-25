@@ -86,6 +86,7 @@ class KanbansController < ApplicationController
     return nil if panes.empty?
     stages = []
     panes.each do |p|
+      next if p.kanban_state.nil?
       next if p.kanban_state.is_closed == true
       state = p.kanban_state
       stage = state.kanban_stage
