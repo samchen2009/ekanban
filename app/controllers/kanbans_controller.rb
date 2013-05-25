@@ -6,6 +6,8 @@ class KanbansController < ApplicationController
   GROUP_VIEW = 1    #Show selected Kanban in Group view
   MEMBER_VIEW = 2   #Show selected Kanban in Member view
 
+  menu_item :Kanban
+
   def index
     @project = Project.find(params[:project_id])#Get member name of this project
     @members= @project.members
