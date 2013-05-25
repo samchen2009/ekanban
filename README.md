@@ -96,17 +96,17 @@ USAGE
 
 2. Select a "Tracker", which specify the scope of states may be used by this kanban. 
 
-3. You can copy an "existing" kanban if any to simplize the setup process.
+3. You can copy an "existing" kanban if any to simplify the setup process.
 
 4. Back to the Kanban board and click "Setup" icon.
 
 5. Select the tab **Pane**, and add the column to be shown in a Kanban.   
-NOTE: You can drag and drop the row of pane to reorder their position in the Kanban.  
+NOTE: You can drag and drop the row of pane to reorder its position(col) in the Kanban.  
 
 6. In the "New Kanban Pane" page, you should specify
-  * WIP_Limit: a explicit number or 'auto'? Normally, you should select 'auto' for pane will consume resource.  
+  * WIP_Limit: an number or 'auto'? Normally, you should select 'auto' for pane will consume resource.  
   * Role: who will work on this stage? This will affect the WIP/WIP_Limit calculation.  
-  * Work In Progress: Whether consume resource in the state? For instance, 'Backlog' pane should not be checked.  
+  * Work In Progress?: Whether consume resource in the state? For instance, 'Backlog' pane should not be checked.  
 
 7. Final step, select the tab "kanban workflow" to setup the Kanban workflow.
 
