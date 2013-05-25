@@ -89,7 +89,7 @@ module EKanban
 
           #issue status change? - need to check pane's wip and wip limit
           if pane.wip_limit_by_view() <= KanbanPane.wip(pane)
-            errors.add :assigned_to_id, ":No resource left in Pane #{new_pane.name}, increase their wip_limit or add new resources!}"
+            errors.add :assigned_to_id, ":No resource left in Pane #{pane.name}, increase their wip_limit or add new resources!}"
           end
 
           assignee = issue.assigned_to
@@ -101,7 +101,7 @@ module EKanban
 
           #need to check the role (both user's and pane's)
           if !pane.accept_user?(assignee)
-            errors.add :assigned_to_id, ":Pane #{new_pane.name} doesn't accept #{assignee.alias}, check his/her roles!"
+            errors.add :assigned_to_id, ":Pane #{pane.name} doesn't accept #{assignee.alias}, check his/her roles!"
           end
           puts errors if errors.full_messages.any?
           errors.blank?
