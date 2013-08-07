@@ -15,7 +15,7 @@ class IssueStatusKanbanStatesController < ApplicationController
 			puts addeds
 
 			removeds.each do |r|
-				rec = IssueStatusKanbanState.find_by_issue_status_id_and_kanban_state_id(v,k)
+				rec = IssueStatusKanbanState.find_by_issue_status_id_and_kanban_state_id(r,k)
 				rec.delete if rec
 			end
 
