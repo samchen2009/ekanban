@@ -15,12 +15,13 @@
         %th Description
       %tbody
         -states.each do |s|
+          - stage = s.kanban_stage
           %tr{:id => "#{s.id}",:class => "#{cycle 'odd', 'even'}"}
             %td=h(s.name)
             %td=h(s.is_default)
             %td=h(s.is_initial)
             %td=h(s.is_closed)
-            %td=h(s.kanban_stage.name)
+            %td=h(stage.nil? ? " " : stage.name)
             %td=h(s.description)
             %td{:class => "buttons"}
               %em.info.error{:style => "display:none"} "Destroy failed!"
