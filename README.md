@@ -58,14 +58,14 @@ It adds the followings to redmine.
 * Double click to view issue(kanban card) status and history.
 * Quickly filter issue(kanban card).
 * Prioritising stories/issues with different colors.
-* Issue weekly report and various charts(TBD).
+* Issue weekly report and various charts(TBD). - try redmine_charts2 plugin by others.
 * Config/Manange Kanbans.
 * Indicate user's wip and wip limit.
 
 ### Kanban State/Stage/Pane
 
-* Kanban state is corresponding to a issue status.
-* Kanban stage is a generic stage in project process, it consist of at least one state.
+* Kanban state is corresponding to an issue status.
+* Kanban stage is a generic stage in project process, it consists of at least one state.
 * Kanban pane is a column (corresponding to a kanban state) in kanban board that actually holds issues. 
 * Kanban Workflow: the transitions between different kanban pane. 
 
