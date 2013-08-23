@@ -9,7 +9,8 @@ module EKanban
           unloadable
 
           def kanbans
-            @kanbans = Kanban.where("project_id=? and is_valid = ?",@project.id, true)
+            #@kanbans = Kanban.where("project_id=? and is_valid = ?",@project.id, true)
+            @kanbans = Kanban.where("project_id=? ",@project.id)
           end
           #user to extend.
           #alias_method_chain :show, :plugin
