@@ -30,7 +30,10 @@ Add "gem 'haml'" to your #{RAILS_ROOT}/Gemfile
 In #{RAILS_ROOT} run the command
         
     bundle install
-    rake redmine:plugins:migrate
+    rake redmine:plugins:migrate RAILS_ENV=production
+
+(or change production to whatever Rails environment you are using).
+
   
 Restart Redmine
 
