@@ -14,7 +14,7 @@ INSTALLATION INSTRUCTIONS
 -------------------------
 
 Download the package from https://github.com/samchen2009/ekanban.
-Now, this plugins only work (at least, only verified) on Redmine 2.1.x.
+Now, this plugins only work (at least, only verified) on Redmine 2.1.x, 2.2.x, 2.3.2.
 
 unpack it into #{RAILS_ROOT}/plugins
 
