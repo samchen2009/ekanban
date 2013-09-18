@@ -1,5 +1,5 @@
 class AddKanbanTablesOptions < ActiveRecord::Migration
-  def change
+  def self.up
   	#table "kanbans"
   	change_column :kanbans, :name, :string, :limit => 32, :null => false
   	change_column :kanbans, :project_id, :integer, :null => false
@@ -23,5 +23,31 @@ class AddKanbanTablesOptions < ActiveRecord::Migration
   	#table  "kanban_workflows"
   	change_column :kanban_workflows, :check_role, :boolean, :default => false
   	change_column :kanban_workflows, :check_wip_limit, :boolean, :default => true
+  end
+  
+  def self.down
+  	#table "kanbans"
+  	change_column :kanbans, :name, :string, :limit => 32, :null => false
+  	change_column :kanbans, :project_id, :integer, :null => false
+  	change_column :kanbans, :tracker_id, :integer, :null => false
+  	change_column :kanbans, :is_valid, :boolean, :default => true
+  	remove_column :kanbans, :description
+
+  	#table "kanban_states"
+  	change_column :kanban_states, :name, :string, :limit => 32, :null => false
+  	change_column :kanban_states, :is_default, :boolean, :default => false
+  	change_column :kanban_states, :is_initial, :boolean, :default => false
+  	change_column :kanban_states, :is_closed, :boolean, :default => false
+
+  	#table "kanban_panes"
+  	change_column :kanban_panes, :name, :string, :limit => 32
+  	remove_column :kanban_panes, :description
+  	change_column :kanban_panes, :wip_limit_auto, :boolean, :default => true
+  	change_column :kanban_panes, :wip_limit, :integer, :default => 1, :null => false
+  	change_column :kanban_panes, :kanban_id, :integer, :null => false
+
+  	#table  "kanban_workflows"
+  	change_column :kanban_workflows, :check_role, :boolean, :default => false
+  	change_column :kanban_workflows, :check_wip_limit, :integer, :default => 1
   end
 end
