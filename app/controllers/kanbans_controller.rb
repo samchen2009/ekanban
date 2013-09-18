@@ -126,7 +126,13 @@ class KanbansController < ApplicationController
     end
 
     @copiable_kanbans = Kanban.find(:all, :conditions => ["tracker_id in (?) and is_valid = ?", @trackers.select{|t| t.id}, true])
-    @copiable_kanbans.each {|k| k.name += " - #{k.project.name}"}
+    @copiable_kanbans.each do |k|
+	   if k.project.nil?
+	      k.name += " - Deleted Project"
+	   else
+	      k.name += " - #{k.project.name}"
+	   end
+	end
   end
 
   def create
