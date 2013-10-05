@@ -63,7 +63,7 @@ It adds the followings to redmine.
 * Prioritising stories/issues with different colors.
 * Issue weekly report and various charts(TBD). - try redmine_charts2 plugin by others.
 * Config/Manange Kanbans.
-* Indicate user's wip and wip limit.
+* Indicate user's WIP and WIP limit.
 
 ### Kanban State/Stage/Pane
 
@@ -88,7 +88,7 @@ USAGE
 
 2. Select tab "Kanban Stages" and "New Kanban Stage", in www.e-kaifa.com, we have the following kanban stages created, **Backlog**, **Planed**, **Development**, **Test**, **Release**, **Closed**.
 
-3. Select tab "Kanban State" and "New Kanban State", each kanban state should be designed to match the issue status accordingly. Given that Kanban is a "Pull" system, you should basically have 2 states - "In progress" and "Done" for stages that need to consume WIP. For example, in www.e-kaifa.com, we created 2 states: **In Progress** and **Solved" in **Development** stage.
+3. Select tab "Kanban State" and "New Kanban State", each kanban state should be designed to match the issue status accordingly. Given that Kanban is a "Pull" system, you should basically have 2 states - "In progress" and "Done" for stages that need to consume WIP. For example, in www.e-kaifa.com, we created 2 states: **In Progress** and **Solved** in **Development** stage.
     
 4. Finally, to make the issue transition reflecting in the Kanban, select the 3rd tab to associate the issue status with kanban state.
 
