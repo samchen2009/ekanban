@@ -93,6 +93,10 @@ module EKanban
           end
 
           assignee = issue.assigned_to
+          if assignee.nil?
+            errors.add :assigned_to_id, ":Need to specify an assignee"
+            return false
+          end
           wip = assignee.is_a?(Group) ? assignee.wip(pane.role_id, issue.project_id) : assignee.wip
           wip_limit = assignee.wip_limit
           if pane.in_progress == true and wip >= wip_limit
