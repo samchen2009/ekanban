@@ -35,7 +35,7 @@ table.kanban td#backlog {}
 .kanban-card { margin: 2px;width:45%;max-width:80px;float:left;}
 .card-max-height {height:100px;}
 .card-min-height {height:auto;}
-.kanban-card span.tip {overflow:visible !important;}
+.kanban-card span.tip {overflow:visible !important; z-index: 1; }
 .card-header { text-align: left; overflow:visible; font-size: 11px }
 .card-header .ui-icon { float: right; }
 .card-content { margin:1px;padding: 1px; height:75%; overflow:hidden;text-align: left; color:#303030;}
