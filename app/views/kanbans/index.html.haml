@@ -19,6 +19,23 @@
 = javascript_include_tag "kanban_api", :plugin => :ekanban
 = javascript_include_tag "sorttable.js", :plugin => :ekanban
 
+:javascript
+  function kanbanAjaxCall(type,url,params,callback){
+    $.ajax({
+      type: type,
+      url:  '#{Redmine::Utils.relative_url_root}' + url,
+      dataType: "json",
+      data: params,
+      cache: false,
+      success: function(json){
+        callback(json,0);
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown){
+        callback(XMLHttpRequest,XMLHttpRequest.status);
+      }
+    });
+  }
+
 #kanban_filter
   = render :partial => "filter_board"
 
