@@ -63,7 +63,7 @@ function kanban_init()
 
   $("table").find("li[id^='li_collapse_all']").click(function(){
     $(this).find("span").toggleClass("ui-icon-minus").toggleClass("ui-icon-plus");
-    $(this).find(".menu-text").text($(this).find("span").hasClass("ui-icon-minus") ? "Collapse all" : "Expend All");
+    $(this).find(".menu-text").text($(this).find("span").hasClass("ui-icon-minus") ? "Collapse all" : "Expand All");
     pane_id = $(this).attr("id").match(/\d+$/)[0];
     $(this).closest("table").find("#pane_"+pane_id).find(".card-header .ui-icon").trigger("click");
   });
