@@ -68,19 +68,3 @@ function getIssueJournals(issue_id,callback){
                 });
 }
 
-function kanbanAjaxCall(type,url,params,callback){
-  $.ajax({
-      type: type,
-      url:  url,
-      dataType: "json",
-      data: params,
-      cache: false,
-      success: function(json){
-        callback(json,0);
-      },
-      error: function (XMLHttpRequest, textStatus, errorThrown){
-        callback(XMLHttpRequest,XMLHttpRequest.status);
-      }
-    });
-}
-
