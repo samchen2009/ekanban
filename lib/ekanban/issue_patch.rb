@@ -65,7 +65,7 @@ module EKanban
       module InstanceMethods
         def validate_kanban_card_new
           issue = self
-          kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
+          kanban = Kanban.find_by_project_id_and_tracker_id_and_is_valid(issue.project_id,issue.tracker_id,true)
           return true if kanban.nil?
 
           state_id = IssueStatusKanbanState.state_id(issue.status_id, issue.tracker_id)
@@ -75,7 +75,7 @@ module EKanban
           end
           pane = KanbanPane.pane_by(state_id, kanban)
           if pane.nil?
-            errors.add(:status_id, ":No kanban pane associated with status '#{issue.status.name}', contact redmine admin!")
+            errors.add(:status_id, ":No kanban pane associated with status '#{issue.status.name}', kanban #{kanban.id}, state_id #{state_id}, contact redmine admin!")
             return false
           end
 
@@ -120,7 +120,7 @@ module EKanban
           assignee = issue.assigned_to
 
           card = KanbanCard.find_by_issue_id(issue.id)
-          kanban = Kanban.find_by_project_id_and_tracker_id(issue.project_id,issue.tracker_id)
+          kanban = Kanban.find_by_project_id_and_tracker_id_and_is_valid(issue.project_id,issue.tracker_id,true)
           #only apply to issue with kanban created.
           return true if kanban.nil?
 
