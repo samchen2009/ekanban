@@ -5,7 +5,7 @@ Thank you for your interest in eKanban.
 
 eKanban is a redmine plugin to support Kanban - an agile software development method.
 
-You can visit www.e-kaifa.com/projects/mybloh/kanbans to see the demo.
+You can visit http://ekanban-demo.herokuapp.com/ to see the demo.
 
 account: guest
 password: redmine
@@ -116,7 +116,7 @@ NOTE: You can drag and drop the row of pane to reorder its position(col) in the 
 
 ## Typical Kanban Workflow
 
-You could visit www.e-kaifa.com/projects/3/kanbans/1/edit to view a typical kanban workflow for software development. 
+You could visit http://ekanban-demo.herokuapp.com/projects/1/kanbans/1/edit to view a typical kanban workflow for software development. 
 
 
 LICENSE
