@@ -152,6 +152,7 @@ function kanban_init()
   $(".kanban-card:contains('P2')").addClass("p3-color")
   $(".kanban-card:contains('P3')").addClass("p4-color")
   $(".kanban-card:contains('P4')").addClass("p5-color")
+  $('.find-card').trigger('keyup');
 }
 
 function getCardsPerCol(input){
