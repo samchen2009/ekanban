@@ -420,7 +420,7 @@ function renderPopupCard(popup,card,action,sender,receiver){
       popup.find("select#issue_status_id").val(card.find("#issue_status_id").val());
       popup.find("select#kanban_state_id").val(card.find("#kanban_state_id").val());
       var pane_id = sender.attr("id").match(/\d+$/)[0];
-      popup.find("#kanban_pane_id").val(pane_id);
+      popup.find("#kanban_pane_id").val(pane_id);      
     }else if (action == 'drop'){
       // Change the assignee to me
       var pane_id = receiver.attr("id").match(/\d+$/)[0];
@@ -467,6 +467,9 @@ function renderPopupCard(popup,card,action,sender,receiver){
     popup.find("#issue_id").val(issue_id);
     popup.find("textarea").val("").focus(1);
     popup.find("#indication").hide();
+    popup.find("#version_id").val(card.find("#version_id").val());
+    popup.find("#est_hours").val(card.find("#est_hours").val());
+
   }
 }
 

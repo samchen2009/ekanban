@@ -13,6 +13,7 @@ class KanbansController < ApplicationController
     @members= @project.members
     @principals = @project.principals
     @user = User.current
+    @versions = @project.versions
 
     @roles = @user.roles_for_project(@project)
 

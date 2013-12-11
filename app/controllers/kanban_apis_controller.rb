@@ -84,6 +84,12 @@ class KanbanApisController < ApplicationController
 		render :json => {:wip => wip, :wip_limit => wip_limit}
 	end
 
+	def issue_card_detail
+		issue = Issues.find(params[:issue_id])
+		card = KanbanCard.find_by_issue_id(params[:issue_id])
+		render :json => {:issue=> issue, :card => card}
+	end
+
 	def detail_to_desc(journal)
 		prop_keys = ["status_id","priority_id", "fixed_version_id", "done_ratio","category_id","assigned_to_id"]
 		actions = ['Set','Changed',"Set","",'Set', 'Change']
@@ -166,3 +172,5 @@ class KanbanApisController < ApplicationController
 		render :json => {:card_journals => card_journals,:issue_journals => issue_journals}
 	end
 end
+
+

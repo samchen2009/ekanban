@@ -6,6 +6,15 @@ $("#ajax-indicator").hide();
     $("#popupWindow").find("#errorExplanation").hide();
     $("#popupWindow").find("#errorExplanation").text("");
     $("##{@issue.id}").appendTo($("#pane_#{@card.kanban_pane_id}"));
+    $("##{@issue.id}").find("#assignee_id").val("#{@issue.assigned_to_id}")
+    $("##{@issue.id}").find("#developer_id").val("#{@card.developer_id}")
+    $("##{@issue.id}").find("#verifier_id").val("#{@card.verifier_id}")
+    $("##{@issue.id}").find("#issue_status_id").val("#{@issue.status_id}")
+    $("##{@issue.id}").find("#kanban_state_id").val("#{@card.kanban_pane.kanban_state_id}")
+    $("##{@issue.id}").find("#version_id").val("#{@issue.fixed_version_id}")
+    $("##{@issue.id}").find("#est_hours").val("#{@issue.estimated_hours}")
+    $("##{@issue.id}").find("#start_date").val("#{@issue.start_date}")
+    $("##{@issue.id}").find("#due_date").val("#{@issue.due_date}")
 - else
   :plain
     $("#popupWindow").find("#errorExplanation").text("  #{@errors}")

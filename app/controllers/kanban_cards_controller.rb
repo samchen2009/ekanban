@@ -42,6 +42,8 @@ class KanbanCardsController < ApplicationController
     @issue.assigned_to_id = params[:assignee_id]
     @issue.start_date = params[:start_date_]
     @issue.due_date = params[:due_date_]
+    @issue.fixed_version_id = params[:version_id]
+    @issue.estimated_hours = params[:est_hours]
 
     @saved = false
     begin

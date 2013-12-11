@@ -208,6 +208,10 @@ td .kanban-card-form select{
   margin: 4px;
 }
 
+.kanban-card-form .float_left {
+  float:left;	
+}
+
 #popupSubmit input{width:auto;}
 .newline {clear:both;}
 

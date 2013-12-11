@@ -16,6 +16,19 @@ function getUserWipAndLimit(user_id){
                   });
 }
 
+function getIssueDetail(issue_id){
+  kanbanAjaxCall("get",
+                   "/kanban_apis/issue_card_detail",{"card_id":issue_id},
+                   function(data,result){
+                    if (result == 0){
+                      return data;
+                    }else{
+                      return undefined;
+                    }
+                  });
+}
+	
+
 function getKanbanStates(){
   kanbanAjaxCall("get",
                    "/kanban_apis/kanban_states",{"id":9999},
