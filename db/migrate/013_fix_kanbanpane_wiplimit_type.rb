@@ -1,6 +1,7 @@
 class FixKanbanpaneWiplimitType < ActiveRecord::Migration
 	def self.up
-  		change_column :kanban_panes, :wip_limit, :integer, :default => 1, :null => false
+  		change_column :kanban_panes, :wip_limit, 'integer using cast(wip_limit as integer)'
+
   	end
 	
 	def self.down
