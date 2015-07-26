@@ -17,12 +17,12 @@ class AddKanbanTablesOptions < ActiveRecord::Migration
   	change_column :kanban_panes, :name, :string, :limit => 32
   	add_column :kanban_panes, :description, :text, :limit => 256
   	change_column :kanban_panes, :wip_limit_auto, :boolean, :default => true
-  	change_column :kanban_panes, :wip_limit, :boolean, :default => 1, :null => false
+    change_column :kanban_panes, :wip_limit, 'boolean USING CAST (wip_limit as boolean)'
   	change_column :kanban_panes, :kanban_id, :integer, :null => false
 
   	#table  "kanban_workflows"
   	change_column :kanban_workflows, :check_role, :boolean, :default => false
-  	change_column :kanban_workflows, :check_wip_limit, :boolean, :default => true
+  	change_column :kanban_workflows, :check_wip_limit, 'boolean USING CAST (check_wip_limit as boolean)'
   end
   
   def self.down
